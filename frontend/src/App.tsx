@@ -8,6 +8,7 @@ import { BookForm } from "@/pages/BookForm";
 import { Gallery } from "@/pages/Gallery";
 import { Login } from "@/pages/Login";
 import { Stats } from "@/pages/Stats";
+import { Loans } from "@/pages/Loans";
 import { TableView } from "@/pages/TableView";
 import { Wishlist } from "@/pages/Wishlist";
 
@@ -52,6 +53,16 @@ export function App() {
           <ProtectedRoute>
             <AppLayout>
               <Stats />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/loans"
+        element={
+          <ProtectedRoute>
+            <AppLayout>
+              <Loans />
             </AppLayout>
           </ProtectedRoute>
         }

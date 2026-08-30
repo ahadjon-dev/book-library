@@ -15,3 +15,16 @@ export async function fetchMe(): Promise<Me> {
   const { data } = await api.get<Me>("/auth/me");
   return data;
 }
+
+export async function updateProfile(displayName: string): Promise<Me> {
+  const { data } = await api.patch<Me>("/auth/profile", { display_name: displayName });
+  return data;
+}
+
+export async function changePassword(currentPassword: string, newPassword: string): Promise<{ message: string }> {
+  const { data } = await api.post<{ message: string }>("/auth/change-password", {
+    current_password: currentPassword,
+    new_password: newPassword,
+  });
+  return data;
+}
