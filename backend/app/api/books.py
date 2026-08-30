@@ -1,13 +1,14 @@
 import io
 from datetime import date
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Response, UploadFile, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, UploadFile, status
 from openpyxl import Workbook
 from openpyxl.styles import Font
 from sqlalchemy import func, or_
 from sqlalchemy.orm import Query as ORMQuery, Session, selectinload
 
 from app.api.deps import get_current_user
+from app.core.limiter import limiter
 from app.db.session import get_db
 from app.models.author import Author
 from app.models.book import Book
@@ -358,7 +359,9 @@ def export_books(
 
 
 @router.post("/import", response_model=ImportSummary)
+@limiter.limit("5/minute")
 async def import_books(
+    request: Request,
     file: UploadFile,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
@@ -368,7 +371,9 @@ async def import_books(
 
 
 @router.post("/scan-shelf", response_model=ShelfScanResult)
+@limiter.limit("10/minute")
 async def scan_shelf(
+    request: Request,
     file: UploadFile,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
@@ -414,12 +419,14 @@ async def bulk_add_books(
 
     return BulkAddResponse(
         added_count=len(added_books),
-        books=[_to_book_out(b, {}) for b in added_books],
+        books=[to_book_out(b, {}) for b in added_books],
     )
 
 
 @router.post("/recommend-next", response_model=RecommendNextResponse)
+@limiter.limit("20/minute")
 def recommend_next(
+    request: Request,
     payload: RecommendNextRequest,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
