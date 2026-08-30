@@ -1,6 +1,13 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { useState } from "react";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 
 import { Navbar } from "@/components/Navbar";
+import { BottomNav } from "@/components/BottomNav";
+import { MobileMoreDrawer } from "@/components/MobileMoreDrawer";
+import { AddBooksHubModal } from "@/components/AddBooksHubModal";
+import { WhatToReadModal } from "@/components/WhatToReadModal";
+import { ProfileModal } from "@/components/ProfileModal";
+import { ShareShelfModal } from "@/components/ShareShelfModal";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { useAuth } from "@/lib/AuthContext";
 import { BookDetail } from "@/pages/BookDetail";
@@ -13,10 +20,58 @@ import { PublicView } from "@/pages/PublicView";
 import { Wishlist } from "@/pages/Wishlist";
 
 function AppLayout({ children }: { children: React.ReactNode }) {
+  const [recommendOpen, setRecommendOpen] = useState(false);
+  const [addHubOpen, setAddHubOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
   return (
     <div className="flex h-dvh flex-col overflow-hidden">
       <Navbar />
-      <main className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-6">{children}</main>
+      <main className="min-h-0 flex-1 overflow-y-auto p-3 sm:p-6 pb-20 md:pb-6">{children}</main>
+      <BottomNav
+        onOpenRecommend={() => setRecommendOpen(true)}
+        onOpenAddHub={() => setAddHubOpen(true)}
+        onOpenMore={() => setMoreOpen(true)}
+      />
+
+      <AddBooksHubModal
+        isOpen={addHubOpen}
+        onClose={() => setAddHubOpen(false)}
+        onSuccess={() => window.location.reload()}
+      />
+      <WhatToReadModal
+        isOpen={recommendOpen}
+        onClose={() => setRecommendOpen(false)}
+      />
+      <ProfileModal
+        isOpen={profileOpen}
+        onClose={() => setProfileOpen(false)}
+      />
+      <ShareShelfModal
+        isOpen={shareOpen}
+        onClose={() => setShareOpen(false)}
+      />
+      <MobileMoreDrawer
+        isOpen={moreOpen}
+        onClose={() => setMoreOpen(false)}
+        onOpenProfile={() => {
+          setMoreOpen(false);
+          setProfileOpen(true);
+        }}
+        onOpenShare={() => {
+          setMoreOpen(false);
+          setShareOpen(true);
+        }}
+        onLogout={() => {
+          setMoreOpen(false);
+          logout();
+          navigate("/login");
+        }}
+      />
     </div>
   );
 }
