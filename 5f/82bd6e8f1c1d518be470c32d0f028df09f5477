@@ -1,0 +1,14 @@
+frontend/src/components/BookCard.tsx
+  h_780173feefb83a 1,3,6,8-9,13-18,20,23-99,101-129,131-165,167-211,213
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "5f82bd6e8f1c1d518be470c32d0f028df09f5477",
+  "prompts": {},
+  "humans": {
+    "h_780173feefb83a": {
+      "author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}
