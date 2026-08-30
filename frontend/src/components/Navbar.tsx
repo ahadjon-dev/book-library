@@ -4,14 +4,13 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { LANGUAGES, useTranslation, type Language } from "@/lib/LanguageContext";
 import { useAuth } from "@/lib/AuthContext";
 import { THEMES, useTheme, type Theme } from "@/lib/ThemeContext";
-import { CsvImportModal } from "@/components/CsvImportModal";
+import { AddBooksHubModal } from "@/components/AddBooksHubModal";
 import { ProfileModal } from "@/components/ProfileModal";
-import { ShelfPhotoScanner } from "@/components/ShelfPhotoScanner";
 import { WhatToReadModal } from "@/components/WhatToReadModal";
 import { ShareShelfModal } from "@/components/ShareShelfModal";
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
-  `shrink-0 whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium ${
+  `shrink-0 whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium transition ${
     isActive ? "bg-surface-hover text-ink" : "text-ink-secondary hover:text-ink"
   }`;
 
@@ -21,9 +20,8 @@ export function Navbar() {
   const { language, setLanguage, t } = useTranslation();
   const navigate = useNavigate();
 
-  const [importOpen, setImportOpen] = useState(false);
+  const [addHubOpen, setAddHubOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [scannerOpen, setScannerOpen] = useState(false);
   const [recommendOpen, setRecommendOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
 
@@ -54,9 +52,6 @@ export function Navbar() {
           <NavLink to="/wishlist" className={linkClass}>
             {t("nav.wishlist")}
           </NavLink>
-          <NavLink to="/books/new" className={linkClass}>
-            {t("nav.addBook")}
-          </NavLink>
 
           <button
             onClick={() => setRecommendOpen(true)}
@@ -65,11 +60,12 @@ export function Navbar() {
             🎯 {t("recommend.title")}
           </button>
 
+          {/* Unified Add Books Hub Button */}
           <button
-            onClick={() => setScannerOpen(true)}
-            className="shrink-0 whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium text-ink-secondary hover:bg-surface-hover hover:text-ink transition"
+            onClick={() => setAddHubOpen(true)}
+            className="shrink-0 whitespace-nowrap inline-flex items-center gap-1.5 rounded-lg bg-accent px-3.5 py-1.5 text-sm font-semibold text-on-accent hover:bg-accent-hover transition shadow-sm"
           >
-            📸 Scan Shelf
+            <span>➕</span> <span>{t("addHub.title")}</span>
           </button>
 
           <button
@@ -78,14 +74,8 @@ export function Navbar() {
           >
             🔗 {t("shareShelf.title")}
           </button>
-
-          <button
-            onClick={() => setImportOpen(true)}
-            className="shrink-0 whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium text-ink-secondary hover:bg-surface-hover hover:text-ink transition"
-          >
-            📥 {t("import.importButton")}
-          </button>
         </div>
+
         <div className="flex shrink-0 items-center gap-2 text-sm text-ink-secondary sm:gap-3">
           <select
             value={language}
@@ -127,22 +117,16 @@ export function Navbar() {
         </div>
       </nav>
 
-      {/* Feature Modals */}
-      <CsvImportModal
-        isOpen={importOpen}
-        onClose={() => setImportOpen(false)}
+      {/* Unified Add Books Hub Modal */}
+      <AddBooksHubModal
+        isOpen={addHubOpen}
+        onClose={() => setAddHubOpen(false)}
         onSuccess={() => window.location.reload()}
       />
 
       <ProfileModal
         isOpen={profileOpen}
         onClose={() => setProfileOpen(false)}
-      />
-
-      <ShelfPhotoScanner
-        isOpen={scannerOpen}
-        onClose={() => setScannerOpen(false)}
-        onSuccess={() => window.location.reload()}
       />
 
       <WhatToReadModal

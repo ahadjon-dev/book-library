@@ -269,4 +269,15 @@ export const en = {
     matchScore: "{score}% Match",
     startReading: "Start Reading",
   },
+  addHub: {
+    title: "Add Books to Library",
+    tabShelf: "📸 Shelf Photo",
+    tabBarcode: "📷 Barcode / ISBN",
+    tabManual: "✍️ Manual Entry",
+    tabImport: "📥 CSV / Goodreads",
+    shelfDesc: "Snap a photo of your bookshelf to auto-detect and bulk add multiple books with AI.",
+    barcodeDesc: "Point your phone camera at the barcode or enter the ISBN for instant metadata lookup.",
+    manualDesc: "Enter custom details manually.",
+    importDesc: "Import your collection from a CSV file or Goodreads export.",
+  },
 };

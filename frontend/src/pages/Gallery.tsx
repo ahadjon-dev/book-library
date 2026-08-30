@@ -7,7 +7,7 @@ import { BookGrid } from "@/components/BookGrid";
 import { Carousel } from "@/components/Carousel";
 import { FilterSidebar } from "@/components/FilterSidebar";
 import { WhatToReadModal } from "@/components/WhatToReadModal";
-import { ShelfPhotoScanner } from "@/components/ShelfPhotoScanner";
+import { AddBooksHubModal } from "@/components/AddBooksHubModal";
 import { ShareShelfModal } from "@/components/ShareShelfModal";
 import { useTranslation } from "@/lib/LanguageContext";
 import type { Book, BookFilters } from "@/types/book";
@@ -89,7 +89,7 @@ export function Gallery() {
   const [view, setView] = useState<GalleryView>("home");
   const [filters, setFilters] = useState<BookFilters>({ limit: 50, offset: 0 });
   const [recommendOpen, setRecommendOpen] = useState(false);
-  const [scannerOpen, setScannerOpen] = useState(false);
+  const [addHubOpen, setAddHubOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
 
   const filtered = useMemo(() => isFilterActive(filters), [filters]);
@@ -128,10 +128,10 @@ export function Gallery() {
               🎯 <span>{t("recommend.title")}</span>
             </button>
             <button
-              onClick={() => setScannerOpen(true)}
-              className="inline-flex items-center gap-1 rounded-lg border border-line bg-surface px-3 py-1.5 text-xs font-medium text-ink hover:bg-surface-hover transition"
+              onClick={() => setAddHubOpen(true)}
+              className="inline-flex items-center gap-1 rounded-lg bg-accent px-3 py-1.5 text-xs font-semibold text-on-accent hover:bg-accent-hover transition shadow-sm"
             >
-              📸 <span>Scan Shelf</span>
+              ➕ <span>{t("addHub.title")}</span>
             </button>
             <button
               onClick={() => setShareOpen(true)}
@@ -150,7 +150,7 @@ export function Gallery() {
       </div>
 
       <WhatToReadModal isOpen={recommendOpen} onClose={() => setRecommendOpen(false)} />
-      <ShelfPhotoScanner isOpen={scannerOpen} onClose={() => setScannerOpen(false)} onSuccess={() => window.location.reload()} />
+      <AddBooksHubModal isOpen={addHubOpen} onClose={() => setAddHubOpen(false)} onSuccess={() => window.location.reload()} />
       <ShareShelfModal isOpen={shareOpen} onClose={() => setShareOpen(false)} />
     </div>
   );
