@@ -6,7 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
-from app.api import auth, books, lookups, stats
+from app.api import auth, books, goals, loans, lookups, stats
 from app.core.config import settings
 from app.core.limiter import limiter
 
@@ -33,6 +33,8 @@ app.include_router(auth.router)
 app.include_router(books.router)
 app.include_router(lookups.router)
 app.include_router(stats.router)
+app.include_router(loans.router)
+app.include_router(goals.router)
 
 
 @app.get("/health")

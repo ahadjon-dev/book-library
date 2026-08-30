@@ -25,6 +25,8 @@ from app.schemas.book import (
     StatusCounts,
     StatusUpdate,
 )
+from app.schemas.import_export import ImportSummary
+from app.services.csv_importer import import_books_from_csv
 from app.services.image_storage import UnsupportedImageType, save_cover_bytes, save_cover_image
 from app.services.isbn_lookup import download_cover_bytes, fetch_isbn_metadata, parse_metadata
 from app.services.lookup_service import get_or_create_shelf, resolve_authors, resolve_tags
@@ -477,3 +479,13 @@ def update_my_status(
     db.commit()
     status_by_book_id = _load_statuses(db, current_user.id, [book.id])
     return _to_book_out(book, status_by_book_id)
+
+
+@router.post("/import", response_model=ImportSummary)
+async def import_books(
+    file: UploadFile,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> ImportSummary:
+    contents = await file.read()
+    return import_books_from_csv(contents, db, current_user)
