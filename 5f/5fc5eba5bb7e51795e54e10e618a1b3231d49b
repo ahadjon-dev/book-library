@@ -1,0 +1,22 @@
+backend/alembic/versions/0003_add_performance_indexes.py
+  h_780173feefb83a 1-52
+backend/app/api/books.py
+  h_780173feefb83a 139-151
+backend/app/api/stats.py
+  h_780173feefb83a 4-6,10-11,14,36-41,43-45,47-77,79-100,133,135-140
+backend/app/models/book.py
+  h_780173feefb83a 31,33,39
+backend/app/models/user_book_status.py
+  h_780173feefb83a 4,22-23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "5f5fc5eba5bb7e51795e54e10e618a1b3231d49b",
+  "prompts": {},
+  "humans": {
+    "h_780173feefb83a": {
+      "author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}
