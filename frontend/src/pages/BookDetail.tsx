@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { Handshake } from "lucide-react";
 
 import { deleteBook, fetchBook, updateBook, updateMyStatus } from "@/api/books";
 import { coverUrl } from "@/api/client";
@@ -106,9 +107,10 @@ export function BookDetail() {
         </div>
         <button
           onClick={() => setLendOpen(true)}
-          className="mt-2 w-full rounded-md border border-line bg-surface px-3 py-2 text-center text-sm font-medium text-ink hover:bg-surface-hover transition"
+          className="mt-2 w-full inline-flex items-center justify-center gap-1.5 rounded-md border border-line bg-surface px-3 py-2 text-center text-sm font-medium text-ink hover:bg-surface-hover transition"
         >
-          🤝 {t("loans.lendBook")}
+          <Handshake className="h-4 w-4 text-accent" />
+          <span>{t("loans.lendBook")}</span>
         </button>
       </div>
 

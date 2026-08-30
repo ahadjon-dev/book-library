@@ -9,6 +9,19 @@ import {
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import {
+  Rows3,
+  LayoutGrid,
+  Table as TableIcon,
+  Download,
+  ChevronLeft,
+  ChevronRight,
+  Sparkles,
+  Plus,
+  Share2,
+  BookOpen,
+  Star,
+} from "lucide-react";
 
 import { exportBooksExcel, fetchBooks, fetchGenres } from "@/api/books";
 import { coverUrl } from "@/api/client";
@@ -130,7 +143,7 @@ function TableSection({
             <img src={cover} alt="" className="h-12 w-8 rounded object-cover" />
           ) : (
             <div className="h-12 w-8 rounded bg-surface-hover flex items-center justify-center text-[10px]">
-              📖
+              <BookOpen className="h-4 w-4 text-ink-muted" />
             </div>
           );
         },
@@ -161,7 +174,10 @@ function TableSection({
         header: t("table.rating"),
         cell: (info) =>
           info.getValue() ? (
-            <span className="font-semibold text-amber-400">★ {info.getValue()}</span>
+            <span className="inline-flex items-center gap-1 font-semibold text-amber-400">
+              <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+              <span>{info.getValue()}</span>
+            </span>
           ) : (
             <span className="text-ink-muted">—</span>
           ),
@@ -234,9 +250,10 @@ function TableSection({
         <button
           onClick={handleExport}
           disabled={exporting || total === 0}
-          className="rounded-lg border border-line bg-surface px-3 py-1.5 text-xs font-semibold text-ink hover:bg-surface-hover transition disabled:opacity-50"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-line bg-surface px-3 py-1.5 text-xs font-semibold text-ink hover:bg-surface-hover transition disabled:opacity-50"
         >
-          {exporting ? t("table.exporting") : `📥 ${t("table.exportToExcel")}`}
+          <Download className="h-3.5 w-3.5 text-ink-secondary" />
+          <span>{exporting ? t("table.exporting") : t("table.exportToExcel")}</span>
         </button>
       </div>
 
@@ -276,9 +293,10 @@ function TableSection({
           <button
             disabled={offset === 0}
             onClick={() => onChangePage(Math.max(0, offset - limit))}
-            className="rounded-lg border border-line px-3 py-1.5 font-medium disabled:opacity-40"
+            className="inline-flex items-center gap-1 rounded-lg border border-line px-3 py-1.5 font-medium disabled:opacity-40"
           >
-            ← {t("common.prev")}
+            <ChevronLeft className="h-3.5 w-3.5" />
+            <span>{t("common.prev")}</span>
           </button>
           <span className="text-ink-secondary">
             {offset + 1}–{Math.min(offset + limit, total)} of {total}
@@ -286,9 +304,10 @@ function TableSection({
           <button
             disabled={offset + limit >= total}
             onClick={() => onChangePage(offset + limit)}
-            className="rounded-lg border border-line px-3 py-1.5 font-medium disabled:opacity-40"
+            className="inline-flex items-center gap-1 rounded-lg border border-line px-3 py-1.5 font-medium disabled:opacity-40"
           >
-            {t("common.next")} →
+            <span>{t("common.next")}</span>
+            <ChevronRight className="h-3.5 w-3.5" />
           </button>
         </div>
       )}
@@ -334,33 +353,36 @@ export function Gallery() {
           <div className="flex p-1 rounded-xl bg-surface border border-line">
             <button
               onClick={() => handleViewChange("shelves")}
-              className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+              className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
                 view === "shelves" && !filtered
                   ? "bg-accent text-on-accent shadow-sm"
                   : "text-ink-secondary hover:text-ink"
               }`}
             >
-              ⊞ {t("gallery.shelves")}
+              <Rows3 className="h-3.5 w-3.5" />
+              <span>{t("gallery.shelves")}</span>
             </button>
             <button
               onClick={() => handleViewChange("grid")}
-              className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+              className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
                 view === "grid" || (view === "shelves" && filtered)
                   ? "bg-accent text-on-accent shadow-sm"
                   : "text-ink-secondary hover:text-ink"
               }`}
             >
-              ▦ {t("gallery.grid")}
+              <LayoutGrid className="h-3.5 w-3.5" />
+              <span>{t("gallery.grid")}</span>
             </button>
             <button
               onClick={() => handleViewChange("table")}
-              className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+              className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
                 view === "table"
                   ? "bg-accent text-on-accent shadow-sm"
                   : "text-ink-secondary hover:text-ink"
               }`}
             >
-              ☰ {t("gallery.table")}
+              <TableIcon className="h-3.5 w-3.5" />
+              <span>{t("gallery.table")}</span>
             </button>
           </div>
 
@@ -368,21 +390,24 @@ export function Gallery() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setRecommendOpen(true)}
-              className="inline-flex items-center gap-1 rounded-lg bg-accent/10 border border-accent/30 px-3 py-1.5 text-xs font-semibold text-accent hover:bg-accent/20 transition shadow-sm"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-accent/10 border border-accent/30 px-3 py-1.5 text-xs font-semibold text-accent hover:bg-accent/20 transition shadow-sm"
             >
-              🎯 <span>{t("recommend.title")}</span>
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>{t("recommend.title")}</span>
             </button>
             <button
               onClick={() => setAddHubOpen(true)}
-              className="inline-flex items-center gap-1 rounded-lg bg-accent px-3 py-1.5 text-xs font-semibold text-on-accent hover:bg-accent-hover transition shadow-sm"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-3 py-1.5 text-xs font-semibold text-on-accent hover:bg-accent-hover transition shadow-sm"
             >
-              ➕ <span>{t("addHub.title")}</span>
+              <Plus className="h-3.5 w-3.5" />
+              <span>{t("addHub.title")}</span>
             </button>
             <button
               onClick={() => setShareOpen(true)}
-              className="inline-flex items-center gap-1 rounded-lg border border-line bg-surface px-3 py-1.5 text-xs font-medium text-ink hover:bg-surface-hover transition"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-line bg-surface px-3 py-1.5 text-xs font-medium text-ink hover:bg-surface-hover transition"
             >
-              🔗 <span>Share</span>
+              <Share2 className="h-3.5 w-3.5 text-ink-secondary" />
+              <span>Share</span>
             </button>
           </div>
         </div>

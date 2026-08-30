@@ -1,6 +1,15 @@
 import { useState, lazy, Suspense, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
+  Camera,
+  Barcode,
+  PenLine,
+  FileSpreadsheet,
+  Plus,
+  X,
+  BookOpen,
+} from "lucide-react";
+import {
   scanShelfImage,
   bulkAddBooks,
   lookupIsbn,
@@ -241,8 +250,10 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
       <div className="w-full max-w-2xl h-[85vh] sm:h-[580px] flex flex-col rounded-t-3xl sm:rounded-2xl border border-line bg-surface p-5 sm:p-6 shadow-2xl transition">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-line pb-4 mb-4">
-          <div className="flex items-center gap-2">
-            <span className="text-2xl">➕</span>
+          <div className="flex items-center gap-2.5">
+            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-accent/10 text-accent border border-accent/20">
+              <Plus className="h-4 w-4" />
+            </span>
             <div>
               <h2 className="text-lg font-bold text-ink">{t("addHub.title")}</h2>
               <p className="text-xs text-ink-secondary hidden sm:block">
@@ -254,7 +265,7 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
             onClick={onClose}
             className="rounded-full p-2 text-ink-secondary hover:text-ink hover:bg-surface-hover transition"
           >
-            ✕
+            <X className="h-5 w-5" />
           </button>
         </div>
 
@@ -262,43 +273,47 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
         <div className="flex gap-1.5 p-1 rounded-xl bg-canvas border border-line overflow-x-auto scrollbar-hide mb-4 shrink-0">
           <button
             onClick={() => setActiveTab("shelf")}
-            className={`flex-1 min-w-[110px] py-2 px-3 rounded-lg text-xs font-semibold transition text-center truncate ${
+            className={`flex-1 min-w-[110px] py-2 px-3 rounded-lg text-xs font-semibold transition inline-flex items-center justify-center gap-1.5 truncate ${
               activeTab === "shelf"
                 ? "bg-accent text-on-accent shadow-sm"
                 : "text-ink-secondary hover:text-ink hover:bg-surface-hover"
             }`}
           >
-            {t("addHub.tabShelf")}
+            <Camera className="h-3.5 w-3.5 shrink-0" />
+            <span>{t("addHub.tabShelf")}</span>
           </button>
           <button
             onClick={() => setActiveTab("barcode")}
-            className={`flex-1 min-w-[110px] py-2 px-3 rounded-lg text-xs font-semibold transition text-center truncate ${
+            className={`flex-1 min-w-[110px] py-2 px-3 rounded-lg text-xs font-semibold transition inline-flex items-center justify-center gap-1.5 truncate ${
               activeTab === "barcode"
                 ? "bg-accent text-on-accent shadow-sm"
                 : "text-ink-secondary hover:text-ink hover:bg-surface-hover"
             }`}
           >
-            {t("addHub.tabBarcode")}
+            <Barcode className="h-3.5 w-3.5 shrink-0" />
+            <span>{t("addHub.tabBarcode")}</span>
           </button>
           <button
             onClick={() => setActiveTab("manual")}
-            className={`flex-1 min-w-[100px] py-2 px-3 rounded-lg text-xs font-semibold transition text-center truncate ${
+            className={`flex-1 min-w-[100px] py-2 px-3 rounded-lg text-xs font-semibold transition inline-flex items-center justify-center gap-1.5 truncate ${
               activeTab === "manual"
                 ? "bg-accent text-on-accent shadow-sm"
                 : "text-ink-secondary hover:text-ink hover:bg-surface-hover"
             }`}
           >
-            {t("addHub.tabManual")}
+            <PenLine className="h-3.5 w-3.5 shrink-0" />
+            <span>{t("addHub.tabManual")}</span>
           </button>
           <button
             onClick={() => setActiveTab("import")}
-            className={`flex-1 min-w-[110px] py-2 px-3 rounded-lg text-xs font-semibold transition text-center truncate ${
+            className={`flex-1 min-w-[110px] py-2 px-3 rounded-lg text-xs font-semibold transition inline-flex items-center justify-center gap-1.5 truncate ${
               activeTab === "import"
                 ? "bg-accent text-on-accent shadow-sm"
                 : "text-ink-secondary hover:text-ink hover:bg-surface-hover"
             }`}
           >
-            {t("addHub.tabImport")}
+            <FileSpreadsheet className="h-3.5 w-3.5 shrink-0" />
+            <span>{t("addHub.tabImport")}</span>
           </button>
         </div>
 
@@ -319,15 +334,16 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
                     </div>
                   ) : (
                     <label className="w-full flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-line hover:border-accent bg-canvas p-8 text-center transition cursor-pointer group">
-                      <span className="text-4xl mb-3 group-hover:scale-110 transition">📸</span>
+                      <Camera className="h-12 w-12 text-accent mb-3 group-hover:scale-110 transition" />
                       <p className="text-sm font-semibold text-ink mb-1">
                         Snap Photo or Upload Image
                       </p>
                       <p className="text-xs text-ink-secondary mb-4">
                         Tap here to open your mobile camera or pick photo
                       </p>
-                      <span className="rounded-lg bg-accent px-4 py-2 text-xs font-semibold text-on-accent group-hover:bg-accent-hover transition">
-                        Open Camera / Gallery
+                      <span className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2 text-xs font-semibold text-on-accent group-hover:bg-accent-hover transition">
+                        <Camera className="h-3.5 w-3.5" />
+                        <span>Open Camera / Gallery</span>
                       </span>
                       <input
                         type="file"
@@ -394,7 +410,7 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
                             />
                           ) : (
                             <div className="h-10 w-7 bg-surface-hover rounded flex items-center justify-center text-[10px] text-ink-secondary shrink-0">
-                              📖
+                              <BookOpen className="h-4 w-4 text-ink-muted" />
                             </div>
                           )}
                           <div className="min-w-0 flex-1">
@@ -463,9 +479,10 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
                 <button
                   type="button"
                   onClick={() => setShowLiveScanner(true)}
-                  className="rounded-lg border border-line bg-surface px-3 py-2 text-xs font-medium text-ink hover:bg-surface-hover transition shrink-0"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-line bg-surface px-3 py-2 text-xs font-medium text-ink hover:bg-surface-hover transition shrink-0"
                 >
-                  📷 {t("bookForm.scan")}
+                  <Barcode className="h-4 w-4" />
+                  <span>{t("bookForm.scan")}</span>
                 </button>
               </div>
 
@@ -480,7 +497,7 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
                       />
                     ) : (
                       <div className="h-20 w-14 bg-surface-hover rounded flex items-center justify-center text-xs text-ink-secondary shrink-0">
-                        📖
+                        <BookOpen className="h-6 w-6 text-ink-muted" />
                       </div>
                     )}
                     <div className="min-w-0 flex-1">
@@ -677,7 +694,7 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
                       csvFile ? "border-accent bg-accent/5" : "border-line bg-canvas"
                     }`}
                   >
-                    <span className="text-3xl mb-2">📄</span>
+                    <FileSpreadsheet className="h-10 w-10 text-accent mb-2" />
                     {csvFile ? (
                       <div>
                         <p className="text-sm font-semibold text-ink">{csvFile.name}</p>

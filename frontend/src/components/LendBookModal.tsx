@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Handshake, X } from "lucide-react";
 import { createLoan } from "@/api/loans";
 import { useTranslation } from "@/lib/LanguageContext";
 import { useToast } from "@/lib/ToastContext";
@@ -40,8 +41,7 @@ export function LendBookModal({ isOpen, bookId, bookTitle, onClose, onSuccess }:
       if (onSuccess) onSuccess();
       onClose();
     } catch (err: any) {
-      console.error("Failed to lend book", err);
-      showToast(err.response?.data?.detail || "Failed to record loan");
+      showToast(err.response?.data?.detail || "Failed to record loan", "error");
     } finally {
       setSaving(false);
     }
@@ -51,15 +51,20 @@ export function LendBookModal({ isOpen, bookId, bookTitle, onClose, onSuccess }:
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <div className="w-full max-w-md rounded-2xl border border-line bg-surface p-6 shadow-2xl transition space-y-4">
         <div className="flex items-center justify-between border-b border-line pb-4">
-          <div>
-            <h2 className="text-lg font-bold text-ink">{t("loans.lendBook")}</h2>
-            <p className="text-xs text-ink-secondary truncate max-w-xs">{bookTitle}</p>
+          <div className="flex items-center gap-2.5">
+            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-accent/10 text-accent border border-accent/20">
+              <Handshake className="h-4 w-4" />
+            </span>
+            <div>
+              <h2 className="text-lg font-bold text-ink">{t("loans.lendBook")}</h2>
+              <p className="text-xs text-ink-secondary truncate max-w-xs">{bookTitle}</p>
+            </div>
           </div>
           <button
             onClick={onClose}
             className="rounded-lg p-1.5 text-ink-secondary hover:text-ink hover:bg-surface-hover transition"
           >
-            ✕
+            <X className="h-5 w-5" />
           </button>
         </div>
 

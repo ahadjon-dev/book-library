@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { Sparkles, Zap, Brain, Coffee, Flame, BookOpen, X } from "lucide-react";
 import { recommendNextBooks, updateMyStatus } from "@/api/books";
 import { coverUrl } from "@/api/client";
 import type { RecommendNextResponse } from "@/types/recommendation";
@@ -44,8 +45,8 @@ export function WhatToReadModal({ isOpen, onClose }: Props) {
       await updateMyStatus(bookId, { status: "reading", started_at: today });
       showToast("Marked as currently reading!");
       onClose();
-    } catch (err) {
-      console.error("Failed to update status", err);
+    } catch (err: any) {
+      showToast(err.response?.data?.detail || "Failed to update reading status");
     }
   }
 
@@ -54,7 +55,9 @@ export function WhatToReadModal({ isOpen, onClose }: Props) {
       <div className="w-full max-w-2xl max-h-[85vh] flex flex-col rounded-2xl border border-line bg-surface p-6 shadow-2xl transition">
         <div className="flex items-center justify-between border-b border-line pb-4 mb-4">
           <div className="flex items-center gap-2.5">
-            <span className="text-2xl">🎯</span>
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent/10 text-accent border border-accent/20">
+              <Sparkles className="h-5 w-5" />
+            </span>
             <div>
               <h2 className="text-lg font-bold text-ink">{t("recommend.title")}</h2>
               <p className="text-xs text-ink-secondary">{t("recommend.subtitle")}</p>
@@ -64,7 +67,7 @@ export function WhatToReadModal({ isOpen, onClose }: Props) {
             onClick={onClose}
             className="rounded-lg p-1.5 text-ink-secondary hover:text-ink hover:bg-surface-hover transition"
           >
-            ✕
+            <X className="h-5 w-5" />
           </button>
         </div>
 
@@ -76,27 +79,31 @@ export function WhatToReadModal({ isOpen, onClose }: Props) {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             <button
               onClick={() => handleRecommend("fast-paced thriller")}
-              className="rounded-xl border border-line bg-canvas p-3 text-left hover:border-accent hover:bg-surface-hover transition text-xs font-medium text-ink"
+              className="flex flex-col items-start rounded-xl border border-line bg-canvas p-3 text-left hover:border-accent hover:bg-surface-hover transition text-xs font-medium text-ink group"
             >
-              {t("recommend.thrillerMood")}
+              <Zap className="h-4 w-4 text-amber-400 mb-1 group-hover:scale-110 transition" />
+              <span>{t("recommend.thrillerMood")}</span>
             </button>
             <button
               onClick={() => handleRecommend("mind-expanding science and philosophy")}
-              className="rounded-xl border border-line bg-canvas p-3 text-left hover:border-accent hover:bg-surface-hover transition text-xs font-medium text-ink"
+              className="flex flex-col items-start rounded-xl border border-line bg-canvas p-3 text-left hover:border-accent hover:bg-surface-hover transition text-xs font-medium text-ink group"
             >
-              {t("recommend.scienceMood")}
+              <Brain className="h-4 w-4 text-purple-400 mb-1 group-hover:scale-110 transition" />
+              <span>{t("recommend.scienceMood")}</span>
             </button>
             <button
               onClick={() => handleRecommend("short weekend read", 250)}
-              className="rounded-xl border border-line bg-canvas p-3 text-left hover:border-accent hover:bg-surface-hover transition text-xs font-medium text-ink"
+              className="flex flex-col items-start rounded-xl border border-line bg-canvas p-3 text-left hover:border-accent hover:bg-surface-hover transition text-xs font-medium text-ink group"
             >
-              {t("recommend.shortMood")}
+              <Coffee className="h-4 w-4 text-orange-400 mb-1 group-hover:scale-110 transition" />
+              <span>{t("recommend.shortMood")}</span>
             </button>
             <button
               onClick={() => handleRecommend("epic fantasy")}
-              className="rounded-xl border border-line bg-canvas p-3 text-left hover:border-accent hover:bg-surface-hover transition text-xs font-medium text-ink"
+              className="flex flex-col items-start rounded-xl border border-line bg-canvas p-3 text-left hover:border-accent hover:bg-surface-hover transition text-xs font-medium text-ink group"
             >
-              {t("recommend.epicMood")}
+              <Flame className="h-4 w-4 text-rose-400 mb-1 group-hover:scale-110 transition" />
+              <span>{t("recommend.epicMood")}</span>
             </button>
           </div>
 
@@ -152,7 +159,7 @@ export function WhatToReadModal({ isOpen, onClose }: Props) {
                           <img src={cover} alt={book.title} className="h-full w-full object-cover" />
                         ) : (
                           <div className="h-full flex items-center justify-center text-xs text-ink-muted">
-                            📖
+                            <BookOpen className="h-5 w-5 text-ink-muted" />
                           </div>
                         )}
                       </div>
@@ -192,9 +199,10 @@ export function WhatToReadModal({ isOpen, onClose }: Props) {
                           </div>
                           <button
                             onClick={() => handleStartReading(book.id)}
-                            className="rounded-lg bg-accent px-3 py-1 text-xs font-semibold text-on-accent hover:bg-accent-hover transition shrink-0"
+                            className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-3 py-1 text-xs font-semibold text-on-accent hover:bg-accent-hover transition shrink-0"
                           >
-                            📖 {t("recommend.startReading")}
+                            <BookOpen className="h-3.5 w-3.5" />
+                            <span>{t("recommend.startReading")}</span>
                           </button>
                         </div>
                       </div>

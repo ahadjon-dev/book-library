@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Settings, X } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
 import { updateProfile, changePassword } from "@/api/auth";
 import { useTranslation } from "@/lib/LanguageContext";
@@ -30,10 +31,10 @@ export function ProfileModal({ isOpen, onClose }: Props) {
     try {
       setSavingProfile(true);
       await updateProfile(displayName.trim());
-      if (refreshUser) await refreshUser();
+      await refreshUser();
       showToast(t("profile.profileUpdated"));
     } catch (err: any) {
-      showToast(err.response?.data?.detail || "Failed to update profile");
+      showToast(err.response?.data?.detail || "Failed to update profile", "error");
     } finally {
       setSavingProfile(false);
     }
@@ -42,11 +43,7 @@ export function ProfileModal({ isOpen, onClose }: Props) {
   async function handleChangePassword(e: React.FormEvent) {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
-      showToast(t("profile.passwordMismatch"));
-      return;
-    }
-    if (newPassword.length < 8) {
-      showToast("New password must have at least 8 characters");
+      showToast(t("profile.passwordMismatch"), "error");
       return;
     }
 
@@ -58,7 +55,7 @@ export function ProfileModal({ isOpen, onClose }: Props) {
       setNewPassword("");
       setConfirmPassword("");
     } catch (err: any) {
-      showToast(err.response?.data?.detail || "Failed to change password");
+      showToast(err.response?.data?.detail || "Failed to change password", "error");
     } finally {
       setSavingPassword(false);
     }
@@ -68,15 +65,20 @@ export function ProfileModal({ isOpen, onClose }: Props) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <div className="w-full max-w-md rounded-2xl border border-line bg-surface p-6 shadow-2xl transition space-y-6">
         <div className="flex items-center justify-between border-b border-line pb-4">
-          <div>
-            <h2 className="text-lg font-bold text-ink">{t("profile.title")}</h2>
-            <p className="text-xs text-ink-secondary">{user?.email}</p>
+          <div className="flex items-center gap-2.5">
+            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-accent/10 text-accent border border-accent/20">
+              <Settings className="h-4 w-4" />
+            </span>
+            <div>
+              <h2 className="text-lg font-bold text-ink">{t("profile.title")}</h2>
+              <p className="text-xs text-ink-secondary">{user?.email}</p>
+            </div>
           </div>
           <button
             onClick={onClose}
             className="rounded-lg p-1.5 text-ink-secondary hover:text-ink hover:bg-surface-hover transition"
           >
-            ✕
+            <X className="h-5 w-5" />
           </button>
         </div>
 

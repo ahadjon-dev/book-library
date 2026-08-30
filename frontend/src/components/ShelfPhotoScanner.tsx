@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Camera, BookOpen, X, UploadCloud } from "lucide-react";
 import { scanShelfImage, bulkAddBooks } from "@/api/books";
 import type { ShelfScanItem, ShelfScanResult } from "@/types/scanner";
 import { useTranslation } from "@/lib/LanguageContext";
@@ -30,10 +31,10 @@ export function ShelfPhotoScanner({ isOpen, onClose, onSuccess }: Props) {
       const unowned = data.items
         .map((item: ShelfScanItem, idx: number) => (!item.already_in_library ? idx : null))
         .filter((idx: number | null): idx is number => idx !== null);
-      setSelectedIndices(unowned);
+      setSelectedIndices(unowned.length > 0 ? unowned : data.items.map((_: ShelfScanItem, i: number) => i));
     } catch (err: any) {
-      console.error("Failed to scan shelf", err);
-      showToast(err.response?.data?.detail || "Failed to scan bookshelf image");
+      console.error("Shelf scan failed", err);
+      showToast(err.response?.data?.detail || "Failed to analyze bookshelf photo", "error");
     } finally {
       setScanning(false);
     }
@@ -50,37 +51,21 @@ export function ShelfPhotoScanner({ isOpen, onClose, onSuccess }: Props) {
     if (selectedIndices.length === result.items.length) {
       setSelectedIndices([]);
     } else {
-      setSelectedIndices(result.items.map((_, i) => i));
+      setSelectedIndices(result.items.map((_: ShelfScanItem, i: number) => i));
     }
   }
 
   async function handleBulkAdd() {
     if (!result || selectedIndices.length === 0) return;
-
     try {
       setAdding(true);
-      const toAdd = selectedIndices.map((idx) => {
-        const item = result.items[idx];
-        return {
-          title: item.title,
-          authors: item.authors,
-          isbn: item.isbn,
-          publisher: item.publisher,
-          publication_year: item.publication_year,
-          page_count: item.page_count,
-          genre: item.genre,
-          owned: true,
-          cover_url: item.cover_url,
-        };
-      });
-
-      const res = await bulkAddBooks(toAdd);
+      const selected = selectedIndices.map((i) => result.items[i]);
+      const res = await bulkAddBooks(selected);
       showToast(t("shelfScanner.booksAdded", { count: res.added_count }));
       if (onSuccess) onSuccess();
       handleReset();
     } catch (err: any) {
-      console.error("Bulk add failed", err);
-      showToast(err.response?.data?.detail || "Failed to add books");
+      showToast(err.response?.data?.detail || "Failed to add books to library", "error");
     } finally {
       setAdding(false);
     }
@@ -97,7 +82,9 @@ export function ShelfPhotoScanner({ isOpen, onClose, onSuccess }: Props) {
       <div className="w-full max-w-2xl max-h-[85vh] flex flex-col rounded-2xl border border-line bg-surface p-6 shadow-2xl transition">
         <div className="flex items-center justify-between border-b border-line pb-4 mb-4">
           <div className="flex items-center gap-2.5">
-            <span className="text-2xl">📸</span>
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent/10 text-accent border border-accent/20">
+              <Camera className="h-5 w-5" />
+            </span>
             <div>
               <h2 className="text-lg font-bold text-ink">{t("shelfScanner.title")}</h2>
               <p className="text-xs text-ink-secondary">{t("shelfScanner.subtitle")}</p>
@@ -107,7 +94,7 @@ export function ShelfPhotoScanner({ isOpen, onClose, onSuccess }: Props) {
             onClick={handleReset}
             className="rounded-lg p-1.5 text-ink-secondary hover:text-ink hover:bg-surface-hover transition"
           >
-            ✕
+            <X className="h-5 w-5" />
           </button>
         </div>
 
@@ -128,7 +115,7 @@ export function ShelfPhotoScanner({ isOpen, onClose, onSuccess }: Props) {
                 }}
                 className="w-full flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-line hover:border-accent/50 bg-canvas p-10 text-center transition cursor-pointer"
               >
-                <span className="text-4xl mb-3">📚</span>
+                <UploadCloud className="h-12 w-12 text-accent mb-3" />
                 <p className="text-sm font-medium text-ink mb-1">{t("shelfScanner.dropzone")}</p>
                 <p className="text-xs text-ink-secondary mb-4">PNG, JPG, WEBP photos up to 10MB</p>
                 <input
@@ -184,7 +171,7 @@ export function ShelfPhotoScanner({ isOpen, onClose, onSuccess }: Props) {
                       />
                     ) : (
                       <div className="h-12 w-8 bg-surface-hover rounded flex items-center justify-center text-[10px] text-ink-secondary shrink-0">
-                        📖
+                        <BookOpen className="h-4 w-4 text-ink-muted" />
                       </div>
                     )}
 
@@ -198,9 +185,7 @@ export function ShelfPhotoScanner({ isOpen, onClose, onSuccess }: Props) {
                         )}
                       </div>
                       <p className="text-xs text-ink-secondary truncate">
-                        {item.authors.join(", ") || "Unknown Author"}{" "}
-                        {item.publication_year ? `• ${item.publication_year}` : ""}{" "}
-                        {item.page_count ? `• ${item.page_count}p` : ""}
+                        {item.authors.join(", ") || "Unknown Author"}
                       </p>
                     </div>
                   </div>

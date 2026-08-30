@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { ChevronRight, Filter, X } from "lucide-react";
 
 import { fetchGenres, fetchShelves, fetchTags } from "@/api/books";
 import { useTranslation } from "@/lib/LanguageContext";
@@ -38,7 +39,7 @@ function CollapsibleSection({
               {activeLabel}
             </span>
           )}
-          <span className={`shrink-0 text-ink-muted transition-transform ${open ? "rotate-90" : ""}`}>›</span>
+          <ChevronRight className={`h-3.5 w-3.5 shrink-0 text-ink-muted transition-transform ${open ? "rotate-90" : ""}`} />
         </span>
       </button>
       {open && <div className="mt-2 space-y-1">{children}</div>}
@@ -52,130 +53,204 @@ function OptionList({
   onSelect,
 }: {
   options: string[];
-  selected: string | undefined;
-  onSelect: (value: string | undefined) => void;
+  selected?: string;
+  onSelect: (val: string | undefined) => void;
 }) {
   return (
-    <>
-      {options.map((option) => (
+    <div className="space-y-0.5">
+      <button
+        onClick={() => onSelect(undefined)}
+        className={`block w-full rounded-md px-2 py-1 text-left text-xs ${
+          !selected ? "bg-surface-hover font-medium text-ink" : "text-ink-secondary hover:text-ink"
+        }`}
+      >
+        All
+      </button>
+      {options.map((opt) => (
         <button
-          key={option}
-          onClick={() => onSelect(selected === option ? undefined : option)}
-          className={`block w-full truncate rounded-md px-2 py-1.5 text-left text-sm ${
-            selected === option ? "bg-surface-hover text-ink" : "text-ink-secondary hover:text-ink"
+          key={opt}
+          onClick={() => onSelect(opt === selected ? undefined : opt)}
+          className={`block w-full truncate rounded-md px-2 py-1 text-left text-xs ${
+            selected === opt
+              ? "bg-surface-hover font-medium text-ink"
+              : "text-ink-secondary hover:text-ink"
           }`}
         >
-          {option}
+          {opt}
         </button>
       ))}
-    </>
+    </div>
   );
 }
 
 export function FilterSidebar({ filters, onChange }: FilterSidebarProps) {
   const { t } = useTranslation();
-  const statuses = useStatusOptions();
+  const statusOptions = useStatusOptions();
   const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState(filters.search ?? "");
+  const [author, setAuthor] = useState(filters.author ?? "");
+  const [yearMin, setYearMin] = useState(filters.year_min?.toString() ?? "");
+  const [yearMax, setYearMax] = useState(filters.year_max?.toString() ?? "");
+
+  const debouncedSearch = useDebouncedValue(search, 300);
+  const debouncedAuthor = useDebouncedValue(author, 300);
+  const debouncedYearMin = useDebouncedValue(yearMin, 300);
+  const debouncedYearMax = useDebouncedValue(yearMax, 300);
+
   const { data: genres = [] } = useQuery({ queryKey: ["genres"], queryFn: fetchGenres });
-  const { data: tags = [] } = useQuery({ queryKey: ["tags"], queryFn: fetchTags });
   const { data: shelves = [] } = useQuery({ queryKey: ["shelves"], queryFn: fetchShelves });
-
-  function set<K extends keyof BookFilters>(key: K, value: BookFilters[K]) {
-    onChange({ ...filters, [key]: value, offset: 0 });
-  }
-
-  const [searchInput, setSearchInput] = useState(filters.search ?? "");
-  const debouncedSearch = useDebouncedValue(searchInput, 300);
+  const { data: tags = [] } = useQuery({ queryKey: ["tags"], queryFn: fetchTags });
 
   useEffect(() => {
-    if (debouncedSearch !== (filters.search ?? "")) {
-      set("search", debouncedSearch || undefined);
-    }
-    // Only re-run when the debounced value itself settles.
+    onChange({
+      ...filters,
+      search: debouncedSearch || undefined,
+      author: debouncedAuthor || undefined,
+      year_min: debouncedYearMin ? Number(debouncedYearMin) : undefined,
+      year_max: debouncedYearMax ? Number(debouncedYearMax) : undefined,
+      offset: 0,
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedSearch]);
-
-  useEffect(() => {
-    setSearchInput(filters.search ?? "");
-  }, [filters.search]);
+  }, [debouncedSearch, debouncedAuthor, debouncedYearMin, debouncedYearMax]);
 
   const activeCount = [
+    filters.search,
+    filters.author,
     filters.genre,
-    filters.status,
     filters.shelf,
     filters.tag,
-    filters.search,
+    filters.status,
     filters.year_min,
     filters.year_max,
   ].filter(Boolean).length;
 
-  const statusLabel = statuses.find((s) => s.value === filters.status)?.label;
-  const yearLabel =
-    filters.year_min || filters.year_max
-      ? t("filters.yearRange", { min: filters.year_min ?? "…", max: filters.year_max ?? "…" })
-      : undefined;
+  function clearAll() {
+    setSearch("");
+    setAuthor("");
+    setYearMin("");
+    setYearMax("");
+    onChange({ limit: filters.limit, offset: 0 });
+  }
 
   const body = (
-    <div>
-      <input
-        type="search"
-        placeholder={t("filters.searchPlaceholder")}
-        value={searchInput}
-        onChange={(e) => setSearchInput(e.target.value)}
-        className="mb-3 w-full rounded-md border border-line-strong bg-surface-hover px-3 py-2 text-sm focus:border-accent focus:outline-none"
-      />
+    <div className="space-y-4 text-xs">
+      <div>
+        <label className="mb-1 block font-semibold uppercase tracking-wide text-ink-muted">
+          Search
+        </label>
+        <input
+          type="search"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder={t("filters.searchPlaceholder")}
+          className="w-full rounded-md border border-line bg-surface px-2.5 py-1.5 text-xs text-ink placeholder:text-ink-muted focus:border-line-strong focus:outline-none"
+        />
+      </div>
 
-      {genres.length > 0 && (
-        <CollapsibleSection title={t("filters.genre")} activeLabel={filters.genre}>
-          <OptionList options={genres} selected={filters.genre} onSelect={(v) => set("genre", v)} />
-        </CollapsibleSection>
-      )}
-
-      <CollapsibleSection title={t("filters.readingStatus")} activeLabel={statusLabel} defaultOpen>
+      <CollapsibleSection title={t("filters.genre")} activeLabel={filters.genre}>
         <OptionList
-          options={statuses.map((s) => s.label)}
-          selected={statusLabel}
-          onSelect={(label) => set("status", statuses.find((s) => s.label === label)?.value)}
+          options={genres}
+          selected={filters.genre}
+          onSelect={(genre) => onChange({ ...filters, genre, offset: 0 })}
         />
       </CollapsibleSection>
 
-      {shelves.length > 0 && (
-        <CollapsibleSection title={t("filters.shelf")} activeLabel={filters.shelf}>
-          <OptionList options={shelves} selected={filters.shelf} onSelect={(v) => set("shelf", v)} />
-        </CollapsibleSection>
-      )}
+      <CollapsibleSection title={t("filters.shelf")} activeLabel={filters.shelf}>
+        <OptionList
+          options={shelves}
+          selected={filters.shelf}
+          onSelect={(shelf) => onChange({ ...filters, shelf, offset: 0 })}
+        />
+      </CollapsibleSection>
 
-      {tags.length > 0 && (
-        <CollapsibleSection title={t("filters.tags")} activeLabel={filters.tag}>
-          <OptionList options={tags} selected={filters.tag} onSelect={(v) => set("tag", v)} />
-        </CollapsibleSection>
-      )}
+      <CollapsibleSection title={t("filters.tags")} activeLabel={filters.tag}>
+        <OptionList
+          options={tags}
+          selected={filters.tag}
+          onSelect={(tag) => onChange({ ...filters, tag, offset: 0 })}
+        />
+      </CollapsibleSection>
 
-      <CollapsibleSection title={t("filters.year")} activeLabel={yearLabel}>
-        <div className="flex gap-2">
+      <CollapsibleSection
+        title={t("filters.readingStatus")}
+        activeLabel={statusOptions.find((o) => o.value === filters.status)?.label}
+      >
+        <div className="space-y-0.5">
+          <button
+            onClick={() => onChange({ ...filters, status: undefined, offset: 0 })}
+            className={`block w-full rounded-md px-2 py-1 text-left text-xs ${
+              !filters.status
+                ? "bg-surface-hover font-medium text-ink"
+                : "text-ink-secondary hover:text-ink"
+            }`}
+          >
+            All
+          </button>
+          {statusOptions.map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() =>
+                onChange({
+                  ...filters,
+                  status: filters.status === opt.value ? undefined : opt.value,
+                  offset: 0,
+                })
+              }
+              className={`block w-full rounded-md px-2 py-1 text-left text-xs ${
+                filters.status === opt.value
+                  ? "bg-surface-hover font-medium text-ink"
+                  : "text-ink-secondary hover:text-ink"
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      </CollapsibleSection>
+
+      <CollapsibleSection title="Author" activeLabel={filters.author}>
+        <input
+          type="text"
+          value={author}
+          onChange={(e) => setAuthor(e.target.value)}
+          placeholder="Author name…"
+          className="w-full rounded-md border border-line bg-surface px-2.5 py-1.5 text-xs text-ink placeholder:text-ink-muted focus:border-line-strong focus:outline-none"
+        />
+      </CollapsibleSection>
+
+      <CollapsibleSection
+        title={t("filters.year")}
+        activeLabel={
+          filters.year_min || filters.year_max
+            ? `${filters.year_min ?? "…"} - ${filters.year_max ?? "…"}`
+            : undefined
+        }
+      >
+        <div className="flex items-center gap-1.5">
           <input
             type="number"
+            value={yearMin}
+            onChange={(e) => setYearMin(e.target.value)}
             placeholder={t("filters.min")}
-            value={filters.year_min ?? ""}
-            onChange={(e) => set("year_min", e.target.value ? Number(e.target.value) : undefined)}
-            className="w-full rounded-md border border-line-strong bg-surface-hover px-2 py-1.5 text-sm focus:border-accent focus:outline-none"
+            className="w-full rounded-md border border-line bg-surface px-2 py-1 text-xs text-ink placeholder:text-ink-muted focus:border-line-strong focus:outline-none"
           />
+          <span className="text-ink-muted">-</span>
           <input
             type="number"
+            value={yearMax}
+            onChange={(e) => setYearMax(e.target.value)}
             placeholder={t("filters.max")}
-            value={filters.year_max ?? ""}
-            onChange={(e) => set("year_max", e.target.value ? Number(e.target.value) : undefined)}
-            className="w-full rounded-md border border-line-strong bg-surface-hover px-2 py-1.5 text-sm focus:border-accent focus:outline-none"
+            className="w-full rounded-md border border-line bg-surface px-2 py-1 text-xs text-ink placeholder:text-ink-muted focus:border-line-strong focus:outline-none"
           />
         </div>
       </CollapsibleSection>
 
       {activeCount > 0 && (
         <button
-          onClick={() => onChange({ limit: filters.limit, offset: 0 })}
-          className="mt-3 text-sm text-ink-muted underline hover:text-ink"
+          onClick={clearAll}
+          className="w-full rounded-md border border-line py-1 text-center text-xs text-ink-secondary hover:bg-surface-hover hover:text-ink"
         >
-          {t("filters.clearFilters")}
+          {t("filters.clearFilters")} ({activeCount})
         </button>
       )}
     </div>
@@ -186,11 +261,12 @@ export function FilterSidebar({ filters, onChange }: FilterSidebarProps) {
       <div className="sm:hidden">
         <button
           onClick={() => setOpen(true)}
-          className="flex items-center gap-2 rounded-md border border-line-strong bg-surface px-3 py-2 text-sm text-ink"
+          className="inline-flex items-center gap-2 rounded-xl border border-line bg-surface px-3 py-2 text-xs font-semibold text-ink shadow-sm"
         >
+          <Filter className="h-4 w-4 text-accent" />
           <span>{t("filters.filters")}</span>
           {activeCount > 0 && (
-            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-xs font-medium text-on-accent">
+            <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-bold text-on-accent">
               {activeCount}
             </span>
           )}
@@ -206,15 +282,16 @@ export function FilterSidebar({ filters, onChange }: FilterSidebarProps) {
           <div className="absolute inset-0 bg-black/60" onClick={() => setOpen(false)} />
           <div className="absolute inset-y-0 left-0 w-[85vw] max-w-xs overflow-y-auto bg-canvas p-4 shadow-xl">
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-sm font-semibold uppercase tracking-wide text-ink-secondary">
-                {t("filters.filters")}
+              <h2 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-ink-secondary">
+                <Filter className="h-4 w-4 text-accent" />
+                <span>{t("filters.filters")}</span>
               </h2>
               <button
                 onClick={() => setOpen(false)}
-                className="flex h-8 w-8 items-center justify-center rounded-md text-ink-secondary hover:bg-surface-hover hover:text-ink"
+                className="flex h-8 w-8 items-center justify-center rounded-full text-ink-secondary hover:bg-surface-hover hover:text-ink"
                 aria-label={t("filters.closeFilters")}
               >
-                ✕
+                <X className="h-4 w-4" />
               </button>
             </div>
             {body}

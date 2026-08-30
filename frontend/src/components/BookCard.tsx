@@ -1,12 +1,34 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  Clock,
+  BookOpen,
+  CheckCircle2,
+  CircleSlash,
+  Star,
+  Bookmark,
+  ChevronDown,
+} from "lucide-react";
 
 import { coverUrl } from "@/api/client";
 import { updateMyStatus } from "@/api/books";
 import { useStatusLabels } from "@/lib/statusLabels";
 import { useToast } from "@/lib/ToastContext";
 import type { Book, ReadStatus, StatusUpdate } from "@/types/book";
+
+function StatusIcon({ status, className }: { status: ReadStatus; className?: string }) {
+  switch (status) {
+    case "reading":
+      return <BookOpen className={className} />;
+    case "finished":
+      return <CheckCircle2 className={className} />;
+    case "abandoned":
+      return <CircleSlash className={className} />;
+    default:
+      return <Clock className={className} />;
+  }
+}
 
 export function BookCard({ book }: { book: Book }) {
   const statusLabels = useStatusLabels();
@@ -75,7 +97,7 @@ export function BookCard({ book }: { book: Book }) {
 
     statusMutation.mutate({ rating: newRating });
     if (newRating) {
-      showToast(`Rated ${starIdx + 1}/5 ★`);
+      showToast(`Rated ${starIdx + 1}/5 stars`);
     } else {
       showToast("Rating cleared");
     }
@@ -89,13 +111,6 @@ export function BookCard({ book }: { book: Book }) {
       : status === "abandoned"
       ? "bg-rose-500/15 text-rose-400 border-rose-500/30 hover:bg-rose-500/25"
       : "bg-surface-hover/80 text-ink-secondary border-line hover:bg-surface-hover";
-
-  const statusEmoji: Record<ReadStatus, string> = {
-    unread: "⏳",
-    reading: "📖",
-    finished: "✅",
-    abandoned: "🚫",
-  };
 
   return (
     <div className="group relative block w-32 shrink-0 overflow-hidden rounded-xl border border-line bg-surface text-ink transition hover:border-line-strong hover:shadow-lg sm:w-36 md:w-44 flex flex-col">
@@ -111,15 +126,16 @@ export function BookCard({ book }: { book: Book }) {
             />
           ) : (
             <div className="flex h-full w-full flex-col items-center justify-center p-3 text-center">
-              <span className="text-2xl mb-1">📖</span>
+              <BookOpen className="h-7 w-7 text-ink-muted mb-1" />
               <span className="text-xs font-semibold text-ink line-clamp-2">{book.title}</span>
             </div>
           )}
 
           {/* Wishlist badge */}
           {!book.owned && (
-            <span className="absolute left-1.5 top-1.5 rounded-md bg-black/70 backdrop-blur-sm px-1.5 py-0.5 text-[9px] font-semibold text-amber-300 border border-amber-500/30 shadow-sm">
-              ⭐ Wishlist
+            <span className="absolute left-1.5 top-1.5 inline-flex items-center gap-1 rounded-md bg-black/75 backdrop-blur-sm px-1.5 py-0.5 text-[9px] font-semibold text-amber-300 border border-amber-500/30 shadow-sm">
+              <Bookmark className="h-2.5 w-2.5 fill-amber-300 text-amber-300" />
+              <span>Wishlist</span>
             </span>
           )}
         </div>
@@ -154,12 +170,16 @@ export function BookCard({ book }: { book: Book }) {
                   key={idx}
                   type="button"
                   onClick={(e) => handleRatingClick(idx, e)}
-                  className={`text-sm transition hover:scale-125 focus:outline-none ${
-                    isFilled ? "text-amber-400" : "text-ink-muted hover:text-amber-300"
-                  }`}
+                  className="p-0.5 transition hover:scale-125 focus:outline-none"
                   aria-label={`Rate ${idx + 1} stars`}
                 >
-                  ★
+                  <Star
+                    className={`h-3 w-3 ${
+                      isFilled
+                        ? "fill-amber-400 text-amber-400"
+                        : "text-ink-muted hover:text-amber-300 hover:fill-amber-300/30"
+                    }`}
+                  />
                 </button>
               );
             })}
@@ -182,10 +202,11 @@ export function BookCard({ book }: { book: Book }) {
             }}
             className={`w-full flex items-center justify-between gap-1 px-2 py-1 rounded-lg border text-[11px] font-semibold transition ${statusColor}`}
           >
-            <span className="truncate">
-              {statusEmoji[status]} {statusLabels[status]}
+            <span className="flex items-center gap-1.5 truncate">
+              <StatusIcon status={status} className="h-3 w-3 shrink-0" />
+              <span className="truncate">{statusLabels[status]}</span>
             </span>
-            <span className="text-[9px] opacity-70">▾</span>
+            <ChevronDown className="h-2.5 w-2.5 opacity-70 shrink-0" />
           </button>
 
           {/* Status Selection Popover */}
@@ -202,7 +223,7 @@ export function BookCard({ book }: { book: Book }) {
                       : "text-ink hover:bg-surface-hover"
                   }`}
                 >
-                  <span>{statusEmoji[st]}</span>
+                  <StatusIcon status={st} className="h-3 w-3 shrink-0" />
                   <span className="truncate">{statusLabels[st]}</span>
                 </button>
               ))}

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { BookOpen, Lock, Star } from "lucide-react";
 import { fetchPublicLibrary } from "@/api/public";
 import { coverUrl } from "@/api/client";
 import type { PublicLibraryResponse } from "@/types/public";
@@ -27,23 +28,22 @@ export function PublicView() {
       });
       setData(res);
     } catch (err: any) {
-      console.error("Failed to load public library", err);
-      setError(err.response?.data?.detail || "This library is private or doesn't exist.");
+      setError(err.response?.data?.detail || "This shelf is private or does not exist.");
     } finally {
       setLoading(false);
     }
   }
 
-  const allGenres = Array.from(
-    new Set(data?.books.map((b) => b.genre).filter(Boolean) as string[])
-  );
+  const allGenres = data ? Array.from(new Set(data.books.map((b) => b.genre).filter(Boolean))) : [];
 
   return (
     <div className="min-h-screen bg-canvas text-ink">
       {/* Public Header */}
       <header className="border-b border-line bg-surface/50 backdrop-blur-md px-6 py-4 sticky top-0 z-10 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className="text-2xl">📚</span>
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent/10 text-accent border border-accent/20">
+            <BookOpen className="h-5 w-5" />
+          </span>
           <div>
             <h1 className="text-base font-bold text-ink">
               {data ? `${data.owner_name}'s Bookshelf` : "Public Library"}
@@ -77,14 +77,14 @@ export function PublicView() {
             ))}
           </div>
         ) : error ? (
-          <div className="rounded-2xl border border-line bg-surface p-12 text-center max-w-md mx-auto mt-12">
-            <span className="text-4xl block mb-2">🔒</span>
+          <div className="rounded-2xl border border-line bg-surface p-12 text-center max-w-md mx-auto mt-12 flex flex-col items-center">
+            <Lock className="h-12 w-12 text-ink-muted mb-3" />
             <h3 className="text-lg font-bold text-ink">Library Unavailable</h3>
             <p className="text-xs text-ink-secondary mt-1">{error}</p>
           </div>
         ) : data && data.books.length === 0 ? (
-          <div className="rounded-2xl border border-line bg-surface p-12 text-center">
-            <span className="text-4xl block mb-2">📖</span>
+          <div className="rounded-2xl border border-line bg-surface p-12 text-center flex flex-col items-center">
+            <BookOpen className="h-12 w-12 text-ink-muted mb-3" />
             <h3 className="text-base font-semibold text-ink">No books found in this view.</h3>
           </div>
         ) : (
@@ -94,38 +94,38 @@ export function PublicView() {
               <div className="flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-hide">
                 <button
                   onClick={() => setSelectedGenre(null)}
-                  className={`rounded-full px-3 py-1 text-xs font-semibold transition shrink-0 ${
+                  className={`px-3 py-1.5 rounded-full text-xs font-semibold transition shrink-0 ${
                     selectedGenre === null
-                      ? "bg-accent text-on-accent"
-                      : "border border-line bg-surface text-ink-secondary hover:text-ink"
+                      ? "bg-accent text-on-accent shadow-sm"
+                      : "bg-surface text-ink-secondary hover:text-ink border border-line"
                   }`}
                 >
-                  All Genres
+                  All ({data?.total_books})
                 </button>
-                {allGenres.map((genre) => (
+                {allGenres.map((g) => (
                   <button
-                    key={genre}
-                    onClick={() => setSelectedGenre(genre === selectedGenre ? null : genre)}
-                    className={`rounded-full px-3 py-1 text-xs font-semibold transition shrink-0 ${
-                      selectedGenre === genre
-                        ? "bg-accent text-on-accent"
-                        : "border border-line bg-surface text-ink-secondary hover:text-ink"
+                    key={g}
+                    onClick={() => setSelectedGenre(g as string)}
+                    className={`px-3 py-1.5 rounded-full text-xs font-semibold transition shrink-0 ${
+                      selectedGenre === g
+                        ? "bg-accent text-on-accent shadow-sm"
+                        : "bg-surface text-ink-secondary hover:text-ink border border-line"
                     }`}
                   >
-                    {genre}
+                    {g}
                   </button>
                 ))}
               </div>
             )}
 
-            {/* Book Cards Grid */}
+            {/* Book Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-              {data!.books.map((book) => {
+              {data?.books.map((book) => {
                 const cover = coverUrl(book.cover_image_path);
                 return (
                   <div
                     key={book.id}
-                    className="flex flex-col rounded-xl border border-line bg-surface overflow-hidden shadow-sm hover:border-line-strong transition group"
+                    className="group rounded-xl border border-line bg-surface overflow-hidden flex flex-col hover:border-line-strong hover:shadow-lg transition"
                   >
                     <div className="aspect-[2/3] w-full overflow-hidden bg-canvas relative">
                       {cover ? (
@@ -140,8 +140,9 @@ export function PublicView() {
                         </div>
                       )}
                       {book.rating && (
-                        <span className="absolute top-2 right-2 rounded-md bg-black/70 backdrop-blur-md px-1.5 py-0.5 text-[10px] font-bold text-amber-300">
-                          ★ {book.rating}
+                        <span className="absolute top-2 right-2 inline-flex items-center gap-1 rounded-md bg-black/70 backdrop-blur-md px-1.5 py-0.5 text-[10px] font-bold text-amber-300">
+                          <Star className="h-3 w-3 fill-amber-300 text-amber-300" />
+                          <span>{book.rating}</span>
                         </span>
                       )}
                     </div>

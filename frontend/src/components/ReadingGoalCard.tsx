@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Target, Trophy, TrendingUp, Clock, AlertCircle } from "lucide-react";
 import { fetchReadingGoal, setReadingGoal } from "@/api/goals";
 import type { ReadingGoal } from "@/types/goal";
 import { useTranslation } from "@/lib/LanguageContext";
@@ -24,7 +25,7 @@ export function ReadingGoalCard() {
       setLoading(true);
       const data = await fetchReadingGoal(currentYear);
       setGoal(data);
-      setTargetInput(String(data.target_books));
+      if (data) setTargetInput(data.target_books.toString());
     } catch (err) {
       console.error("Failed to load reading goal", err);
     } finally {
@@ -34,17 +35,19 @@ export function ReadingGoalCard() {
 
   async function handleSaveGoal(e: React.FormEvent) {
     e.preventDefault();
-    const num = parseInt(targetInput, 10);
-    if (isNaN(num) || num < 1) return;
-
+    const target = parseInt(targetInput, 10);
+    if (isNaN(target) || target <= 0) {
+      showToast("Please enter a valid positive number");
+      return;
+    }
     try {
       setSaving(true);
-      const updated = await setReadingGoal(currentYear, num);
+      const updated = await setReadingGoal(currentYear, target);
       setGoal(updated);
       setEditing(false);
       showToast(t("goals.goalUpdated"));
-    } catch (err) {
-      console.error("Failed to update reading goal", err);
+    } catch (err: any) {
+      showToast(err.response?.data?.detail || "Failed to update goal");
     } finally {
       setSaving(false);
     }
@@ -62,13 +65,33 @@ export function ReadingGoalCard() {
   const getPaceBadge = () => {
     switch (goal.pace_status) {
       case "completed":
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">{t("goals.completedBadge")}</span>;
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <Trophy className="h-3.5 w-3.5" />
+            <span>{t("goals.completedBadge")}</span>
+          </span>
+        );
       case "ahead":
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">{t("goals.aheadBadge")}</span>;
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <TrendingUp className="h-3.5 w-3.5" />
+            <span>{t("goals.aheadBadge")}</span>
+          </span>
+        );
       case "on_track":
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">{t("goals.onTrackBadge")}</span>;
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+            <Clock className="h-3.5 w-3.5" />
+            <span>{t("goals.onTrackBadge")}</span>
+          </span>
+        );
       case "behind":
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20">{t("goals.behindBadge")}</span>;
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20">
+            <AlertCircle className="h-3.5 w-3.5" />
+            <span>{t("goals.behindBadge")}</span>
+          </span>
+        );
     }
   };
 
@@ -76,8 +99,8 @@ export function ReadingGoalCard() {
     <div className="rounded-xl border border-line bg-surface p-6 transition shadow-sm">
       <div className="flex items-center justify-between gap-4 mb-4 flex-wrap">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10 text-accent font-bold">
-            🎯
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent border border-accent/20">
+            <Target className="h-5 w-5" />
           </div>
           <div>
             <h3 className="text-base font-semibold text-ink">
