@@ -1,0 +1,40 @@
+frontend/src/App.tsx
+  h_780173feefb83a 12,31-32
+frontend/src/api/books.ts
+  h_780173feefb83a 98-121
+frontend/src/api/public.ts
+  h_780173feefb83a 1-23
+frontend/src/components/Navbar.tsx
+  h_780173feefb83a 9-11,26-28,60-81,130,141-156
+frontend/src/components/ShareShelfModal.tsx
+  h_780173feefb83a 1-139
+frontend/src/components/ShelfPhotoScanner.tsx
+  h_780173feefb83a 1-235
+frontend/src/components/WhatToReadModal.tsx
+  h_780173feefb83a 1-215
+frontend/src/lib/AuthContext.tsx
+  h_780173feefb83a 11,20-28,54
+frontend/src/lib/i18n/en.ts
+  h_780173feefb83a 238-271
+frontend/src/lib/i18n/uz.ts
+  h_780173feefb83a 241-274
+frontend/src/pages/PublicView.tsx
+  h_780173feefb83a 1-169
+frontend/src/types/public.ts
+  h_780173feefb83a 1-26
+frontend/src/types/recommendation.ts
+  h_780173feefb83a 1-14
+frontend/src/types/scanner.ts
+  h_780173feefb83a 1-22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "bbb73a13d62e7bbbc547b0097296310e201387dc",
+  "prompts": {},
+  "humans": {
+    "h_780173feefb83a": {
+      "author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}
