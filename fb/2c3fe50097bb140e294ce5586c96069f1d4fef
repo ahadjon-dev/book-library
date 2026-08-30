@@ -1,0 +1,14 @@
+frontend/src/components/AddBooksHubModal.tsx
+  h_780173feefb83a 241
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "fb2c3fe50097bb140e294ce5586c96069f1d4fef",
+  "prompts": {},
+  "humans": {
+    "h_780173feefb83a": {
+      "author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}
