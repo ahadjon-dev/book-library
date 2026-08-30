@@ -1,0 +1,34 @@
+.gitignore
+  h_780173feefb83a 3-4
+backend/app/api/books.py
+  h_780173feefb83a 208-211,213,215-216,456-457
+backend/pyproject.toml
+  h_780173feefb83a 27
+backend/tests/test_auth_integration.py
+  h_780173feefb83a 1-27
+backend/tests/test_books_integration.py
+  h_780173feefb83a 1-252
+backend/tests/test_csv_importer_integration.py
+  h_780173feefb83a 1-41
+backend/tests/test_goals_integration.py
+  h_780173feefb83a 1-38
+backend/tests/test_loans_integration.py
+  h_780173feefb83a 1-60
+backend/tests/test_lookups_integration.py
+  h_780173feefb83a 1-40
+backend/tests/test_public_integration.py
+  h_780173feefb83a 1-87
+backend/tests/test_services_integration.py
+  h_780173feefb83a 1-56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "e517d459dbee513b2f0d8206b90693dc5b5c103f",
+  "prompts": {},
+  "humans": {
+    "h_780173feefb83a": {
+      "author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}
