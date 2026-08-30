@@ -1,0 +1,16 @@
+frontend/src/pages/BookForm.tsx
+  h_780173feefb83a 11,75,235-241,268-273
+frontend/src/pages/Gallery.tsx
+  h_780173feefb83a 9-11,91-94,102-142,144,151-154
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "37ac631d92d1f8d8c8ba5a1b39ce6dbba66d07dc",
+  "prompts": {},
+  "humans": {
+    "h_780173feefb83a": {
+      "author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}
