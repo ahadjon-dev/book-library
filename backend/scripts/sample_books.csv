@@ -1,0 +1,4 @@
+title,subtitle,authors,isbn,publisher,publication_year,language,page_count,description,genre,tags,shelf,purchase_date,purchase_price
+The Hobbit,,J.R.R. Tolkien,9780547928227,Houghton Mifflin,1937,English,310,Bilbo Baggins joins a quest to reclaim a dwarf kingdom.,Fantasy,favorite;classic,Shelf A,2020-03-14,12.99
+Clean Architecture,A Craftsman's Guide to Software Structure and Design,Robert C. Martin,9780134494166,Prentice Hall,2017,English,432,Principles for structuring maintainable software systems.,Software,backend;architecture,Office,2021-06-01,34.50
+Atomic Habits,An Easy & Proven Way to Build Good Habits and Break Bad Ones,James Clear,9780735211292,Avery,2018,English,320,A practical framework for building better habits.,Business,favorite;habits,Shelf B,2022-01-10,15.00

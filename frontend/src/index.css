@@ -1,0 +1,139 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Dark (default) */
+  --color-canvas: 10 10 10;
+  --color-surface: 23 23 23;
+  --color-surface-hover: 38 38 38;
+  --color-line: 38 38 38;
+  --color-line-strong: 64 64 64;
+  --color-ink: 245 245 245;
+  --color-ink-secondary: 163 163 163;
+  --color-ink-muted: 115 115 115;
+  --color-accent: 245 245 245;
+  --color-accent-hover: 255 255 255;
+  --color-on-accent: 23 23 23;
+  --color-stat-surface: 23 23 23;
+  --color-stat-ink: 245 245 245;
+  --color-stat-ink-muted: 163 163 163;
+}
+
+:root[data-theme="onyx"] {
+  --color-canvas: 0 0 0;
+  --color-surface: 58 58 58;
+  --color-surface-hover: 74 74 74;
+  --color-line: 42 42 42;
+  --color-line-strong: 82 82 82;
+  --color-ink: 244 244 244;
+  --color-ink-secondary: 191 191 191;
+  --color-ink-muted: 168 168 168;
+  --color-accent: 244 244 244;
+  --color-accent-hover: 255 255 255;
+  --color-on-accent: 23 23 23;
+  --color-stat-surface: 58 58 58;
+  --color-stat-ink: 244 244 244;
+  --color-stat-ink-muted: 191 191 191;
+}
+
+:root[data-theme="sky"] {
+  --color-canvas: 230 230 230;
+  --color-surface: 255 255 255;
+  --color-surface-hover: 242 242 245;
+  --color-line: 197 205 217;
+  --color-line-strong: 174 183 196;
+  --color-ink: 22 24 27;
+  --color-ink-secondary: 75 85 99;
+  --color-ink-muted: 107 114 128;
+  --color-accent: 116 201 247;
+  --color-accent-hover: 94 187 243;
+  --color-on-accent: 22 24 27;
+  --color-stat-surface: 255 255 255;
+  --color-stat-ink: 22 24 27;
+  --color-stat-ink-muted: 107 114 128;
+}
+
+:root[data-theme="plum"] {
+  --color-canvas: 234 201 238;
+  --color-surface: 255 255 255;
+  --color-surface-hover: 245 233 247;
+  --color-line: 227 206 231;
+  --color-line-strong: 179 102 193;
+  --color-ink: 40 5 76;
+  --color-ink-secondary: 101 40 144;
+  --color-ink-muted: 122 92 138;
+  --color-accent: 220 160 228;
+  --color-accent-hover: 179 102 193;
+  --color-on-accent: 40 5 76;
+  /* Stat cards use the darker Royal Indigo shade from the shared palette. */
+  --color-stat-surface: 40 5 76;
+  --color-stat-ink: 234 201 238;
+  --color-stat-ink-muted: 179 102 193;
+}
+
+:root[data-theme="blue"] {
+  --color-canvas: 230 237 249;
+  --color-surface: 255 255 255;
+  --color-surface-hover: 238 243 251;
+  --color-line: 201 216 237;
+  --color-line-strong: 169 194 227;
+  --color-ink: 38 77 135;
+  --color-ink-secondary: 38 96 163;
+  --color-ink-muted: 107 122 153;
+  --color-accent: 21 95 172;
+  --color-accent-hover: 51 167 228;
+  --color-on-accent: 255 255 255;
+  --color-stat-surface: 255 255 255;
+  --color-stat-ink: 38 77 135;
+  --color-stat-ink-muted: 107 122 153;
+}
+
+:root[data-theme="light"] {
+  --color-canvas: 246 246 246;
+  --color-surface: 255 255 255;
+  --color-surface-hover: 236 236 236;
+  --color-line: 231 230 225;
+  --color-line-strong: 216 215 210;
+  --color-ink: 22 24 27;
+  --color-ink-secondary: 75 85 99;
+  --color-ink-muted: 107 114 128;
+  --color-accent: 26 26 26;
+  --color-accent-hover: 0 0 0;
+  --color-on-accent: 255 255 255;
+  --color-stat-surface: 255 255 255;
+  --color-stat-ink: 22 24 27;
+  --color-stat-ink-muted: 107 114 128;
+}
+
+:root[data-theme="lime"] {
+  /* Bright Starship lime as the page background; buttons use the darker
+     Bitter Lemon shade from the same palette so they stay legible and
+     read as distinct, interactive elements against the vivid canvas. */
+  --color-canvas: 229 240 58;
+  --color-surface: 255 255 255;
+  --color-surface-hover: 239 239 232;
+  --color-line: 229 229 224;
+  --color-line-strong: 208 208 200;
+  --color-ink: 22 24 27;
+  --color-ink-secondary: 75 85 99;
+  --color-ink-muted: 107 114 128;
+  --color-accent: 202 224 13;
+  --color-accent-hover: 162 179 10;
+  --color-on-accent: 22 24 27;
+  /* Stat cards use a dark olive derived at Starship's own hue (the palette
+     itself has nothing this dark) so they read as cards, not just more lime. */
+  --color-stat-surface: 63 67 10;
+  --color-stat-ink: 229 240 58;
+  --color-stat-ink-muted: 202 224 13;
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
