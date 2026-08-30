@@ -1,0 +1,16 @@
+backend/app/api/books.py
+  h_780173feefb83a 347-415
+docker-compose.yml
+  h_780173feefb83a 27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "d7c9541a08adfe2edaaad032a9fdb434ca98ae0d",
+  "prompts": {},
+  "humans": {
+    "h_780173feefb83a": {
+      "author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}
