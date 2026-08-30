@@ -1,7 +1,7 @@
 import enum
 from datetime import date, datetime
 
-from sqlalchemy import CheckConstraint, Date, DateTime, Enum, ForeignKey, Integer, Text, UniqueConstraint, func
+from sqlalchemy import CheckConstraint, Date, DateTime, Enum, ForeignKey, Index, Integer, Text, UniqueConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -19,6 +19,8 @@ class UserBookStatus(Base):
     __table_args__ = (
         UniqueConstraint("user_id", "book_id", name="uq_user_book"),
         CheckConstraint("rating IS NULL OR (rating BETWEEN 1 AND 10)", name="ck_rating_range"),
+        Index("ix_user_book_status_user_status", "user_id", "status"),
+        Index("ix_user_book_status_user_finished", "user_id", "finished_at"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
