@@ -34,11 +34,15 @@ def _period_counts(dated_entries: list[tuple[date, int]], start: date) -> Readin
 @router.get("/stats", response_model=StatsOut)
 def get_stats(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)) -> StatsOut:
     # 1. Total books & pages & average publication year via SQL aggregation
-    summary = db.query(
-        func.count(Book.id).label("total_books"),
-        func.coalesce(func.sum(Book.page_count), 0).label("total_pages"),
-        func.avg(Book.publication_year).label("avg_year"),
-    ).first()
+    summary = (
+        db.query(
+            func.count(Book.id).label("total_books"),
+            func.coalesce(func.sum(Book.page_count), 0).label("total_pages"),
+            func.avg(Book.publication_year).label("avg_year"),
+        )
+        .filter(Book.user_id == current_user.id)
+        .first()
+    )
 
     total_books = summary.total_books if summary else 0
     total_pages = int(summary.total_pages) if summary else 0
@@ -68,7 +72,7 @@ def get_stats(db: Session = Depends(get_db), current_user: User = Depends(get_cu
     # 3. Genre breakdown (direct SQL GROUP BY)
     genre_rows = (
         db.query(Book.genre, func.count(Book.id))
-        .filter(Book.genre.is_not(None))
+        .filter(Book.genre.is_not(None), Book.user_id == current_user.id)
         .group_by(Book.genre)
         .order_by(func.count(Book.id).desc())
         .all()
@@ -80,6 +84,8 @@ def get_stats(db: Session = Depends(get_db), current_user: User = Depends(get_cu
     most_common_author_row = (
         db.query(Author.name, func.count(book_authors.c.book_id))
         .join(book_authors, book_authors.c.author_id == Author.id)
+        .join(Book, Book.id == book_authors.c.book_id)
+        .filter(Book.user_id == current_user.id)
         .group_by(Author.name)
         .order_by(func.count(book_authors.c.book_id).desc())
         .first()
@@ -90,7 +96,7 @@ def get_stats(db: Session = Depends(get_db), current_user: User = Depends(get_cu
     decade_expr = (func.floor(Book.publication_year / 10.0) * 10).cast(sa.Integer)
     decade_rows = (
         db.query(decade_expr, func.count(Book.id))
-        .filter(Book.publication_year.is_not(None))
+        .filter(Book.publication_year.is_not(None), Book.user_id == current_user.id)
         .group_by(decade_expr)
         .order_by(decade_expr)
         .all()
@@ -101,7 +107,11 @@ def get_stats(db: Session = Depends(get_db), current_user: User = Depends(get_cu
     finished_rows = (
         db.query(UserBookStatus.finished_at, Book.page_count)
         .join(Book, Book.id == UserBookStatus.book_id)
-        .filter(UserBookStatus.user_id == current_user.id, UserBookStatus.status == ReadStatus.finished)
+        .filter(
+            UserBookStatus.user_id == current_user.id,
+            Book.user_id == current_user.id,
+            UserBookStatus.status == ReadStatus.finished,
+        )
         .all()
     )
     pages_read_total = sum(page_count or 0 for _, page_count in finished_rows)

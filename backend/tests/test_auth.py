@@ -1,6 +1,49 @@
 from fastapi.testclient import TestClient
 
 
+def test_register_success(client: TestClient):
+    resp = client.post(
+        "/auth/register",
+        json={"email": "newuser@example.com", "password": "securepassword123", "display_name": "New User"},
+    )
+    assert resp.status_code == 201
+    data = resp.json()
+    assert "access_token" in data
+    assert data["token_type"] == "bearer"
+
+    # Verify user can access /auth/me with the token
+    headers = {"Authorization": f"Bearer {data['access_token']}"}
+    me_resp = client.get("/auth/me", headers=headers)
+    assert me_resp.status_code == 200
+    assert me_resp.json()["email"] == "newuser@example.com"
+    assert me_resp.json()["display_name"] == "New User"
+
+
+def test_register_duplicate_email(client: TestClient):
+    resp = client.post(
+        "/auth/register",
+        json={"email": "test@example.com", "password": "securepassword123", "display_name": "Duplicate User"},
+    )
+    assert resp.status_code == 400
+    assert "already exists" in resp.json()["detail"]
+
+
+def test_register_invalid_inputs(client: TestClient):
+    # Short password (< 8 chars)
+    resp = client.post(
+        "/auth/register",
+        json={"email": "valid@example.com", "password": "short", "display_name": "Valid User"},
+    )
+    assert resp.status_code == 422
+
+    # Invalid email
+    resp = client.post(
+        "/auth/register",
+        json={"email": "notanemail", "password": "securepassword123", "display_name": "Valid User"},
+    )
+    assert resp.status_code == 422
+
+
 def test_login_success(client: TestClient):
     resp = client.post("/auth/login", json={"email": "test@example.com", "password": "password123"})
     assert resp.status_code == 200

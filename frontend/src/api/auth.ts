@@ -11,6 +11,15 @@ export async function login(email: string, password: string): Promise<string> {
   return data.access_token;
 }
 
+export async function register(email: string, password: string, displayName: string): Promise<string> {
+  const { data } = await api.post<{ access_token: string }>("/auth/register", {
+    email,
+    password,
+    display_name: displayName,
+  });
+  return data.access_token;
+}
+
 export async function fetchMe(): Promise<Me> {
   const { data } = await api.get<Me>("/auth/me");
   return data;

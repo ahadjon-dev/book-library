@@ -66,7 +66,7 @@ def create_loan(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> LoanOut:
-    book = db.get(Book, payload.book_id)
+    book = db.query(Book).filter(Book.id == payload.book_id, Book.user_id == current_user.id).first()
     if book is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found")
 

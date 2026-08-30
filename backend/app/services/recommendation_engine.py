@@ -33,7 +33,7 @@ def recommend_next_books(
     all_books = (
         db.query(Book)
         .options(selectinload(Book.authors), selectinload(Book.tags), selectinload(Book.shelf))
-        .filter(Book.owned.is_(True))
+        .filter(Book.owned.is_(True), Book.user_id == current_user.id)
         .all()
     )
 

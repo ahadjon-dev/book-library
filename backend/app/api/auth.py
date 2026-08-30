@@ -1,3 +1,6 @@
+import re
+import uuid
+
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
 
@@ -12,10 +15,47 @@ from app.schemas.auth import (
     MeResponse,
     MessageResponse,
     ProfileUpdateRequest,
+    RegisterRequest,
     TokenResponse,
 )
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+
+
+@router.post("/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
+@limiter.limit("5/minute")
+def register(
+    request: Request, payload: RegisterRequest, db: Session = Depends(get_db)
+) -> TokenResponse:
+    email = payload.email.lower().strip()
+    existing = db.query(User).filter(User.email == email).first()
+    if existing:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="A user with this email already exists",
+        )
+
+    # Generate an initial share slug from display_name (e.g. ahadjon-dev)
+    base_slug = re.sub(r"[^a-zA-Z0-9-_]", "", payload.display_name.strip().lower())
+    slug = base_slug if base_slug else None
+    if slug:
+        slug_taken = db.query(User).filter(User.share_slug == slug).first()
+        if slug_taken:
+            slug = f"{slug}-{uuid.uuid4().hex[:4]}"
+
+    user = User(
+        email=email,
+        password_hash=hash_password(payload.password),
+        display_name=payload.display_name.strip(),
+        share_slug=slug,
+        is_public_shelf=True,
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+
+    token = create_access_token(subject=user.email)
+    return TokenResponse(access_token=token)
 
 
 @router.post("/login", response_model=TokenResponse)

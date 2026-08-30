@@ -52,7 +52,7 @@ def get_public_library(
     query = (
         db.query(Book)
         .options(selectinload(Book.authors), selectinload(Book.tags), selectinload(Book.shelf))
-        .filter(Book.owned.is_(True))
+        .filter(Book.owned.is_(True), Book.user_id == user.id)
     )
 
     if genre:
