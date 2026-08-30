@@ -11,9 +11,10 @@ export const en = {
   },
   nav: {
     myLibrary: "My Library",
-    gallery: "Gallery",
+    library: "Library",
+    gallery: "Library",
     table: "Table",
-    stats: "Stats",
+    stats: "Stats & Goals",
     wishlist: "Wishlist",
     addBook: "Add Book",
     logout: "Log out",
@@ -30,6 +31,9 @@ export const en = {
     home: "Home",
     allBooks: "All Books",
     recentlyAdded: "Recently Added",
+    shelves: "Shelves",
+    grid: "Grid",
+    table: "Table",
   },
   filters: {
     genre: "Genre",

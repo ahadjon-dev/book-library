@@ -10,7 +10,6 @@ import { Login } from "@/pages/Login";
 import { Stats } from "@/pages/Stats";
 import { Loans } from "@/pages/Loans";
 import { PublicView } from "@/pages/PublicView";
-import { TableView } from "@/pages/TableView";
 import { Wishlist } from "@/pages/Wishlist";
 
 function AppLayout({ children }: { children: React.ReactNode }) {
@@ -42,13 +41,7 @@ export function App() {
       />
       <Route
         path="/table"
-        element={
-          <ProtectedRoute>
-            <AppLayout>
-              <TableView />
-            </AppLayout>
-          </ProtectedRoute>
-        }
+        element={<Navigate to="/?view=table" replace />}
       />
       <Route
         path="/stats"

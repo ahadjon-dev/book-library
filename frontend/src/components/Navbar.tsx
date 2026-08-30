@@ -38,10 +38,7 @@ export function Navbar() {
             📚 <span className="hidden sm:inline">{t("nav.myLibrary")}</span>
           </span>
           <NavLink to="/" end className={linkClass}>
-            {t("nav.gallery")}
-          </NavLink>
-          <NavLink to="/table" className={linkClass}>
-            {t("nav.table")}
+            {t("nav.library")}
           </NavLink>
           <NavLink to="/stats" className={linkClass}>
             {t("nav.stats")}

@@ -13,9 +13,10 @@ export const uz: typeof en = {
   },
   nav: {
     myLibrary: "Mening Kutubxonam",
-    gallery: "Galereya",
+    library: "Kutubxona",
+    gallery: "Kutubxona",
     table: "Jadval",
-    stats: "Statistika",
+    stats: "Statistika va Maqsadlar",
     wishlist: "Istaklar",
     addBook: "Kitob qo'shish",
     logout: "Chiqish",
@@ -32,6 +33,9 @@ export const uz: typeof en = {
     home: "Bosh sahifa",
     allBooks: "Barcha kitoblar",
     recentlyAdded: "Yaqinda qo'shilgan",
+    shelves: "Javonlar",
+    grid: "To'r",
+    table: "Jadval",
   },
   filters: {
     genre: "Janr",
