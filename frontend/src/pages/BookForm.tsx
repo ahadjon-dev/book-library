@@ -8,6 +8,7 @@ import { compressImage } from "@/lib/compressImage";
 import { useTranslation } from "@/lib/LanguageContext";
 import { useDebouncedValue } from "@/lib/useDebouncedValue";
 import { useToast } from "@/lib/ToastContext";
+import { ShelfPhotoScanner } from "@/components/ShelfPhotoScanner";
 import type { Book, BookFormValues } from "@/types/book";
 import type { IsbnLookupMatch } from "@/types/lookup";
 
@@ -71,6 +72,7 @@ export function BookForm({ mode }: { mode: "create" | "edit" }) {
   const [lookupMessage, setLookupMessage] = useState<string | null>(null);
   const [lookupMatch, setLookupMatch] = useState<IsbnLookupMatch | null>(null);
   const [showScanner, setShowScanner] = useState(false);
+  const [showShelfScanner, setShowShelfScanner] = useState(false);
   const [titleMatch, setTitleMatch] = useState<Book | null>(null);
   const debouncedTitle = useDebouncedValue(form.title, 400);
 
@@ -230,6 +232,13 @@ export function BookForm({ mode }: { mode: "create" | "edit" }) {
           >
             {t("bookForm.scan")}
           </button>
+          <button
+            type="button"
+            onClick={() => setShowShelfScanner(true)}
+            className="shrink-0 rounded-md bg-accent/10 border border-accent/30 text-accent px-3 py-2 text-sm hover:bg-accent/20 transition font-medium"
+          >
+            📸 1-Photo Shelf Scan
+          </button>
         </div>
         {lookupMessage && <p className="text-sm text-ink-secondary">{lookupMessage}</p>}
         {lookupMatch && (
@@ -255,6 +264,12 @@ export function BookForm({ mode }: { mode: "create" | "edit" }) {
           <BarcodeScanner onDetected={handleScanned} onClose={() => setShowScanner(false)} />
         </Suspense>
       )}
+
+      <ShelfPhotoScanner
+        isOpen={showShelfScanner}
+        onClose={() => setShowShelfScanner(false)}
+        onSuccess={() => navigate("/")}
+      />
 
       <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
         <div className="mx-auto w-32 shrink-0 sm:mx-0">
