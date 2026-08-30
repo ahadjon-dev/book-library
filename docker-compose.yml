@@ -20,6 +20,7 @@ services:
     environment:
       DATABASE_URL: postgresql+psycopg://library:library@db:5432/library
       JWT_SECRET: ${JWT_SECRET:-change-me-in-.env}
+      UPLOADS_DIR: /app/uploads
     volumes:
       - ./backend:/app
       - uploads_data:/app/uploads
