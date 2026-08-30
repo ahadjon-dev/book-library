@@ -61,3 +61,23 @@ def client(db_session: Session):
 def auth_headers(db_session: Session) -> dict[str, str]:
     token = create_access_token(subject="test@example.com")
     return {"Authorization": f"Bearer {token}"}
+
+
+@pytest.fixture(scope="function")
+def second_user(db_session: Session) -> User:
+    user = User(
+        email="user2@example.com",
+        password_hash=hash_password("password123"),
+        display_name="User Two",
+        share_slug="usertwo",
+    )
+    db_session.add(user)
+    db_session.commit()
+    db_session.refresh(user)
+    return user
+
+
+@pytest.fixture(scope="function")
+def auth_headers_user2(second_user: User) -> dict[str, str]:
+    token = create_access_token(subject=second_user.email)
+    return {"Authorization": f"Bearer {token}"}

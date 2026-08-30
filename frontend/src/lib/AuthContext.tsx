@@ -1,12 +1,13 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
-import { fetchMe, login as loginRequest, type Me } from "@/api/auth";
+import { fetchMe, login as loginRequest, register as registerRequest, type Me } from "@/api/auth";
 import { clearToken, getToken, setToken } from "@/api/client";
 
 interface AuthContextValue {
   user: Me | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
+  register: (email: string, password: string, displayName: string) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
 }
@@ -45,13 +46,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(me);
   }
 
+  async function register(email: string, password: string, displayName: string) {
+    const token = await registerRequest(email, password, displayName);
+    setToken(token);
+    const me = await fetchMe();
+    setUser(me);
+  }
+
   function logout() {
     clearToken();
     setUser(null);
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, refreshUser }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, refreshUser }}>{children}</AuthContext.Provider>
   );
 }
 

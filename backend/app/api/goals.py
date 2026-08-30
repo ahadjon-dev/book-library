@@ -25,6 +25,7 @@ def _calculate_goal_progress(goal: ReadingGoal, db: Session, user_id: int) -> Go
         .join(Book, Book.id == UserBookStatus.book_id)
         .filter(
             UserBookStatus.user_id == user_id,
+            Book.user_id == user_id,
             UserBookStatus.status == ReadStatus.finished,
             extract("year", UserBookStatus.finished_at) == target_year,
         )
