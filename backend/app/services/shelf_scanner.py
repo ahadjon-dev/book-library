@@ -8,6 +8,7 @@ from typing import Any
 import httpx
 from sqlalchemy.orm import Session
 
+from app.core.config import settings
 from app.models.book import Book
 from app.schemas.shelf_scanner import ShelfScanItem, ShelfScanResult
 
@@ -139,7 +140,7 @@ async def _match_single_book(
 
 async def scan_shelf_image(image_bytes: bytes, db: Session, user_id: int | None = None) -> ShelfScanResult:
     """Main pipeline for shelf scanning with concurrent Open Library auto-matching."""
-    openai_key = os.getenv("OPENAI_API_KEY")
+    openai_key = settings.openai_api_key
 
     raw_books: list[dict[str, str]] = []
     if openai_key:
