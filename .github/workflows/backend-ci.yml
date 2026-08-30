@@ -34,5 +34,6 @@ jobs:
       - name: Run Pytest Test Suite
         env:
           JWT_SECRET: ci-test-secret-key-12345
+          UPLOADS_DIR: ./test_uploads
         run: |
           pytest -v tests/
