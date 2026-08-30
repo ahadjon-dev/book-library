@@ -1,23 +1,22 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 
-import { LANGUAGES, useTranslation, type Language } from "@/lib/LanguageContext";
+import { useTranslation } from "@/lib/LanguageContext";
 import { useAuth } from "@/lib/AuthContext";
-import { THEMES, useTheme, type Theme } from "@/lib/ThemeContext";
 import { AddBooksHubModal } from "@/components/AddBooksHubModal";
 import { ProfileModal } from "@/components/ProfileModal";
 import { WhatToReadModal } from "@/components/WhatToReadModal";
 import { ShareShelfModal } from "@/components/ShareShelfModal";
+import { UserMenuDropdown } from "@/components/UserMenuDropdown";
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
-  `shrink-0 whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium transition ${
-    isActive ? "bg-surface-hover text-ink" : "text-ink-secondary hover:text-ink"
+  `shrink-0 whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium transition ${
+    isActive ? "bg-surface-hover text-ink shadow-sm" : "text-ink-secondary hover:text-ink"
   }`;
 
 export function Navbar() {
-  const { user, logout } = useAuth();
-  const { theme, setTheme } = useTheme();
-  const { language, setLanguage, t } = useTranslation();
+  const { logout } = useAuth();
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const [addHubOpen, setAddHubOpen] = useState(false);
@@ -32,89 +31,68 @@ export function Navbar() {
 
   return (
     <>
-      <nav className="flex shrink-0 items-center gap-2 border-b border-line bg-canvas px-3 py-2 text-ink sm:px-6 sm:py-3">
-        <div className="scrollbar-hide flex min-w-0 flex-1 items-center gap-1 overflow-x-auto sm:gap-2">
-          <span className="mr-1 shrink-0 whitespace-nowrap text-base font-semibold sm:mr-4 sm:text-lg">
-            📚 <span className="hidden sm:inline">{t("nav.myLibrary")}</span>
-          </span>
-          <NavLink to="/" end className={linkClass}>
-            {t("nav.library")}
-          </NavLink>
-          <NavLink to="/stats" className={linkClass}>
-            {t("nav.stats")}
-          </NavLink>
-          <NavLink to="/loans" className={linkClass}>
-            {t("loans.title")}
-          </NavLink>
-          <NavLink to="/wishlist" className={linkClass}>
-            {t("nav.wishlist")}
+      <nav className="flex shrink-0 items-center justify-between border-b border-line bg-canvas px-3 py-2 text-ink sm:px-6 sm:py-3">
+        {/* Left: Brand & Desktop Navigation */}
+        <div className="flex items-center gap-1 sm:gap-2 min-w-0">
+          <NavLink to="/" className="mr-2 sm:mr-4 flex items-center gap-2 shrink-0">
+            <span className="text-xl">📚</span>
+            <span className="text-base font-bold text-ink tracking-tight hidden sm:inline">
+              {t("nav.myLibrary")}
+            </span>
           </NavLink>
 
-          <button
-            onClick={() => setRecommendOpen(true)}
-            className="shrink-0 whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-semibold text-accent hover:bg-accent/10 transition"
-          >
-            🎯 {t("recommend.title")}
-          </button>
+          {/* Desktop Navigation Links */}
+          <div className="hidden md:flex items-center gap-1">
+            <NavLink to="/" end className={linkClass}>
+              {t("nav.library")}
+            </NavLink>
+            <NavLink to="/loans" className={linkClass}>
+              {t("loans.title")}
+            </NavLink>
+            <NavLink to="/stats" className={linkClass}>
+              {t("nav.stats")}
+            </NavLink>
+            <NavLink to="/wishlist" className={linkClass}>
+              {t("nav.wishlist")}
+            </NavLink>
 
-          {/* Unified Add Books Hub Button */}
+            <button
+              onClick={() => setRecommendOpen(true)}
+              className="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-semibold text-accent hover:bg-accent/10 transition"
+            >
+              🎯 <span>{t("recommend.title")}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Right: Actions & User Menu */}
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          {/* Primary Add Books Button (Desktop) */}
           <button
             onClick={() => setAddHubOpen(true)}
-            className="shrink-0 whitespace-nowrap inline-flex items-center gap-1.5 rounded-lg bg-accent px-3.5 py-1.5 text-sm font-semibold text-on-accent hover:bg-accent-hover transition shadow-sm"
+            className="hidden sm:inline-flex items-center gap-1.5 rounded-xl bg-accent px-4 py-1.5 text-xs sm:text-sm font-semibold text-on-accent hover:bg-accent-hover transition shadow-sm"
           >
             <span>➕</span> <span>{t("addHub.title")}</span>
           </button>
 
+          {/* Share Button */}
           <button
             onClick={() => setShareOpen(true)}
-            className="shrink-0 whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium text-ink-secondary hover:bg-surface-hover hover:text-ink transition"
+            className="hidden sm:inline-flex items-center gap-1 rounded-xl border border-line bg-surface px-3 py-1.5 text-xs sm:text-sm font-medium text-ink hover:bg-surface-hover transition"
           >
-            🔗 {t("shareShelf.title")}
+            <span>🔗</span> <span>{t("shareShelf.title")}</span>
           </button>
-        </div>
 
-        <div className="flex shrink-0 items-center gap-2 text-sm text-ink-secondary sm:gap-3">
-          <select
-            value={language}
-            onChange={(e) => setLanguage(e.target.value as Language)}
-            className="rounded-md border border-line bg-surface px-2 py-1 text-sm text-ink focus:border-line-strong focus:outline-none"
-            aria-label={t("nav.language")}
-          >
-            {LANGUAGES.map((l) => (
-              <option key={l.value} value={l.value}>
-                {l.label}
-              </option>
-            ))}
-          </select>
-          <select
-            value={theme}
-            onChange={(e) => setTheme(e.target.value as Theme)}
-            className="rounded-md border border-line bg-surface px-2 py-1 text-sm text-ink focus:border-line-strong focus:outline-none"
-            aria-label={t("nav.theme")}
-          >
-            {THEMES.map((th) => (
-              <option key={th.value} value={th.value}>
-                {th.label}
-              </option>
-            ))}
-          </select>
-          <button
-            onClick={() => setProfileOpen(true)}
-            className="hidden sm:inline-flex items-center gap-1.5 rounded-md px-2 py-1 hover:bg-surface-hover hover:text-ink font-medium transition"
-            title="User Profile & Settings"
-          >
-            👤 <span>{user?.display_name}</span>
-          </button>
-          <button
-            onClick={handleLogout}
-            className="shrink-0 whitespace-nowrap rounded-md px-2 py-1 hover:bg-surface-hover hover:text-ink"
-          >
-            {t("nav.logout")}
-          </button>
+          {/* User & Settings Dropdown */}
+          <UserMenuDropdown
+            onOpenProfile={() => setProfileOpen(true)}
+            onOpenShare={() => setShareOpen(true)}
+            onLogout={handleLogout}
+          />
         </div>
       </nav>
 
-      {/* Unified Add Books Hub Modal */}
+      {/* Feature Modals */}
       <AddBooksHubModal
         isOpen={addHubOpen}
         onClose={() => setAddHubOpen(false)}
