@@ -1,0 +1,22 @@
+frontend/src/App.tsx
+  h_780173feefb83a 1-2,5-10,23-30,34-74
+frontend/src/components/BottomNav.tsx
+  h_780173feefb83a 1-70
+frontend/src/components/MobileMoreDrawer.tsx
+  h_780173feefb83a 1-146
+frontend/src/components/Navbar.tsx
+  h_780173feefb83a 4,10,13-14,18-19,34-41,44-66,68-70,73,78,81,83,86-91,95
+frontend/src/components/UserMenuDropdown.tsx
+  h_780173feefb83a 1-147
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "b82af9c78dd076aaa9a71579b395955898b151d5",
+  "prompts": {},
+  "humans": {
+    "h_780173feefb83a": {
+      "author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}
