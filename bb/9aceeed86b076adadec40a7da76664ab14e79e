@@ -1,0 +1,44 @@
+frontend/src/components/AddBooksHubModal.tsx
+  h_780173feefb83a 413
+frontend/src/components/BarcodeScanner.tsx
+  h_780173feefb83a 4,20,23-25,27-33,35,45,54
+frontend/src/components/BookCard.tsx
+  h_780173feefb83a 100
+frontend/src/components/CsvImportModal.tsx
+  h_780173feefb83a 2,28-32,35,51-56,61,79
+frontend/src/components/LendBookModal.tsx
+  h_780173feefb83a 2,44,54-61,67
+frontend/src/components/ProfileModal.tsx
+  h_780173feefb83a 2,34,37,46,58,68-75,81
+frontend/src/components/ReadingGoalCard.tsx
+  h_780173feefb83a 2,28,38-42,45,49-50,68-73,75-80,82-87,89-94,102-103
+frontend/src/components/ShelfPhotoScanner.tsx
+  h_780173feefb83a 2,34,36-37,54,62-63,68,85-87,97,118,174,188
+frontend/src/lib/i18n/en.ts
+  h_780173feefb83a 214-217,263,265-268,278-281
+frontend/src/lib/i18n/uz.ts
+  h_780173feefb83a 217-220,266,268-271,281-284
+frontend/src/pages/BookDetail.tsx
+  h_780173feefb83a 4,110,112-113
+frontend/src/pages/BookForm.tsx
+  h_780173feefb83a 4,232,234-235,240,242-243
+frontend/src/pages/Gallery.tsx
+  h_780173feefb83a 23,177-180
+frontend/src/pages/Loans.tsx
+  h_780173feefb83a 3,106-107,118,120-121,124,128-142,145,147-148,152,156,160,163-165,175,177-178,181-184,189,191-192
+frontend/src/pages/PublicView.tsx
+  h_780173feefb83a 3,31,37,44-46,80-81,86-87,97,99-100,103,105,107-112,115,121,123,128,143-145
+frontend/src/pages/TableView.tsx
+  h_780173feefb83a 12,127-128,132,134-135,147-162
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "bb9aceeed86b076adadec40a7da76664ab14e79e",
+  "prompts": {},
+  "humans": {
+    "h_780173feefb83a": {
+      "author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}
