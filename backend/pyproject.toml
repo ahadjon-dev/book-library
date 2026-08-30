@@ -19,6 +19,7 @@ dependencies = [
     "bcrypt<4.1",  # passlib 1.7.4 breaks on bcrypt>=4.1 (removed `__about__`)
     "python-multipart>=0.0.9",
     "openpyxl>=3.1",
+    "slowapi>=0.1.9",
 ]
 
 [tool.setuptools.packages.find]
