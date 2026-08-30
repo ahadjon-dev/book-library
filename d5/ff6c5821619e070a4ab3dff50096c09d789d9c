@@ -1,0 +1,30 @@
+.github/workflows/backend-ci.yml
+  h_780173feefb83a 1-38
+backend/pyproject.toml
+  h_780173feefb83a 25-26
+backend/tests/conftest.py
+  h_780173feefb83a 1-63
+backend/tests/test_auth.py
+  h_780173feefb83a 1-66
+backend/tests/test_books.py
+  h_780173feefb83a 1-48
+backend/tests/test_csv_importer.py
+  h_780173feefb83a 1-39
+backend/tests/test_goals.py
+  h_780173feefb83a 1-42
+backend/tests/test_loans.py
+  h_780173feefb83a 1-52
+backend/tests/test_stats.py
+  h_780173feefb83a 1-31
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "d5ff6c5821619e070a4ab3dff50096c09d789d9c",
+  "prompts": {},
+  "humans": {
+    "h_780173feefb83a": {
+      "author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}
