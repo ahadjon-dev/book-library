@@ -1,41 +1,42 @@
+import asyncio
 import json
 import re
-import time
-import urllib.error
-import urllib.parse
-import urllib.request
+from typing import Any
+
+import httpx
 
 OPEN_LIBRARY_BOOKS_URL = "https://openlibrary.org/api/books"
 HEADERS = {"User-Agent": "personal-library-app/1.0 (personal use)"}
 MAX_ATTEMPTS = 3
+TIMEOUT_SECONDS = 6.0
 
 
-def _get_with_retries(url: str) -> bytes | None:
-    req = urllib.request.Request(url, headers=HEADERS)
-    for attempt in range(MAX_ATTEMPTS):
-        try:
-            with urllib.request.urlopen(req, timeout=8) as resp:
-                return resp.read()
-        except (urllib.error.URLError, TimeoutError):
-            if attempt < MAX_ATTEMPTS - 1:
-                time.sleep(0.5)
+async def _async_get_with_retries(url: str, params: dict[str, str] | None = None) -> bytes | None:
+    async with httpx.AsyncClient(timeout=TIMEOUT_SECONDS, follow_redirects=True) as client:
+        for attempt in range(MAX_ATTEMPTS):
+            try:
+                resp = await client.get(url, params=params, headers=HEADERS)
+                if resp.status_code == 200:
+                    return resp.content
+            except (httpx.RequestError, httpx.TimeoutException):
+                if attempt < MAX_ATTEMPTS - 1:
+                    await asyncio.sleep(0.4)
     return None
 
 
-def fetch_isbn_metadata(isbn: str) -> dict | None:
+async def fetch_isbn_metadata(isbn: str) -> dict[str, Any] | None:
     params = {"bibkeys": f"ISBN:{isbn}", "format": "json", "jscmd": "data"}
-    url = OPEN_LIBRARY_BOOKS_URL + "?" + urllib.parse.urlencode(params)
-    raw = _get_with_retries(url)
-    if raw is None:
+    raw_bytes = await _async_get_with_retries(OPEN_LIBRARY_BOOKS_URL, params=params)
+    if not raw_bytes:
         return None
     try:
-        data = json.loads(raw)
-    except json.JSONDecodeError:
+        data = json.loads(raw_bytes.decode("utf-8"))
+        return data.get(f"ISBN:{isbn}")
+    except (json.JSONDecodeError, UnicodeDecodeError):
         return None
-    return data.get(f"ISBN:{isbn}")
 
 
-def parse_metadata(raw: dict) -> dict:
+def parse_metadata(raw: dict[str, Any]) -> dict[str, Any]:
     authors = [a["name"] for a in raw.get("authors", []) if a.get("name")]
     publishers = raw.get("publishers", [])
     publish_date = raw.get("publish_date") or ""
@@ -53,9 +54,9 @@ def parse_metadata(raw: dict) -> dict:
     }
 
 
-def download_cover_bytes(url: str) -> bytes | None:
-    data = _get_with_retries(url)
-    # Open Library serves a tiny placeholder image when there's no real cover.
+async def download_cover_bytes(url: str) -> bytes | None:
+    data = await _async_get_with_retries(url)
+    # Open Library serves a tiny placeholder image (< 2000 bytes) when there's no real cover.
     if data is None or len(data) < 2000:
         return None
     return data
