@@ -344,6 +344,75 @@ def export_books(
     )
 
 
+@router.post("/import", response_model=ImportSummary)
+async def import_books(
+    file: UploadFile,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> ImportSummary:
+    contents = await file.read()
+    return import_books_from_csv(contents, db, current_user)
+
+
+@router.post("/scan-shelf", response_model=ShelfScanResult)
+async def scan_shelf(
+    file: UploadFile,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> ShelfScanResult:
+    image_bytes = await file.read()
+    return await scan_shelf_image(image_bytes, db)
+
+
+@router.post("/bulk-add", response_model=BulkAddResponse)
+async def bulk_add_books(
+    payload: BulkAddRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> BulkAddResponse:
+    added_books: list[Book] = []
+    for item in payload.books:
+        book = Book(
+            title=item.title,
+            subtitle=item.subtitle,
+            isbn=item.isbn,
+            publisher=item.publisher,
+            publication_year=item.publication_year,
+            language=item.language,
+            page_count=item.page_count,
+            description=item.description,
+            genre=item.genre,
+            owned=item.owned,
+            purchase_date=item.purchase_date,
+            purchase_price=item.purchase_price,
+        )
+        db.add(book)
+        _apply_relations(db, book, item)
+        if item.cover_url:
+            img = await download_cover_bytes(item.cover_url)
+            if img:
+                book.cover_image_path = save_cover_bytes(img, ".webp")
+        added_books.append(book)
+
+    db.commit()
+    for b in added_books:
+        db.refresh(b)
+
+    return BulkAddResponse(
+        added_count=len(added_books),
+        books=[_to_book_out(b, {}) for b in added_books],
+    )
+
+
+@router.post("/recommend-next", response_model=RecommendNextResponse)
+def recommend_next(
+    payload: RecommendNextRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> RecommendNextResponse:
+    return recommend_next_books(db, current_user, payload)
+
+
 @router.get("/{book_id}", response_model=BookOut)
 def get_book(
     book_id: int,
@@ -450,72 +519,3 @@ def update_my_status(
     db.commit()
     status_by_book_id = _load_statuses(db, current_user.id, [book.id])
     return _to_book_out(book, status_by_book_id)
-
-
-@router.post("/import", response_model=ImportSummary)
-async def import_books(
-    file: UploadFile,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-) -> ImportSummary:
-    contents = await file.read()
-    return import_books_from_csv(contents, db, current_user)
-
-
-@router.post("/scan-shelf", response_model=ShelfScanResult)
-async def scan_shelf(
-    file: UploadFile,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-) -> ShelfScanResult:
-    image_bytes = await file.read()
-    return await scan_shelf_image(image_bytes, db)
-
-
-@router.post("/bulk-add", response_model=BulkAddResponse)
-async def bulk_add_books(
-    payload: BulkAddRequest,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-) -> BulkAddResponse:
-    added_books: list[Book] = []
-    for item in payload.books:
-        book = Book(
-            title=item.title,
-            subtitle=item.subtitle,
-            isbn=item.isbn,
-            publisher=item.publisher,
-            publication_year=item.publication_year,
-            language=item.language,
-            page_count=item.page_count,
-            description=item.description,
-            genre=item.genre,
-            owned=item.owned,
-            purchase_date=item.purchase_date,
-            purchase_price=item.purchase_price,
-        )
-        db.add(book)
-        _apply_relations(db, book, item)
-        if item.cover_url:
-            img = await download_cover_bytes(item.cover_url)
-            if img:
-                book.cover_image_path = save_cover_bytes(img, ".webp")
-        added_books.append(book)
-
-    db.commit()
-    for b in added_books:
-        db.refresh(b)
-
-    return BulkAddResponse(
-        added_count=len(added_books),
-        books=[_to_book_out(b, {}) for b in added_books],
-    )
-
-
-@router.post("/recommend-next", response_model=RecommendNextResponse)
-def recommend_next(
-    payload: RecommendNextRequest,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-) -> RecommendNextResponse:
-    return recommend_next_books(db, current_user, payload)
