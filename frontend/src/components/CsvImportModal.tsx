@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { FileSpreadsheet, X } from "lucide-react";
 import { importBooksCsv } from "@/api/books";
 import type { ImportSummary } from "@/types/import";
 import { useTranslation } from "@/lib/LanguageContext";
@@ -24,13 +25,14 @@ export function CsvImportModal({ isOpen, onClose, onSuccess }: Props) {
     if (!file) return;
     try {
       setImporting(true);
-      const res = await importBooksCsv(file);
-      setResult(res);
-      showToast(t("import.summary", { imported: res.imported, skipped: res.skipped }));
+      const data = await importBooksCsv(file);
+      setResult(data);
+      showToast(
+        t("import.summary", { imported: data.imported, skipped: data.skipped })
+      );
       if (onSuccess) onSuccess();
     } catch (err: any) {
-      console.error("Import failed", err);
-      showToast(err.response?.data?.detail || "Import failed");
+      showToast(err.response?.data?.detail || "Import failed", "error");
     } finally {
       setImporting(false);
     }
@@ -46,12 +48,17 @@ export function CsvImportModal({ isOpen, onClose, onSuccess }: Props) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <div className="w-full max-w-lg rounded-2xl border border-line bg-surface p-6 shadow-2xl transition">
         <div className="flex items-center justify-between border-b border-line pb-4 mb-4">
-          <h2 className="text-lg font-bold text-ink">{t("import.title")}</h2>
+          <div className="flex items-center gap-2.5">
+            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-accent/10 text-accent border border-accent/20">
+              <FileSpreadsheet className="h-4 w-4" />
+            </span>
+            <h2 className="text-lg font-bold text-ink">{t("import.title")}</h2>
+          </div>
           <button
             onClick={handleReset}
             className="rounded-lg p-1.5 text-ink-secondary hover:text-ink hover:bg-surface-hover transition"
           >
-            ✕
+            <X className="h-5 w-5" />
           </button>
         </div>
 
@@ -69,7 +76,7 @@ export function CsvImportModal({ isOpen, onClose, onSuccess }: Props) {
                 file ? "border-accent bg-accent/5" : "border-line hover:border-accent/50 bg-canvas"
               }`}
             >
-              <span className="text-3xl mb-2">📄</span>
+              <FileSpreadsheet className="h-10 w-10 text-accent mb-2" />
               {file ? (
                 <div>
                   <p className="text-sm font-semibold text-ink">{file.name}</p>

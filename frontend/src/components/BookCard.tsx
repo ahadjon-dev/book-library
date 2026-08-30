@@ -97,7 +97,7 @@ export function BookCard({ book }: { book: Book }) {
 
     statusMutation.mutate({ rating: newRating });
     if (newRating) {
-      showToast(`Rated ${starIdx + 1}/5 ★`);
+      showToast(`Rated ${starIdx + 1}/5 stars`);
     } else {
       showToast("Rating cleared");
     }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Handshake, Check, CheckCircle2, Trash2 } from "lucide-react";
 import { fetchLoans, returnLoan, deleteLoan } from "@/api/loans";
 import type { BookLoan } from "@/types/loan";
 import { useTranslation } from "@/lib/LanguageContext";
@@ -102,8 +103,8 @@ export function Loans() {
           ))}
         </div>
       ) : loans.length === 0 ? (
-        <div className="rounded-2xl border border-line bg-surface p-12 text-center">
-          <span className="text-4xl block mb-2">🤝</span>
+        <div className="rounded-2xl border border-line bg-surface p-12 text-center flex flex-col items-center justify-center">
+          <Handshake className="h-12 w-12 text-ink-muted mb-3" />
           <h3 className="text-base font-semibold text-ink">{t("loans.noLoans")}</h3>
           <p className="text-xs text-ink-secondary mt-1">
             Open any book in your library and click "Lend Book" to track it here.
@@ -114,61 +115,54 @@ export function Loans() {
           {loans.map((loan) => (
             <div
               key={loan.id}
-              className="flex flex-col justify-between rounded-xl border border-line bg-surface p-5 shadow-sm transition hover:border-line-strong space-y-4"
+              className="rounded-2xl border border-line bg-surface p-5 space-y-4 hover:border-line-strong transition flex flex-col justify-between"
             >
-              <div className="space-y-2">
-                <div className="flex items-center justify-between gap-2">
+              <div className="space-y-3">
+                <div className="flex items-start justify-between gap-2">
                   <Link
                     to={`/books/${loan.book_id}`}
-                    className="font-bold text-sm text-ink hover:text-accent transition truncate"
+                    className="font-bold text-sm text-ink hover:text-accent transition line-clamp-2"
                   >
                     {loan.book_title}
                   </Link>
-                  {loan.is_returned ? (
-                    <span className="shrink-0 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                      {t("loans.returnedBadge")}
-                    </span>
-                  ) : loan.is_overdue ? (
-                    <span className="shrink-0 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20 animate-pulse">
-                      {t("loans.overdueBadge")}
-                    </span>
-                  ) : (
-                    <span className="shrink-0 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                      Active
-                    </span>
-                  )}
+                  <span
+                    className={`px-2 py-0.5 rounded-full text-[10px] font-bold border shrink-0 ${
+                      loan.is_returned
+                        ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                        : loan.is_overdue
+                        ? "bg-rose-500/10 text-rose-400 border-rose-500/20"
+                        : "bg-blue-500/10 text-blue-400 border-blue-500/20"
+                    }`}
+                  >
+                    {loan.is_returned
+                      ? t("loans.returnedBadge")
+                      : loan.is_overdue
+                      ? t("loans.overdueBadge")
+                      : t("loans.active")}
+                  </span>
                 </div>
 
-                <div className="space-y-1 text-xs text-ink-secondary">
+                <div className="text-xs space-y-1 text-ink-secondary bg-canvas/60 p-3 rounded-xl border border-line">
                   <p>
-                    <strong className="text-ink font-medium">{t("loans.borrower")}:</strong>{" "}
-                    {loan.borrower_name}
+                    <span className="text-ink-muted">{t("loans.borrower")}:</span>{" "}
+                    <strong className="text-ink">{loan.borrower_name}</strong>
                   </p>
                   {loan.borrower_contact && (
                     <p>
-                      <strong className="text-ink font-medium">Contact:</strong>{" "}
-                      {loan.borrower_contact}
+                      <span className="text-ink-muted">Contact:</span> {loan.borrower_contact}
                     </p>
                   )}
                   <p>
-                    <strong className="text-ink font-medium">{t("loans.loanDate")}:</strong>{" "}
-                    {loan.loan_date}
+                    <span className="text-ink-muted">{t("loans.loanDate")}:</span> {loan.loan_date}
                   </p>
                   {loan.due_date && (
-                    <p className={loan.is_overdue ? "text-rose-400 font-semibold" : ""}>
-                      <strong className="text-ink font-medium">{t("loans.dueDate")}:</strong>{" "}
-                      {loan.due_date}
+                    <p>
+                      <span className="text-ink-muted">{t("loans.dueDate")}:</span> {loan.due_date}
                     </p>
                   )}
                   {loan.returned_at && (
-                    <p>
-                      <strong className="text-ink font-medium">{t("loans.returnedAt")}:</strong>{" "}
-                      {loan.returned_at}
-                    </p>
-                  )}
-                  {loan.notes && (
-                    <p className="italic bg-canvas p-2 rounded-lg border border-line mt-2 text-[11px]">
-                      "{loan.notes}"
+                    <p className="text-emerald-400">
+                      <span>{t("loans.returnedAt")}:</span> {loan.returned_at}
                     </p>
                   )}
                 </div>
@@ -178,19 +172,24 @@ export function Loans() {
                 {!loan.is_returned ? (
                   <button
                     onClick={() => handleReturn(loan.id)}
-                    className="rounded-lg bg-accent px-3 py-1.5 text-xs font-semibold text-on-accent hover:bg-accent-hover transition"
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-3 py-1.5 text-xs font-semibold text-on-accent hover:bg-accent-hover transition"
                   >
-                    ✓ {t("loans.markReturned")}
+                    <Check className="h-3.5 w-3.5" />
+                    <span>{t("loans.markReturned")}</span>
                   </button>
                 ) : (
-                  <span className="text-[11px] text-emerald-400 font-medium">✓ Completed</span>
+                  <span className="inline-flex items-center gap-1 text-[11px] text-emerald-400 font-medium">
+                    <CheckCircle2 className="h-3.5 w-3.5" />
+                    <span>Completed</span>
+                  </span>
                 )}
 
                 <button
                   onClick={() => handleDelete(loan.id)}
-                  className="text-xs text-ink-secondary hover:text-rose-400 transition p-1"
+                  className="inline-flex items-center gap-1 text-xs text-ink-secondary hover:text-rose-400 transition p-1"
                 >
-                  ✕ {t("common.delete")}
+                  <Trash2 className="h-3.5 w-3.5" />
+                  <span>{t("common.delete")}</span>
                 </button>
               </div>
             </div>

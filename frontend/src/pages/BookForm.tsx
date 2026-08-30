@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { lazy, Suspense, useEffect, useState, type FormEvent } from "react";
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { Camera, Barcode } from "lucide-react";
 
 import { createBook, fetchBook, fetchBooks, fetchShelves, lookupIsbn, updateBook, uploadCover } from "@/api/books";
 import { coverUrl } from "@/api/client";
@@ -228,16 +229,18 @@ export function BookForm({ mode }: { mode: "create" | "edit" }) {
           <button
             type="button"
             onClick={() => setShowScanner(true)}
-            className="shrink-0 rounded-md border border-line-strong px-3 py-2 text-sm hover:bg-surface-hover"
+            className="shrink-0 inline-flex items-center gap-1.5 rounded-md border border-line-strong px-3 py-2 text-sm hover:bg-surface-hover"
           >
-            {t("bookForm.scan")}
+            <Barcode className="h-4 w-4" />
+            <span>{t("bookForm.scan")}</span>
           </button>
           <button
             type="button"
             onClick={() => setShowShelfScanner(true)}
-            className="shrink-0 rounded-md bg-accent/10 border border-accent/30 text-accent px-3 py-2 text-sm hover:bg-accent/20 transition font-medium"
+            className="shrink-0 inline-flex items-center gap-1.5 rounded-md bg-accent/10 border border-accent/30 text-accent px-3 py-2 text-sm hover:bg-accent/20 transition font-medium"
           >
-            📸 1-Photo Shelf Scan
+            <Camera className="h-4 w-4" />
+            <span>1-Photo Shelf Scan</span>
           </button>
         </div>
         {lookupMessage && <p className="text-sm text-ink-secondary">{lookupMessage}</p>}

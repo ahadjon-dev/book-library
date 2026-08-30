@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { Download, ChevronUp, ChevronDown } from "lucide-react";
 
 import { exportBooksExcel, fetchBooks } from "@/api/books";
 import { coverUrl } from "@/api/client";
@@ -123,14 +124,15 @@ export function TableView() {
     <div className="flex h-full flex-col gap-4 sm:flex-row sm:gap-6">
       <FilterSidebar filters={filters} onChange={(f) => setFilters({ ...f, limit: PAGE_SIZE, offset: 0 })} />
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-        <div className="mb-3 flex items-center justify-between">
-          <p className="text-sm text-ink-muted">{t("table.booksCount", { count: total })}</p>
+        <div className="mb-3 flex shrink-0 items-center justify-between">
+          <p className="text-sm text-ink-secondary">{t("table.booksCount", { count: total })}</p>
           <button
             onClick={handleExport}
             disabled={exporting || total === 0}
-            className="rounded-md border border-line-strong px-3 py-1.5 text-sm hover:bg-surface-hover disabled:opacity-40"
+            className="inline-flex items-center gap-1.5 rounded-md border border-line-strong px-3 py-1.5 text-sm hover:bg-surface-hover disabled:opacity-40"
           >
-            {exporting ? t("table.exporting") : t("table.exportToExcel")}
+            <Download className="h-3.5 w-3.5" />
+            <span>{exporting ? t("table.exporting") : t("table.exportToExcel")}</span>
           </button>
         </div>
         {isLoading ? (
@@ -142,16 +144,22 @@ export function TableView() {
                 <thead className="sticky top-0 z-10 bg-canvas">
                   {table.getHeaderGroups().map((headerGroup) => (
                     <tr key={headerGroup.id} className="border-b border-line-strong text-left text-ink-secondary">
-                      {headerGroup.headers.map((header) => (
-                        <th
-                          key={header.id}
-                          onClick={header.column.getToggleSortingHandler()}
-                          className="cursor-pointer select-none whitespace-nowrap border-r border-line-strong px-3 py-2 font-medium last:border-r-0"
-                        >
-                          {flexRender(header.column.columnDef.header, header.getContext())}
-                          {{ asc: " ▲", desc: " ▼" }[header.column.getIsSorted() as string] ?? ""}
-                        </th>
-                      ))}
+                      {headerGroup.headers.map((header) => {
+                        const isSorted = header.column.getIsSorted();
+                        return (
+                          <th
+                            key={header.id}
+                            onClick={header.column.getToggleSortingHandler()}
+                            className="cursor-pointer select-none whitespace-nowrap border-r border-line-strong px-3 py-2 font-medium last:border-r-0"
+                          >
+                            <div className="inline-flex items-center gap-1">
+                              <span>{flexRender(header.column.columnDef.header, header.getContext())}</span>
+                              {isSorted === "asc" && <ChevronUp className="h-3.5 w-3.5 text-accent" />}
+                              {isSorted === "desc" && <ChevronDown className="h-3.5 w-3.5 text-accent" />}
+                            </div>
+                          </th>
+                        );
+                      })}
                     </tr>
                   ))}
                 </thead>

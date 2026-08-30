@@ -20,6 +20,7 @@ import {
   Plus,
   Share2,
   BookOpen,
+  Star,
 } from "lucide-react";
 
 import { exportBooksExcel, fetchBooks, fetchGenres } from "@/api/books";
@@ -173,7 +174,10 @@ function TableSection({
         header: t("table.rating"),
         cell: (info) =>
           info.getValue() ? (
-            <span className="font-semibold text-amber-400">★ {info.getValue()}</span>
+            <span className="inline-flex items-center gap-1 font-semibold text-amber-400">
+              <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+              <span>{info.getValue()}</span>
+            </span>
           ) : (
             <span className="text-ink-muted">—</span>
           ),

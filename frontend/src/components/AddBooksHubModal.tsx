@@ -410,7 +410,7 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
                             />
                           ) : (
                             <div className="h-10 w-7 bg-surface-hover rounded flex items-center justify-center text-[10px] text-ink-secondary shrink-0">
-                              📖
+                              <BookOpen className="h-4 w-4 text-ink-muted" />
                             </div>
                           )}
                           <div className="min-w-0 flex-1">
