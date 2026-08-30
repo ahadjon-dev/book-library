@@ -9,6 +9,7 @@ import { Gallery } from "@/pages/Gallery";
 import { Login } from "@/pages/Login";
 import { Stats } from "@/pages/Stats";
 import { Loans } from "@/pages/Loans";
+import { PublicView } from "@/pages/PublicView";
 import { TableView } from "@/pages/TableView";
 import { Wishlist } from "@/pages/Wishlist";
 
@@ -27,6 +28,8 @@ export function App() {
   return (
     <Routes>
       <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} />
+      <Route path="/share/:slug" element={<PublicView />} />
+      <Route path="/u/:slug" element={<PublicView />} />
       <Route
         path="/"
         element={

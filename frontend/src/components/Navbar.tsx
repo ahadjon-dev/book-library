@@ -6,6 +6,9 @@ import { useAuth } from "@/lib/AuthContext";
 import { THEMES, useTheme, type Theme } from "@/lib/ThemeContext";
 import { CsvImportModal } from "@/components/CsvImportModal";
 import { ProfileModal } from "@/components/ProfileModal";
+import { ShelfPhotoScanner } from "@/components/ShelfPhotoScanner";
+import { WhatToReadModal } from "@/components/WhatToReadModal";
+import { ShareShelfModal } from "@/components/ShareShelfModal";
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
   `shrink-0 whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium ${
@@ -20,6 +23,9 @@ export function Navbar() {
 
   const [importOpen, setImportOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [scannerOpen, setScannerOpen] = useState(false);
+  const [recommendOpen, setRecommendOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
 
   function handleLogout() {
     logout();
@@ -51,6 +57,28 @@ export function Navbar() {
           <NavLink to="/books/new" className={linkClass}>
             {t("nav.addBook")}
           </NavLink>
+
+          <button
+            onClick={() => setRecommendOpen(true)}
+            className="shrink-0 whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-semibold text-accent hover:bg-accent/10 transition"
+          >
+            🎯 {t("recommend.title")}
+          </button>
+
+          <button
+            onClick={() => setScannerOpen(true)}
+            className="shrink-0 whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium text-ink-secondary hover:bg-surface-hover hover:text-ink transition"
+          >
+            📸 Scan Shelf
+          </button>
+
+          <button
+            onClick={() => setShareOpen(true)}
+            className="shrink-0 whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium text-ink-secondary hover:bg-surface-hover hover:text-ink transition"
+          >
+            🔗 {t("shareShelf.title")}
+          </button>
+
           <button
             onClick={() => setImportOpen(true)}
             className="shrink-0 whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium text-ink-secondary hover:bg-surface-hover hover:text-ink transition"
@@ -99,17 +127,32 @@ export function Navbar() {
         </div>
       </nav>
 
-      {/* CSV Import Modal */}
+      {/* Feature Modals */}
       <CsvImportModal
         isOpen={importOpen}
         onClose={() => setImportOpen(false)}
         onSuccess={() => window.location.reload()}
       />
 
-      {/* Profile Settings Modal */}
       <ProfileModal
         isOpen={profileOpen}
         onClose={() => setProfileOpen(false)}
+      />
+
+      <ShelfPhotoScanner
+        isOpen={scannerOpen}
+        onClose={() => setScannerOpen(false)}
+        onSuccess={() => window.location.reload()}
+      />
+
+      <WhatToReadModal
+        isOpen={recommendOpen}
+        onClose={() => setRecommendOpen(false)}
+      />
+
+      <ShareShelfModal
+        isOpen={shareOpen}
+        onClose={() => setShareOpen(false)}
       />
     </>
   );

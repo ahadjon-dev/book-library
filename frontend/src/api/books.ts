@@ -95,3 +95,27 @@ export async function importBooksCsv(file: File): Promise<{
   });
   return data;
 }
+
+export async function scanShelfImage(file: File): Promise<any> {
+  const formData = new FormData();
+  formData.append("file", file);
+  const { data } = await api.post("/books/scan-shelf", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return data;
+}
+
+export async function bulkAddBooks(books: Partial<BookFormValues>[]): Promise<{ added_count: number; books: Book[] }> {
+  const { data } = await api.post("/books/bulk-add", { books });
+  return data;
+}
+
+export async function recommendNextBooks(payload: {
+  mood?: string;
+  max_pages?: number;
+  preferred_genre?: string;
+  custom_prompt?: string;
+}): Promise<any> {
+  const { data } = await api.post("/books/recommend-next", payload);
+  return data;
+}
