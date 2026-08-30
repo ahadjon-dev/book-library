@@ -1,0 +1,22 @@
+backend/app/api/books.py
+  h_780173feefb83a 30,39,41,43,226,249,251,259,269,388,404,406
+backend/app/services/image_storage.py
+  h_780173feefb83a 1,6,11,18-53,60
+backend/app/services/isbn_lookup.py
+  h_780173feefb83a 1,4-6,11-23,27,29-30,33-35,39,57-59
+backend/app/services/lookup_service.py
+  h_780173feefb83a 1-43
+backend/pyproject.toml
+  h_780173feefb83a 23-24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "10f70ca3ef040a9ef668cf4b26ae23d0409f9d91",
+  "prompts": {},
+  "humans": {
+    "h_780173feefb83a": {
+      "author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}
