@@ -27,46 +27,20 @@ from app.schemas.book import (
 )
 from app.services.image_storage import UnsupportedImageType, save_cover_bytes, save_cover_image
 from app.services.isbn_lookup import download_cover_bytes, fetch_isbn_metadata, parse_metadata
+from app.services.lookup_service import get_or_create_shelf, resolve_authors, resolve_tags
 
 router = APIRouter(prefix="/books", tags=["books"])
 
 MAX_COVER_BYTES = 10 * 1024 * 1024
 
 
-def _get_or_create_author(db: Session, name: str) -> Author:
-    author = db.query(Author).filter(Author.name == name).first()
-    if author is None:
-        author = Author(name=name)
-        db.add(author)
-        db.flush()
-    return author
-
-
-def _get_or_create_tag(db: Session, name: str) -> Tag:
-    tag = db.query(Tag).filter(Tag.name == name).first()
-    if tag is None:
-        tag = Tag(name=name)
-        db.add(tag)
-        db.flush()
-    return tag
-
-
-def _get_or_create_shelf(db: Session, name: str) -> Shelf:
-    shelf = db.query(Shelf).filter(Shelf.name == name).first()
-    if shelf is None:
-        shelf = Shelf(name=name)
-        db.add(shelf)
-        db.flush()
-    return shelf
-
-
 def _apply_relations(db: Session, book: Book, payload: BookCreate | BookUpdate) -> None:
     if payload.authors is not None:
-        book.authors = [_get_or_create_author(db, name.strip()) for name in payload.authors if name.strip()]
+        book.authors = resolve_authors(db, payload.authors)
     if payload.tags is not None:
-        book.tags = [_get_or_create_tag(db, name.strip()) for name in payload.tags if name.strip()]
+        book.tags = resolve_tags(db, payload.tags)
     if payload.shelf is not None:
-        book.shelf = _get_or_create_shelf(db, payload.shelf.strip()) if payload.shelf.strip() else None
+        book.shelf = get_or_create_shelf(db, payload.shelf) if payload.shelf.strip() else None
 
 
 def _to_book_out(book: Book, status_by_book_id: dict[int, UserBookStatus]) -> BookOut:
@@ -118,9 +92,6 @@ def _apply_common_filters(
     search: str | None,
     owned: bool | None = None,
 ) -> ORMQuery:
-    # Use relationship .any()/.has() (correlated EXISTS subqueries) instead of
-    # explicit joins so author/tag/search filters can combine freely without
-    # colliding on the same joined table.
     if owned is not None:
         query = query.filter(Book.owned == owned)
     if genre:
@@ -155,8 +126,6 @@ def _apply_common_filters(
 
 def _filter_by_status(query: ORMQuery, db: Session, user_id: int, status_filter: ReadStatus) -> ORMQuery:
     if status_filter == ReadStatus.unread:
-        # a book with no status row yet is implicitly unread, so exclude
-        # only books explicitly marked as something else.
         non_unread_book_ids = db.query(UserBookStatus.book_id).filter(
             UserBookStatus.user_id == user_id, UserBookStatus.status != ReadStatus.unread
         )
@@ -184,7 +153,6 @@ def _status_breakdown(db: Session, user_id: int, matching_ids: list[int]) -> Sta
         counts[status_value] = count
 
     explicit_total = sum(counts.values())
-    # books with no status row at all are implicitly unread
     counts[ReadStatus.unread] += total - explicit_total
 
     return StatusCounts(
@@ -255,7 +223,7 @@ def list_books(
 
 
 @router.post("", response_model=BookOut, status_code=status.HTTP_201_CREATED)
-def create_book(
+async def create_book(
     payload: BookCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
@@ -278,9 +246,9 @@ def create_book(
     _apply_relations(db, book, payload)
 
     if payload.cover_url:
-        image_bytes = download_cover_bytes(payload.cover_url)
+        image_bytes = await download_cover_bytes(payload.cover_url)
         if image_bytes:
-            book.cover_image_path = save_cover_bytes(image_bytes, ".jpg")
+            book.cover_image_path = save_cover_bytes(image_bytes, ".webp")
 
     db.commit()
     db.refresh(book)
@@ -288,7 +256,7 @@ def create_book(
 
 
 @router.get("/lookup", response_model=IsbnLookupResult)
-def lookup_isbn(
+async def lookup_isbn(
     isbn: str = Query(..., min_length=8, max_length=20),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
@@ -298,7 +266,7 @@ def lookup_isbn(
     existing = db.query(Book).filter(Book.isbn == clean_isbn).first()
     already_in_library = IsbnLookupMatch(id=existing.id, owned=existing.owned) if existing else None
 
-    raw = fetch_isbn_metadata(clean_isbn)
+    raw = await fetch_isbn_metadata(clean_isbn)
     if raw is None:
         return IsbnLookupResult(found=False, already_in_library=already_in_library)
 
@@ -417,7 +385,7 @@ def get_book(
 
 
 @router.patch("/{book_id}", response_model=BookOut)
-def update_book(
+async def update_book(
     book_id: int,
     payload: BookUpdate,
     db: Session = Depends(get_db),
@@ -433,9 +401,9 @@ def update_book(
     _apply_relations(db, book, payload)
 
     if payload.cover_url:
-        image_bytes = download_cover_bytes(payload.cover_url)
+        image_bytes = await download_cover_bytes(payload.cover_url)
         if image_bytes:
-            book.cover_image_path = save_cover_bytes(image_bytes, ".jpg")
+            book.cover_image_path = save_cover_bytes(image_bytes, ".webp")
 
     db.commit()
     db.refresh(book)
