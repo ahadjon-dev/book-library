@@ -1,0 +1,22 @@
+frontend/src/components/AddBooksHubModal.tsx
+  h_780173feefb83a 1-756
+frontend/src/components/Navbar.tsx
+  h_780173feefb83a 7,13,23,63,65-66,68,78,120-123
+frontend/src/lib/i18n/en.ts
+  h_780173feefb83a 272-282
+frontend/src/lib/i18n/uz.ts
+  h_780173feefb83a 275-285
+frontend/src/pages/Gallery.tsx
+  h_780173feefb83a 10,92,131-132,134,153
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "2475c39fe6daffb6395e318f74f50409555a56a9",
+  "prompts": {},
+  "humans": {
+    "h_780173feefb83a": {
+      "author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}
