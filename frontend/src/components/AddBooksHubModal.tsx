@@ -238,7 +238,7 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm p-0 sm:p-4">
-      <div className="w-full max-w-2xl max-h-[92vh] flex flex-col rounded-t-3xl sm:rounded-2xl border border-line bg-surface p-5 sm:p-6 shadow-2xl transition">
+      <div className="w-full max-w-2xl h-[85vh] sm:h-[580px] flex flex-col rounded-t-3xl sm:rounded-2xl border border-line bg-surface p-5 sm:p-6 shadow-2xl transition">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-line pb-4 mb-4">
           <div className="flex items-center gap-2">
