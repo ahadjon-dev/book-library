@@ -272,4 +272,15 @@ export const uz: typeof en = {
     matchScore: "{score}% Moslik",
     startReading: "O'qishni boshlash",
   },
+  addHub: {
+    title: "Kutubxonaga kitob qo'shish",
+    tabShelf: "📸 Javon surati",
+    tabBarcode: "📷 Shtrix-kod / ISBN",
+    tabManual: "✍️ Qo'lda kiritish",
+    tabImport: "📥 CSV / Goodreads",
+    shelfDesc: "Javoningizni rasmga oling va AI yordamida bir vaqtda bir nechta kitobni qo'shing.",
+    barcodeDesc: "Kitob orqasidagi shtrix-kodni skanerlang yoki ISBN kiriting.",
+    manualDesc: "Kitob ma'lumotlarini qo'lda kiriting.",
+    importDesc: "CSV fayl yoki Goodreads eksportidan to'plamingizni import qiling.",
+  },
 };
