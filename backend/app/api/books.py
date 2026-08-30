@@ -136,17 +136,20 @@ def _apply_common_filters(
     if year_max is not None:
         query = query.filter(Book.publication_year <= year_max)
     if search:
-        like = f"%{search}%"
-        query = query.filter(
-            or_(
-                Book.title.ilike(like),
-                Book.subtitle.ilike(like),
-                Book.isbn.ilike(like),
-                Book.publisher.ilike(like),
-                Book.authors.any(Author.name.ilike(like)),
-                Book.tags.any(Tag.name.ilike(like)),
+        search_terms = [t.strip() for t in search.strip().split() if t.strip()]
+        for term in search_terms:
+            like = f"%{term}%"
+            query = query.filter(
+                or_(
+                    Book.title.ilike(like),
+                    Book.subtitle.ilike(like),
+                    Book.isbn.ilike(like),
+                    Book.publisher.ilike(like),
+                    Book.description.ilike(like),
+                    Book.authors.any(Author.name.ilike(like)),
+                    Book.tags.any(Tag.name.ilike(like)),
+                )
             )
-        )
     return query
 
 

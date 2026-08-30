@@ -28,15 +28,15 @@ class Book(Base):
     subtitle: Mapped[str | None] = mapped_column(String(500))
     isbn: Mapped[str | None] = mapped_column(String(20), index=True)
     publisher: Mapped[str | None] = mapped_column(String(255))
-    publication_year: Mapped[int | None]
+    publication_year: Mapped[int | None] = mapped_column(index=True)
     language: Mapped[str | None] = mapped_column(String(50))
-    page_count: Mapped[int | None]
+    page_count: Mapped[int | None] = mapped_column(index=True)
     cover_image_path: Mapped[str | None] = mapped_column(String(500))
     description: Mapped[str | None] = mapped_column(Text)
     genre: Mapped[str | None] = mapped_column(String(100), index=True)
     owned: Mapped[bool] = mapped_column(Boolean, server_default="true", index=True)
     shelf_id: Mapped[int | None] = mapped_column(ForeignKey("shelves.id", ondelete="SET NULL"))
-    purchase_date: Mapped[date | None] = mapped_column(Date)
+    purchase_date: Mapped[date | None] = mapped_column(Date, index=True)
     purchase_price: Mapped[float | None] = mapped_column(Numeric(10, 2))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(
