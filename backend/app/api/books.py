@@ -205,15 +205,15 @@ async def create_book(
 ) -> BookOut:
     book = Book(
         user_id=current_user.id,
-        title=payload.title,
-        subtitle=payload.subtitle,
-        isbn=payload.isbn,
-        publisher=payload.publisher,
+        title=payload.title.strip(),
+        subtitle=payload.subtitle.strip() if payload.subtitle else None,
+        isbn=payload.isbn.strip() if payload.isbn else None,
+        publisher=payload.publisher.strip() if payload.publisher else None,
         publication_year=payload.publication_year,
-        language=payload.language,
+        language=payload.language.strip() if payload.language else None,
         page_count=payload.page_count,
-        description=payload.description,
-        genre=payload.genre,
+        description=payload.description.strip() if payload.description else None,
+        genre=payload.genre.strip() if payload.genre else None,
         owned=payload.owned,
         purchase_date=payload.purchase_date,
         purchase_price=payload.purchase_price,
@@ -453,6 +453,8 @@ async def update_book(
 
     data = payload.model_dump(exclude_unset=True, exclude={"authors", "tags", "shelf", "cover_url"})
     for field, value in data.items():
+        if isinstance(value, str):
+            value = value.strip() or None
         setattr(book, field, value)
     _apply_relations(db, book, payload, current_user.id)
 
