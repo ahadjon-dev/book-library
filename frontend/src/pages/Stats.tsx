@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchStats } from "@/api/books";
 import { useTranslation } from "@/lib/LanguageContext";
 import type { ReadingAverages } from "@/types/stats";
+import { ReadingGoalCard } from "@/components/ReadingGoalCard";
 
 function StatTile({ label, value }: { label: string; value: string | number }) {
   return (
@@ -89,6 +90,9 @@ export function Stats() {
 
   return (
     <div className="max-w-4xl space-y-8 pb-8">
+      {/* Annual Reading Goal */}
+      <ReadingGoalCard />
+
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         <StatTile label={t("stats.booksOwned")} value={data.total_books} />
         <StatTile label={t("stats.unread")} value={sc.unread} />

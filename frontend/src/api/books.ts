@@ -81,3 +81,17 @@ export async function exportBooksExcel(filters: BookFilters): Promise<Blob> {
   const { data } = await api.get("/books/export", { params: filters, responseType: "blob" });
   return data;
 }
+
+export async function importBooksCsv(file: File): Promise<{
+  total_rows: number;
+  imported: number;
+  skipped: number;
+  errors: string[];
+}> {
+  const formData = new FormData();
+  formData.append("file", file);
+  const { data } = await api.post("/books/import", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return data;
+}

@@ -8,6 +8,7 @@ import { useTranslation } from "@/lib/LanguageContext";
 import { useStatusOptions } from "@/lib/statusLabels";
 import { useToast } from "@/lib/ToastContext";
 import type { ReadStatus, StatusUpdate } from "@/types/book";
+import { LendBookModal } from "@/components/LendBookModal";
 
 export function BookDetail() {
   const { id } = useParams();
@@ -18,6 +19,7 @@ export function BookDetail() {
   const { t } = useTranslation();
   const statusOptions = useStatusOptions();
   const [notesDraft, setNotesDraft] = useState<string | null>(null);
+  const [lendOpen, setLendOpen] = useState(false);
 
   const { data: book, isLoading } = useQuery({
     queryKey: ["book", bookId],
@@ -102,6 +104,12 @@ export function BookDetail() {
             {t("common.delete")}
           </button>
         </div>
+        <button
+          onClick={() => setLendOpen(true)}
+          className="mt-2 w-full rounded-md border border-line bg-surface px-3 py-2 text-center text-sm font-medium text-ink hover:bg-surface-hover transition"
+        >
+          🤝 {t("loans.lendBook")}
+        </button>
       </div>
 
       <div className="min-w-0 flex-1 space-y-6">
@@ -272,6 +280,13 @@ export function BookDetail() {
         </div>
         )}
       </div>
+
+      <LendBookModal
+        isOpen={lendOpen}
+        bookId={book.id}
+        bookTitle={book.title}
+        onClose={() => setLendOpen(false)}
+      />
     </div>
   );
 }
