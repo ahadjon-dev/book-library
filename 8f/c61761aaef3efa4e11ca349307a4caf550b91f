@@ -1,0 +1,36 @@
+backend/alembic/versions/0004_add_loans_and_goals.py
+  h_780173feefb83a 1-53
+backend/app/api/books.py
+  h_780173feefb83a 28-29,482-491
+backend/app/api/goals.py
+  h_780173feefb83a 1-111
+backend/app/api/loans.py
+  h_780173feefb83a 1-148
+backend/app/main.py
+  h_780173feefb83a 9,36-37
+backend/app/models/__init__.py
+  h_780173feefb83a 3-4,15-16
+backend/app/models/book_loan.py
+  h_780173feefb83a 1-24
+backend/app/models/reading_goal.py
+  h_780173feefb83a 1-22
+backend/app/schemas/goal.py
+  h_780173feefb83a 1-17
+backend/app/schemas/import_export.py
+  h_780173feefb83a 1-8
+backend/app/schemas/loan.py
+  h_780173feefb83a 1-37
+backend/app/services/csv_importer.py
+  h_780173feefb83a 1-227
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "8fc61761aaef3efa4e11ca349307a4caf550b91f",
+  "prompts": {},
+  "humans": {
+    "h_780173feefb83a": {
+      "author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}
