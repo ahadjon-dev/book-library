@@ -1,0 +1,48 @@
+frontend/src/App.tsx
+  h_780173feefb83a 11,60-69
+frontend/src/api/auth.ts
+  h_780173feefb83a 18-30
+frontend/src/api/books.ts
+  h_780173feefb83a 84-97
+frontend/src/api/goals.ts
+  h_780173feefb83a 1-12
+frontend/src/api/loans.ts
+  h_780173feefb83a 1-21
+frontend/src/components/CsvImportModal.tsx
+  h_780173feefb83a 1-153
+frontend/src/components/LendBookModal.tsx
+  h_780173feefb83a 1-139
+frontend/src/components/Navbar.tsx
+  h_780173feefb83a 1,7-8,21-23,30-114
+frontend/src/components/ProfileModal.tsx
+  h_780173feefb83a 1-155
+frontend/src/components/ReadingGoalCard.tsx
+  h_780173feefb83a 1-142
+frontend/src/lib/i18n/en.ts
+  h_780173feefb83a 186-237
+frontend/src/lib/i18n/uz.ts
+  h_780173feefb83a 189-240
+frontend/src/pages/BookDetail.tsx
+  h_780173feefb83a 11,22,107-112,283-289
+frontend/src/pages/Loans.tsx
+  h_780173feefb83a 1-202
+frontend/src/pages/Stats.tsx
+  h_780173feefb83a 6,93-95
+frontend/src/types/goal.ts
+  h_780173feefb83a 1-10
+frontend/src/types/import.ts
+  h_780173feefb83a 1-6
+frontend/src/types/loan.ts
+  h_780173feefb83a 1-24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "9c0ced57376e3bbebda5fb5bf6ad67287a3a0195",
+  "prompts": {},
+  "humans": {
+    "h_780173feefb83a": {
+      "author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}
