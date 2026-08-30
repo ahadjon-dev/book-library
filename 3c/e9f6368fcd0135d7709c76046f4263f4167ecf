@@ -1,0 +1,26 @@
+.github/workflows/backend-ci.yml
+  h_780173feefb83a 31,38
+README.md
+  h_780173feefb83a 1,3,5-30,36-38,40,44,47-61,63,65-67,70-74,77-79,81-82,84-87,89,91,93-94
+backend/pyproject.toml
+  h_780173feefb83a 25-28
+docker-compose.yml
+  h_780173feefb83a 5-7,13,21,23-24,29,32-37,43-45,47
+frontend/Dockerfile
+  h_780173feefb83a 1-2,5,7-9,11-16
+frontend/Dockerfile.dev
+  h_780173feefb83a 1-12
+frontend/nginx.conf
+  h_780173feefb83a 1-21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "3ce9f6368fcd0135d7709c76046f4263f4167ecf",
+  "prompts": {},
+  "humans": {
+    "h_780173feefb83a": {
+      "author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}
