@@ -1,0 +1,18 @@
+.github/workflows/backend-ci.yml
+  h_780173feefb83a 37
+backend/app/core/config.py
+  h_780173feefb83a 11
+docker-compose.yml
+  h_780173feefb83a 23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "7aebb2b442bfe817dfa63c0f5514cc2326eb1587",
+  "prompts": {},
+  "humans": {
+    "h_780173feefb83a": {
+      "author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}
