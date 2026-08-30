@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import { Library, Sparkles, Plus, BarChart3, Menu } from "lucide-react";
 import { useTranslation } from "@/lib/LanguageContext";
 
 interface Props {
@@ -22,8 +23,8 @@ export function BottomNav({ onOpenRecommend, onOpenAddHub, onOpenMore }: Props) 
           }`
         }
       >
-        <span className="text-xl">📚</span>
-        <span className="mt-0.5">{t("nav.library")}</span>
+        <Library className="h-5 w-5 mb-0.5" />
+        <span>{t("nav.library")}</span>
       </NavLink>
 
       {/* 2. AI Picks */}
@@ -31,8 +32,8 @@ export function BottomNav({ onOpenRecommend, onOpenAddHub, onOpenMore }: Props) 
         onClick={onOpenRecommend}
         className="flex flex-col items-center justify-center min-w-[56px] py-1 text-[10px] font-semibold text-ink-secondary hover:text-accent transition"
       >
-        <span className="text-xl">🎯</span>
-        <span className="mt-0.5">AI Picks</span>
+        <Sparkles className="h-5 w-5 mb-0.5" />
+        <span>AI Picks</span>
       </button>
 
       {/* 3. Center Add Button */}
@@ -41,7 +42,7 @@ export function BottomNav({ onOpenRecommend, onOpenAddHub, onOpenMore }: Props) 
         className="flex h-12 w-12 items-center justify-center rounded-full bg-accent text-on-accent shadow-lg shadow-accent/25 hover:scale-105 active:scale-95 transition -mt-5 border-4 border-surface"
         title={t("addHub.title")}
       >
-        <span className="text-2xl font-light">＋</span>
+        <Plus className="h-6 w-6" />
       </button>
 
       {/* 4. Stats */}
@@ -53,8 +54,8 @@ export function BottomNav({ onOpenRecommend, onOpenAddHub, onOpenMore }: Props) 
           }`
         }
       >
-        <span className="text-xl">📊</span>
-        <span className="mt-0.5">{t("nav.stats")}</span>
+        <BarChart3 className="h-5 w-5 mb-0.5" />
+        <span>{t("nav.stats")}</span>
       </NavLink>
 
       {/* 5. More */}
@@ -62,8 +63,8 @@ export function BottomNav({ onOpenRecommend, onOpenAddHub, onOpenMore }: Props) 
         onClick={onOpenMore}
         className="flex flex-col items-center justify-center min-w-[56px] py-1 text-[10px] font-semibold text-ink-secondary hover:text-ink transition"
       >
-        <span className="text-xl">👤</span>
-        <span className="mt-0.5">More</span>
+        <Menu className="h-5 w-5 mb-0.5" />
+        <span>More</span>
       </button>
     </nav>
   );

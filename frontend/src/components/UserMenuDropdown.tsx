@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { Share2, Settings, Palette, Languages, LogOut, ChevronDown } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
 import { THEMES, useTheme, type Theme } from "@/lib/ThemeContext";
 import { LANGUAGES, useTranslation, type Language } from "@/lib/LanguageContext";
@@ -50,7 +51,7 @@ export function UserMenuDropdown({ onOpenProfile, onOpenShare, onLogout }: Props
         <span className="hidden sm:inline text-xs font-semibold text-ink max-w-[100px] truncate">
           {user?.display_name}
         </span>
-        <span className="text-[10px] text-ink-muted hidden sm:inline">▾</span>
+        <ChevronDown className="h-3.5 w-3.5 text-ink-muted hidden sm:inline transition duration-200" />
       </button>
 
       {isOpen && (
@@ -70,7 +71,7 @@ export function UserMenuDropdown({ onOpenProfile, onOpenShare, onLogout }: Props
               }}
               className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-ink hover:bg-surface-hover transition text-left"
             >
-              <span>🔗</span>
+              <Share2 className="h-4 w-4 text-accent" />
               <span>{t("shareShelf.title")}</span>
             </button>
 
@@ -81,7 +82,7 @@ export function UserMenuDropdown({ onOpenProfile, onOpenShare, onLogout }: Props
               }}
               className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-ink hover:bg-surface-hover transition text-left"
             >
-              <span>⚙️</span>
+              <Settings className="h-4 w-4 text-ink-secondary" />
               <span>Profile & Password</span>
             </button>
           </div>
@@ -92,8 +93,9 @@ export function UserMenuDropdown({ onOpenProfile, onOpenShare, onLogout }: Props
           <div className="px-3 py-1.5 space-y-2.5">
             {/* Theme Selector */}
             <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-ink-muted mb-1">
-                {t("nav.theme")}
+              <label className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-ink-muted mb-1">
+                <Palette className="h-3 w-3" />
+                <span>{t("nav.theme")}</span>
               </label>
               <select
                 value={theme}
@@ -110,8 +112,9 @@ export function UserMenuDropdown({ onOpenProfile, onOpenShare, onLogout }: Props
 
             {/* Language Selector */}
             <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-ink-muted mb-1">
-                {t("nav.language")}
+              <label className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-ink-muted mb-1">
+                <Languages className="h-3 w-3" />
+                <span>{t("nav.language")}</span>
               </label>
               <select
                 value={language}
@@ -137,7 +140,7 @@ export function UserMenuDropdown({ onOpenProfile, onOpenShare, onLogout }: Props
             }}
             className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-red-400 hover:bg-red-500/10 transition text-left"
           >
-            <span>🚪</span>
+            <LogOut className="h-4 w-4 text-red-400" />
             <span>{t("nav.logout")}</span>
           </button>
         </div>

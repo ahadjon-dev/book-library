@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { BookOpen, Library, Handshake, BarChart3, Bookmark, Sparkles, Plus, Share2 } from "lucide-react";
 
 import { useTranslation } from "@/lib/LanguageContext";
 import { useAuth } from "@/lib/AuthContext";
@@ -10,7 +11,7 @@ import { ShareShelfModal } from "@/components/ShareShelfModal";
 import { UserMenuDropdown } from "@/components/UserMenuDropdown";
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
-  `shrink-0 whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium transition ${
+  `inline-flex items-center gap-1.5 shrink-0 whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium transition ${
     isActive ? "bg-surface-hover text-ink shadow-sm" : "text-ink-secondary hover:text-ink"
   }`;
 
@@ -34,8 +35,10 @@ export function Navbar() {
       <nav className="flex shrink-0 items-center justify-between border-b border-line bg-canvas px-3 py-2 text-ink sm:px-6 sm:py-3">
         {/* Left: Brand & Desktop Navigation */}
         <div className="flex items-center gap-1 sm:gap-2 min-w-0">
-          <NavLink to="/" className="mr-2 sm:mr-4 flex items-center gap-2 shrink-0">
-            <span className="text-xl">📚</span>
+          <NavLink to="/" className="mr-2 sm:mr-4 flex items-center gap-2 shrink-0 group">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent/10 border border-accent/20 text-accent group-hover:bg-accent/20 transition">
+              <BookOpen className="h-4 w-4" />
+            </span>
             <span className="text-base font-bold text-ink tracking-tight hidden sm:inline">
               {t("nav.myLibrary")}
             </span>
@@ -44,23 +47,28 @@ export function Navbar() {
           {/* Desktop Navigation Links */}
           <div className="hidden md:flex items-center gap-1">
             <NavLink to="/" end className={linkClass}>
-              {t("nav.library")}
+              <Library className="h-4 w-4" />
+              <span>{t("nav.library")}</span>
             </NavLink>
             <NavLink to="/loans" className={linkClass}>
-              {t("loans.title")}
+              <Handshake className="h-4 w-4" />
+              <span>{t("loans.title")}</span>
             </NavLink>
             <NavLink to="/stats" className={linkClass}>
-              {t("nav.stats")}
+              <BarChart3 className="h-4 w-4" />
+              <span>{t("nav.stats")}</span>
             </NavLink>
             <NavLink to="/wishlist" className={linkClass}>
-              {t("nav.wishlist")}
+              <Bookmark className="h-4 w-4" />
+              <span>{t("nav.wishlist")}</span>
             </NavLink>
 
             <button
               onClick={() => setRecommendOpen(true)}
-              className="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-semibold text-accent hover:bg-accent/10 transition"
+              className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-semibold text-accent hover:bg-accent/10 transition"
             >
-              🎯 <span>{t("recommend.title")}</span>
+              <Sparkles className="h-4 w-4" />
+              <span>{t("recommend.title")}</span>
             </button>
           </div>
         </div>
@@ -70,17 +78,19 @@ export function Navbar() {
           {/* Primary Add Books Button (Desktop) */}
           <button
             onClick={() => setAddHubOpen(true)}
-            className="hidden sm:inline-flex items-center gap-1.5 rounded-xl bg-accent px-4 py-1.5 text-xs sm:text-sm font-semibold text-on-accent hover:bg-accent-hover transition shadow-sm"
+            className="hidden sm:inline-flex items-center gap-1.5 rounded-xl bg-accent px-3.5 py-1.5 text-xs sm:text-sm font-semibold text-on-accent hover:bg-accent-hover transition shadow-sm"
           >
-            <span>➕</span> <span>{t("addHub.title")}</span>
+            <Plus className="h-4 w-4" />
+            <span>{t("addHub.title")}</span>
           </button>
 
           {/* Share Button */}
           <button
             onClick={() => setShareOpen(true)}
-            className="hidden sm:inline-flex items-center gap-1 rounded-xl border border-line bg-surface px-3 py-1.5 text-xs sm:text-sm font-medium text-ink hover:bg-surface-hover transition"
+            className="hidden sm:inline-flex items-center gap-1.5 rounded-xl border border-line bg-surface px-3 py-1.5 text-xs sm:text-sm font-medium text-ink hover:bg-surface-hover transition"
           >
-            <span>🔗</span> <span>{t("shareShelf.title")}</span>
+            <Share2 className="h-4 w-4" />
+            <span>{t("shareShelf.title")}</span>
           </button>
 
           {/* User & Settings Dropdown */}

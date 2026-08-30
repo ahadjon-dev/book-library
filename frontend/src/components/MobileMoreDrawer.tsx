@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import { Handshake, Bookmark, Share2, Settings, Palette, Languages, LogOut, X } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
 import { THEMES, useTheme, type Theme } from "@/lib/ThemeContext";
 import { LANGUAGES, useTranslation, type Language } from "@/lib/LanguageContext";
@@ -36,7 +37,7 @@ export function MobileMoreDrawer({ isOpen, onClose, onOpenProfile, onOpenShare, 
             onClick={onClose}
             className="rounded-full p-2 text-ink-secondary hover:text-ink hover:bg-surface-hover transition"
           >
-            ✕
+            <X className="h-5 w-5" />
           </button>
         </div>
 
@@ -51,7 +52,7 @@ export function MobileMoreDrawer({ isOpen, onClose, onOpenProfile, onOpenShare, 
               }`
             }
           >
-            <span className="text-lg">🤝</span>
+            <Handshake className="h-5 w-5 text-accent" />
             <span>{t("loans.title")}</span>
           </NavLink>
 
@@ -64,7 +65,7 @@ export function MobileMoreDrawer({ isOpen, onClose, onOpenProfile, onOpenShare, 
               }`
             }
           >
-            <span className="text-lg">⭐</span>
+            <Bookmark className="h-5 w-5 text-amber-400" />
             <span>{t("nav.wishlist")}</span>
           </NavLink>
 
@@ -75,7 +76,7 @@ export function MobileMoreDrawer({ isOpen, onClose, onOpenProfile, onOpenShare, 
             }}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-ink hover:bg-surface-hover transition text-left"
           >
-            <span className="text-lg">🔗</span>
+            <Share2 className="h-5 w-5 text-blue-400" />
             <span>{t("shareShelf.title")}</span>
           </button>
 
@@ -86,15 +87,16 @@ export function MobileMoreDrawer({ isOpen, onClose, onOpenProfile, onOpenShare, 
             }}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-ink hover:bg-surface-hover transition text-left"
           >
-            <span className="text-lg">⚙️</span>
+            <Settings className="h-5 w-5 text-ink-secondary" />
             <span>Profile & Password</span>
           </button>
         </div>
 
         <div className="border-t border-line pt-4 space-y-3 mb-4">
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-ink-muted mb-1.5">
-              {t("nav.theme")}
+            <label className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-ink-muted mb-1.5">
+              <Palette className="h-4 w-4" />
+              <span>{t("nav.theme")}</span>
             </label>
             <select
               value={theme}
@@ -110,8 +112,9 @@ export function MobileMoreDrawer({ isOpen, onClose, onOpenProfile, onOpenShare, 
           </div>
 
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-ink-muted mb-1.5">
-              {t("nav.language")}
+            <label className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-ink-muted mb-1.5">
+              <Languages className="h-4 w-4" />
+              <span>{t("nav.language")}</span>
             </label>
             <select
               value={language}
@@ -136,7 +139,7 @@ export function MobileMoreDrawer({ isOpen, onClose, onOpenProfile, onOpenShare, 
             }}
             className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold text-red-400 hover:bg-red-500/10 transition"
           >
-            <span>🚪</span>
+            <LogOut className="h-5 w-5" />
             <span>{t("nav.logout")}</span>
           </button>
         </div>
