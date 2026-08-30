@@ -1,0 +1,184 @@
+.env.example
+  h_780173feefb83a 1
+.gitignore
+  h_780173feefb83a 1-16
+README.md
+  h_780173feefb83a 1-59
+backend/.dockerignore
+  h_780173feefb83a 1-6
+backend/Dockerfile
+  h_780173feefb83a 1-12
+backend/alembic.ini
+  h_780173feefb83a 1-37
+backend/alembic/env.py
+  h_780173feefb83a 1-48
+backend/alembic/script.py.mako
+  h_780173feefb83a 1-23
+backend/alembic/versions/0001_initial.py
+  h_780173feefb83a 1-135
+backend/alembic/versions/0002_add_owned.py
+  h_780173feefb83a 1-27
+backend/app/api/auth.py
+  h_780173feefb83a 1-25
+backend/app/api/books.py
+  h_780173feefb83a 1-508
+backend/app/api/deps.py
+  h_780173feefb83a 1-27
+backend/app/api/lookups.py
+  h_780173feefb83a 1-39
+backend/app/api/stats.py
+  h_780173feefb83a 1-96
+backend/app/core/config.py
+  h_780173feefb83a 1-14
+backend/app/core/security.py
+  h_780173feefb83a 1-30
+backend/app/db/base.py
+  h_780173feefb83a 1-5
+backend/app/db/session.py
+  h_780173feefb83a 1-17
+backend/app/main.py
+  h_780173feefb83a 1-31
+backend/app/models/__init__.py
+  h_780173feefb83a 1-18
+backend/app/models/author.py
+  h_780173feefb83a 1-15
+backend/app/models/book.py
+  h_780173feefb83a 1-51
+backend/app/models/shelf.py
+  h_780173feefb83a 1-13
+backend/app/models/tag.py
+  h_780173feefb83a 1-15
+backend/app/models/user.py
+  h_780173feefb83a 1-16
+backend/app/models/user_book_status.py
+  h_780173feefb83a 1-39
+backend/app/schemas/auth.py
+  h_780173feefb83a 1-19
+backend/app/schemas/book.py
+  h_780173feefb83a 1-124
+backend/app/schemas/lookup.py
+  h_780173feefb83a 1-5
+backend/app/schemas/stats.py
+  h_780173feefb83a 1-45
+backend/app/services/image_storage.py
+  h_780173feefb83a 1-28
+backend/app/services/isbn_lookup.py
+  h_780173feefb83a 1-61
+backend/pyproject.toml
+  h_780173feefb83a 1-25
+backend/scripts/import_csv.py
+  h_780173feefb83a 1-129
+backend/scripts/populate_200_books.py
+  h_780173feefb83a 1-2005
+backend/scripts/sample_200_books.csv
+  h_780173feefb83a 1-289
+backend/scripts/sample_books.csv
+  h_780173feefb83a 1-4
+backend/scripts/seed_users.py
+  h_780173feefb83a 1-49
+docker-compose.yml
+  h_780173feefb83a 1-43
+docs/BACKEND.md
+  h_780173feefb83a 1-384
+docs/FRONTEND.md
+  h_780173feefb83a 1-417
+frontend/.dockerignore
+  h_780173feefb83a 1-3
+frontend/Dockerfile
+  h_780173feefb83a 1-12
+frontend/index.html
+  h_780173feefb83a 1-16
+frontend/package-lock.json
+  h_780173feefb83a 1-8530
+frontend/package.json
+  h_780173feefb83a 1-37
+frontend/postcss.config.js
+  h_780173feefb83a 1-6
+frontend/src/App.tsx
+  h_780173feefb83a 1-102
+frontend/src/api/auth.ts
+  h_780173feefb83a 1-17
+frontend/src/api/books.ts
+  h_780173feefb83a 1-83
+frontend/src/api/client.ts
+  h_780173feefb83a 1-45
+frontend/src/components/BarcodeScanner.tsx
+  h_780173feefb83a 1-70
+frontend/src/components/BookCard.tsx
+  h_780173feefb83a 1-50
+frontend/src/components/BookGrid.tsx
+  h_780173feefb83a 1-57
+frontend/src/components/Carousel.tsx
+  h_780173feefb83a 1-67
+frontend/src/components/FilterSidebar.tsx
+  h_780173feefb83a 1-226
+frontend/src/components/Navbar.tsx
+  h_780173feefb83a 1-80
+frontend/src/components/ProtectedRoute.tsx
+  h_780173feefb83a 1-20
+frontend/src/index.css
+  h_780173feefb83a 1-139
+frontend/src/lib/AuthContext.tsx
+  h_780173feefb83a 1-52
+frontend/src/lib/LanguageContext.tsx
+  h_780173feefb83a 1-84
+frontend/src/lib/ThemeContext.tsx
+  h_780173feefb83a 1-52
+frontend/src/lib/ToastContext.tsx
+  h_780173feefb83a 1-53
+frontend/src/lib/compressImage.ts
+  h_780173feefb83a 1-27
+frontend/src/lib/i18n/en.ts
+  h_780173feefb83a 1-186
+frontend/src/lib/i18n/uz.ts
+  h_780173feefb83a 1-189
+frontend/src/lib/statusLabels.ts
+  h_780173feefb83a 1-19
+frontend/src/lib/useDebouncedValue.ts
+  h_780173feefb83a 1-12
+frontend/src/main.tsx
+  h_780173feefb83a 1-33
+frontend/src/pages/BookDetail.tsx
+  h_780173feefb83a 1-277
+frontend/src/pages/BookForm.tsx
+  h_780173feefb83a 1-413
+frontend/src/pages/Gallery.tsx
+  h_780173feefb83a 1-121
+frontend/src/pages/Login.tsx
+  h_780173feefb83a 1-79
+frontend/src/pages/Stats.tsx
+  h_780173feefb83a 1-146
+frontend/src/pages/TableView.tsx
+  h_780173feefb83a 1-227
+frontend/src/pages/Wishlist.tsx
+  h_780173feefb83a 1-43
+frontend/src/types/book.ts
+  h_780173feefb83a 1-89
+frontend/src/types/lookup.ts
+  h_780173feefb83a 1-16
+frontend/src/types/stats.ts
+  h_780173feefb83a 1-43
+frontend/src/vite-env.d.ts
+  h_780173feefb83a 1-9
+frontend/tailwind.config.js
+  h_780173feefb83a 1-37
+frontend/tsconfig.app.json
+  h_780173feefb83a 1-24
+frontend/tsconfig.json
+  h_780173feefb83a 1-7
+frontend/tsconfig.node.json
+  h_780173feefb83a 1-13
+frontend/vite.config.ts
+  h_780173feefb83a 1-37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "a10fb88acc5c28854d3b84428a131fc45e7b06fd",
+  "prompts": {},
+  "humans": {
+    "h_780173feefb83a": {
+      "author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}
