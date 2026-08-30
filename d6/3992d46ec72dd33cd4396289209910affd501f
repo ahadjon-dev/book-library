@@ -1,0 +1,24 @@
+.env.example
+  h_780173feefb83a 1,3-17
+backend/app/api/books.py
+  h_780173feefb83a 4,11,362,364,374,376,422,427,429
+backend/app/core/config.py
+  h_780173feefb83a 1,14-24
+backend/app/db/session.py
+  h_780173feefb83a 8-13
+backend/app/main.py
+  h_780173feefb83a 23
+backend/app/services/shelf_scanner.py
+  h_780173feefb83a 11,143
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "d63992d46ec72dd33cd4396289209910affd501f",
+  "prompts": {},
+  "humans": {
+    "h_780173feefb83a": {
+      "author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}
