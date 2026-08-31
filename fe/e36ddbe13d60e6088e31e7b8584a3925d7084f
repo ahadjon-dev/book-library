@@ -1,0 +1,16 @@
+backend/app/core/config.py
+  h_780173feefb83a 16
+backend/app/services/vision.py
+  h_780173feefb83a 39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "fee36ddbe13d60e6088e31e7b8584a3925d7084f",
+  "prompts": {},
+  "humans": {
+    "h_780173feefb83a": {
+      "author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}
