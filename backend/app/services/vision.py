@@ -14,6 +14,7 @@ class DetectedSpine(BaseModel):
     confidence: float = Field(default=0.8, ge=0.0, le=1.0)
 
 
+# Production Vision OCR Engine powered by Google Gemini 3.6 Flash
 GEMINI_GENERATE_URL = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
 
 
