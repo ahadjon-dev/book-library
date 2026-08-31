@@ -1,9 +1,12 @@
 import { api } from "@/api/client";
+import type { LibraryBrief } from "@/types/library";
 
 export interface Me {
   id: number;
   email: string;
   display_name: string;
+  role: string;
+  library: LibraryBrief;
 }
 
 export async function login(email: string, password: string): Promise<string> {
@@ -11,11 +14,17 @@ export async function login(email: string, password: string): Promise<string> {
   return data.access_token;
 }
 
-export async function register(email: string, password: string, displayName: string): Promise<string> {
+export async function register(
+  email: string,
+  password: string,
+  displayName: string,
+  inviteCode?: string | null
+): Promise<string> {
   const { data } = await api.post<{ access_token: string }>("/auth/register", {
     email,
     password,
     display_name: displayName,
+    invite_code: inviteCode || null,
   });
   return data.access_token;
 }

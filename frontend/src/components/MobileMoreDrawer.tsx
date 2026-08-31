@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { Handshake, Bookmark, Share2, Settings, Palette, Languages, LogOut, X } from "lucide-react";
+import { Handshake, Bookmark, Share2, Settings, Palette, Languages, LogOut, X, Users } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
 import { THEMES, useTheme, type Theme } from "@/lib/ThemeContext";
 import { LANGUAGES, useTranslation, type Language } from "@/lib/LanguageContext";
@@ -9,10 +9,11 @@ interface Props {
   onClose: () => void;
   onOpenProfile: () => void;
   onOpenShare: () => void;
+  onOpenLibrary: () => void;
   onLogout: () => void;
 }
 
-export function MobileMoreDrawer({ isOpen, onClose, onOpenProfile, onOpenShare, onLogout }: Props) {
+export function MobileMoreDrawer({ isOpen, onClose, onOpenProfile, onOpenShare, onOpenLibrary, onLogout }: Props) {
   const { user } = useAuth();
   const { theme, setTheme } = useTheme();
   const { language, setLanguage, t } = useTranslation();
@@ -68,6 +69,17 @@ export function MobileMoreDrawer({ isOpen, onClose, onOpenProfile, onOpenShare, 
             <Bookmark className="h-5 w-5 text-amber-400" />
             <span>{t("nav.wishlist")}</span>
           </NavLink>
+
+          <button
+            onClick={() => {
+              onClose();
+              onOpenLibrary();
+            }}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-ink hover:bg-surface-hover transition text-left"
+          >
+            <Users className="h-5 w-5 text-accent" />
+            <span>{t("library.title")}</span>
+          </button>
 
           <button
             onClick={() => {

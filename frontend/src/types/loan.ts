@@ -1,6 +1,6 @@
 export interface BookLoan {
   id: number;
-  user_id: number;
+  created_by: string | null;
   book_id: number;
   book_title: string;
   borrower_name: string;

@@ -29,11 +29,11 @@ def recommend_next_books(
     current_user: User,
     req: RecommendNextRequest,
 ) -> RecommendNextResponse:
-    # 1. Query all unread books for user
+    # 1. Query all unread books in the library
     all_books = (
         db.query(Book)
         .options(selectinload(Book.authors), selectinload(Book.tags), selectinload(Book.shelf))
-        .filter(Book.owned.is_(True), Book.user_id == current_user.id)
+        .filter(Book.owned.is_(True), Book.library_id == current_user.library_id)
         .all()
     )
 

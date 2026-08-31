@@ -138,7 +138,7 @@ async def _match_single_book(
     )
 
 
-async def scan_shelf_image(image_bytes: bytes, db: Session, user_id: int | None = None) -> ShelfScanResult:
+async def scan_shelf_image(image_bytes: bytes, db: Session, library_id: int | None = None) -> ShelfScanResult:
     """Main pipeline for shelf scanning with concurrent Open Library auto-matching."""
     openai_key = settings.openai_api_key
 
@@ -152,10 +152,10 @@ async def scan_shelf_image(image_bytes: bytes, db: Session, user_id: int | None 
     if not raw_books:
         raw_books = _heuristic_spine_extraction(image_bytes)
 
-    # Build memory map of existing books for this user for fast duplicate checking
+    # Build memory map of the library's books for fast duplicate checking
     query = db.query(Book.id, Book.title)
-    if user_id is not None:
-        query = query.filter(Book.user_id == user_id)
+    if library_id is not None:
+        query = query.filter(Book.library_id == library_id)
     existing_books = query.all()
     db_books_map = {b.title.strip().lower(): b.id for b in existing_books}
 

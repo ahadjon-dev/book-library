@@ -83,6 +83,8 @@ export const uz: typeof en = {
     rating: "Baho",
     notes: "Izohlar",
     notesSaved: "Izohlar saqlandi",
+    addedBy: "Kim qo'shgan: ",
+    householdReading: "Oila a'zolari o'qishi",
     notesPlaceholder: "Muhim joylar, iqtiboslar, fikrlar…",
   },
   bookForm: {
@@ -139,6 +141,10 @@ export const uz: typeof en = {
     alreadyHaveAccount: "Hisobingiz bormi? Kirish",
     dontHaveAccount: "Hisobingiz yo'qmi? Ro'yxatdan o'tish",
     registrationSuccess: "Hisob muvaffaqiyatli yaratildi!",
+    inviteCode: "Taklif kodi (ixtiyoriy)",
+    invitePlaceholder: "Kod bilan oilaviy kutubxonaga qo'shiling",
+    joiningLibrary: "Siz \"{name}\" kutubxonasiga qo'shilasiz ({count} a'zo)",
+    invalidInvite: "Bu taklif kodi noto'g'ri yoki bekor qilingan.",
   },
   stats: {
     booksOwned: "Kitoblar soni",
@@ -167,6 +173,8 @@ export const uz: typeof en = {
     average: "O'rtacha",
     booksColumn: "Kitoblar",
     pagesColumn: "Sahifalar",
+    myReading: "Mening o'qishim",
+    ourLibrary: "Bizning kutubxona",
   },
   table: {
     title: "Sarlavha",
@@ -218,6 +226,7 @@ export const uz: typeof en = {
     loanCreated: "Kitob qarzga berildi",
     loanReturned: "Qaytarildi deb belgilandi",
     loanDeleted: "Qarz yozuvi o'chirildi",
+    lentBy: "Kim bergan:",
   },
   goals: {
     title: "Yillik o'qish maqsadi",
@@ -285,6 +294,21 @@ export const uz: typeof en = {
     noUnread: "Javoningizda o'qilmagan kitob qolmagan! Yangi kitoblar qo'shing.",
     matchScore: "{score}% Moslik",
     startReading: "O'qishni boshlash",
+  },
+  library: {
+    title: "Bizning Kutubxona",
+    nameLabel: "Kutubxona nomi",
+    renamed: "Kutubxona nomi o'zgartirildi",
+    membersTitle: "A'zolar",
+    roleOwner: "Egasi",
+    roleMember: "A'zo",
+    inviteTitle: "A'zo taklif qilish",
+    inviteSubtitle: "Bitta havolani ulashing. Turmush o'rtog'ingiz yoki oila a'zongiz ro'yxatdan o'tib, shu kutubxonaga qo'shiladi.",
+    generateInvite: "Taklif havolasini yaratish",
+    copyJoinLink: "Havolani nusxalash",
+    joinLinkCopied: "Havola nusxalandi!",
+    revokeInvite: "Bekor qilish",
+    inviteRevoked: "Taklif havolasi bekor qilindi",
   },
   addHub: {
     title: "Kutubxonaga kitob qo'shish",

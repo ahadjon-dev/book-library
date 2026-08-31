@@ -1,7 +1,9 @@
-import { useState, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
-import { BookOpen, LogIn, UserPlus } from "lucide-react";
+import { useEffect, useState, type FormEvent } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { BookOpen, LogIn, UserPlus, Users } from "lucide-react";
 
+import { fetchInvitePreview } from "@/api/library";
+import type { InvitePreview } from "@/types/library";
 import { useAuth } from "@/lib/AuthContext";
 import { LANGUAGES, useTranslation, type Language } from "@/lib/LanguageContext";
 import { useToast } from "@/lib/ToastContext";
@@ -13,8 +15,12 @@ export function Login() {
   const { language, setLanguage, t } = useTranslation();
   const { showToast } = useToast();
   const navigate = useNavigate();
+  const { inviteCode: inviteCodeParam } = useParams();
 
-  const [mode, setMode] = useState<Mode>("login");
+  const [mode, setMode] = useState<Mode>(inviteCodeParam ? "register" : "login");
+  const [inviteCode, setInviteCode] = useState(inviteCodeParam ?? "");
+  const [invitePreview, setInvitePreview] = useState<InvitePreview | null>(null);
+  const [inviteInvalid, setInviteInvalid] = useState(false);
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,6 +32,30 @@ export function Login() {
     setMode(newMode);
     setError(null);
   }
+
+  useEffect(() => {
+    const code = inviteCode.trim();
+    if (!code) {
+      setInvitePreview(null);
+      setInviteInvalid(false);
+      return;
+    }
+    let cancelled = false;
+    fetchInvitePreview(code)
+      .then((preview) => {
+        if (cancelled) return;
+        setInvitePreview(preview);
+        setInviteInvalid(false);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setInvitePreview(null);
+        setInviteInvalid(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [inviteCode]);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -47,7 +77,7 @@ export function Login() {
 
       setSubmitting(true);
       try {
-        await register(email.trim(), password, displayName.trim());
+        await register(email.trim(), password, displayName.trim(), inviteCode.trim() || null);
         showToast(t("login.registrationSuccess"));
         navigate("/");
       } catch (err: any) {
@@ -188,6 +218,35 @@ export function Login() {
                 placeholder="••••••••"
                 className="w-full rounded-xl border border-line bg-canvas px-3 py-2 text-sm text-ink placeholder:text-ink-muted focus:border-accent focus:outline-none transition"
               />
+            </div>
+          )}
+
+          {mode === "register" && (
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-ink-secondary uppercase tracking-wider">
+                {t("login.inviteCode")}
+              </label>
+              <input
+                type="text"
+                value={inviteCode}
+                onChange={(e) => setInviteCode(e.target.value)}
+                placeholder={t("login.invitePlaceholder")}
+                className="w-full rounded-xl border border-line bg-canvas px-3 py-2 text-sm text-ink placeholder:text-ink-muted focus:border-accent focus:outline-none transition"
+              />
+              {invitePreview && (
+                <div className="flex items-center gap-2 rounded-xl border border-accent/20 bg-accent/10 p-2.5 text-xs text-accent font-medium">
+                  <Users className="h-3.5 w-3.5 shrink-0" />
+                  <span>
+                    {t("login.joiningLibrary", {
+                      name: invitePreview.library_name,
+                      count: invitePreview.member_count,
+                    })}
+                  </span>
+                </div>
+              )}
+              {inviteInvalid && (
+                <p className="text-[11px] text-rose-400 font-medium">{t("login.invalidInvite")}</p>
+              )}
             </div>
           )}
 

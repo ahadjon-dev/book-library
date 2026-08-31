@@ -5,6 +5,7 @@ import { BookOpen, Library, Handshake, BarChart3, Bookmark, Sparkles, Plus, Shar
 import { useTranslation } from "@/lib/LanguageContext";
 import { useAuth } from "@/lib/AuthContext";
 import { AddBooksHubModal } from "@/components/AddBooksHubModal";
+import { LibraryModal } from "@/components/LibraryModal";
 import { ProfileModal } from "@/components/ProfileModal";
 import { WhatToReadModal } from "@/components/WhatToReadModal";
 import { ShareShelfModal } from "@/components/ShareShelfModal";
@@ -24,6 +25,7 @@ export function Navbar() {
   const [profileOpen, setProfileOpen] = useState(false);
   const [recommendOpen, setRecommendOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
+  const [libraryOpen, setLibraryOpen] = useState(false);
 
   function handleLogout() {
     logout();
@@ -97,6 +99,7 @@ export function Navbar() {
           <UserMenuDropdown
             onOpenProfile={() => setProfileOpen(true)}
             onOpenShare={() => setShareOpen(true)}
+            onOpenLibrary={() => setLibraryOpen(true)}
             onLogout={handleLogout}
           />
         </div>
@@ -109,6 +112,10 @@ export function Navbar() {
         onSuccess={() => window.location.reload()}
       />
 
+      <LibraryModal
+        isOpen={libraryOpen}
+        onClose={() => setLibraryOpen(false)}
+      />
       <ProfileModal
         isOpen={profileOpen}
         onClose={() => setProfileOpen(false)}

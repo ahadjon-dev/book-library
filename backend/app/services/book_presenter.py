@@ -37,6 +37,7 @@ def to_book_out(book: Book, status_by_book_id: dict[int, UserBookStatus]) -> Boo
         authors=[a.name for a in book.authors],
         tags=[t.name for t in book.tags],
         my_status=my_status,
+        added_by=book.added_by.display_name if book.added_by else None,
         created_at=book.created_at,
         updated_at=book.updated_at,
     )

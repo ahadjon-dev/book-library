@@ -8,7 +8,9 @@ from app.api.deps import get_current_user
 from app.core.limiter import limiter
 from app.core.security import create_access_token, hash_password, verify_password
 from app.db.session import get_db
-from app.models.user import User
+from app.models.library import Library
+from app.models.user import ROLE_MEMBER, ROLE_OWNER, User
+from app.schemas.library import InvitePreview
 from app.schemas.auth import (
     ChangePasswordRequest,
     LoginRequest,
@@ -35,20 +37,38 @@ def register(
             detail="A user with this email already exists",
         )
 
-    # Generate an initial share slug from display_name (e.g. ahadjon-dev)
-    base_slug = re.sub(r"[^a-zA-Z0-9-_]", "", payload.display_name.strip().lower())
-    slug = base_slug if base_slug else None
-    if slug:
-        slug_taken = db.query(User).filter(User.share_slug == slug).first()
-        if slug_taken:
-            slug = f"{slug}-{uuid.uuid4().hex[:4]}"
+    display_name = payload.display_name.strip()
+
+    if payload.invite_code:
+        library = (
+            db.query(Library).filter(Library.invite_code == payload.invite_code.strip()).first()
+        )
+        if library is None:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid or revoked invite code",
+            )
+        role = ROLE_MEMBER
+    else:
+        # Generate an initial share slug from display_name (e.g. ahadjon-dev)
+        base_slug = re.sub(r"[^a-zA-Z0-9-_]", "", display_name.lower())
+        slug = base_slug if base_slug else None
+        if slug:
+            slug_taken = db.query(Library).filter(Library.share_slug == slug).first()
+            if slug_taken:
+                slug = f"{slug}-{uuid.uuid4().hex[:4]}"
+
+        library = Library(name=display_name, share_slug=slug)
+        db.add(library)
+        db.flush()
+        role = ROLE_OWNER
 
     user = User(
         email=email,
         password_hash=hash_password(payload.password),
-        display_name=payload.display_name.strip(),
-        share_slug=slug,
-        is_public_shelf=True,
+        display_name=display_name,
+        library_id=library.id,
+        role=role,
     )
     db.add(user)
     db.commit()
@@ -56,6 +76,19 @@ def register(
 
     token = create_access_token(subject=user.email)
     return TokenResponse(access_token=token)
+
+
+@router.get("/invite/{code}", response_model=InvitePreview)
+@limiter.limit("20/minute")
+def preview_invite(request: Request, code: str, db: Session = Depends(get_db)) -> InvitePreview:
+    library = db.query(Library).filter(Library.invite_code == code.strip()).first()
+    if library is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Invalid or revoked invite code",
+        )
+    member_count = db.query(User).filter(User.library_id == library.id).count()
+    return InvitePreview(library_name=library.name, member_count=member_count)
 
 
 @router.post("/login", response_model=TokenResponse)

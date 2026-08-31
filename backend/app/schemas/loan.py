@@ -21,7 +21,7 @@ class LoanUpdate(BaseModel):
 
 class LoanOut(BaseModel):
     id: int
-    user_id: int
+    created_by: str | None
     book_id: int
     book_title: str
     borrower_name: str

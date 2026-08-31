@@ -6,7 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
-from app.api import auth, books, goals, loans, lookups, public, stats
+from app.api import auth, books, goals, library, loans, lookups, public, stats
 from app.core.config import settings
 from app.core.limiter import limiter
 
@@ -30,6 +30,7 @@ Path(settings.uploads_dir).mkdir(parents=True, exist_ok=True)
 app.mount("/uploads", StaticFiles(directory=settings.uploads_dir), name="uploads")
 
 app.include_router(auth.router)
+app.include_router(library.router)
 app.include_router(books.router)
 app.include_router(lookups.router)
 app.include_router(stats.router)

@@ -23,6 +23,7 @@ from app.schemas.book import (
     BookUpdate,
     IsbnLookupMatch,
     IsbnLookupResult,
+    MemberStatusOut,
     StatusCounts,
     StatusUpdate,
 )
@@ -45,13 +46,13 @@ _to_book_out = to_book_out
 _load_statuses = load_statuses
 
 
-def _apply_relations(db: Session, book: Book, payload: BookCreate | BookUpdate, user_id: int) -> None:
+def _apply_relations(db: Session, book: Book, payload: BookCreate | BookUpdate, library_id: int) -> None:
     if payload.authors is not None:
         book.authors = resolve_authors(db, payload.authors)
     if payload.tags is not None:
-        book.tags = resolve_tags(db, payload.tags, user_id)
+        book.tags = resolve_tags(db, payload.tags, library_id)
     if payload.shelf is not None:
-        book.shelf = get_or_create_shelf(db, payload.shelf, user_id) if payload.shelf.strip() else None
+        book.shelf = get_or_create_shelf(db, payload.shelf, library_id) if payload.shelf.strip() else None
 
 
 def _apply_common_filters(
@@ -155,7 +156,7 @@ def list_books(
     current_user: User = Depends(get_current_user),
 ) -> BookListOut:
     base_query = _apply_common_filters(
-        db.query(Book).filter(Book.user_id == current_user.id),
+        db.query(Book).filter(Book.library_id == current_user.library_id),
         genre=genre,
         shelf=shelf,
         author=author,
@@ -170,8 +171,13 @@ def list_books(
 
     query = (
         db.query(Book)
-        .options(selectinload(Book.authors), selectinload(Book.tags), selectinload(Book.shelf))
-        .filter(Book.user_id == current_user.id)
+        .options(
+            selectinload(Book.authors),
+            selectinload(Book.tags),
+            selectinload(Book.shelf),
+            selectinload(Book.added_by),
+        )
+        .filter(Book.library_id == current_user.library_id)
     )
     query = _apply_common_filters(
         query,
@@ -205,7 +211,8 @@ async def create_book(
     current_user: User = Depends(get_current_user),
 ) -> BookOut:
     book = Book(
-        user_id=current_user.id,
+        library_id=current_user.library_id,
+        added_by_user_id=current_user.id,
         title=payload.title.strip(),
         subtitle=payload.subtitle.strip() if payload.subtitle else None,
         isbn=payload.isbn.strip() if payload.isbn else None,
@@ -220,7 +227,7 @@ async def create_book(
         purchase_price=payload.purchase_price,
     )
     db.add(book)
-    _apply_relations(db, book, payload, current_user.id)
+    _apply_relations(db, book, payload, current_user.library_id)
 
     if payload.cover_url:
         image_bytes = await download_cover_bytes(payload.cover_url)
@@ -242,7 +249,7 @@ async def lookup_isbn(
 
     existing = (
         db.query(Book)
-        .filter(Book.isbn == clean_isbn, Book.user_id == current_user.id)
+        .filter(Book.isbn == clean_isbn, Book.library_id == current_user.library_id)
         .first()
     )
     already_in_library = IsbnLookupMatch(id=existing.id, owned=existing.owned) if existing else None
@@ -256,7 +263,7 @@ async def lookup_isbn(
     if already_in_library is None and parsed["title"]:
         title_match = (
             db.query(Book)
-            .filter(func.lower(Book.title) == parsed["title"].strip().lower(), Book.user_id == current_user.id)
+            .filter(func.lower(Book.title) == parsed["title"].strip().lower(), Book.library_id == current_user.library_id)
             .first()
         )
         if title_match and (
@@ -291,8 +298,13 @@ def export_books(
 ) -> Response:
     query = (
         db.query(Book)
-        .options(selectinload(Book.authors), selectinload(Book.tags), selectinload(Book.shelf))
-        .filter(Book.user_id == current_user.id)
+        .options(
+            selectinload(Book.authors),
+            selectinload(Book.tags),
+            selectinload(Book.shelf),
+            selectinload(Book.added_by),
+        )
+        .filter(Book.library_id == current_user.library_id)
     )
     query = _apply_common_filters(
         query,
@@ -379,7 +391,7 @@ async def scan_shelf(
     current_user: User = Depends(get_current_user),
 ) -> ShelfScanResult:
     image_bytes = await file.read()
-    return await scan_shelf_image(image_bytes, db, current_user.id)
+    return await scan_shelf_image(image_bytes, db, current_user.library_id)
 
 
 @router.post("/bulk-add", response_model=BulkAddResponse)
@@ -391,7 +403,8 @@ async def bulk_add_books(
     added_books: list[Book] = []
     for item in payload.books:
         book = Book(
-            user_id=current_user.id,
+            library_id=current_user.library_id,
+            added_by_user_id=current_user.id,
             title=item.title,
             subtitle=item.subtitle,
             isbn=item.isbn,
@@ -406,7 +419,7 @@ async def bulk_add_books(
             purchase_price=item.purchase_price,
         )
         db.add(book)
-        _apply_relations(db, book, item, current_user.id)
+        _apply_relations(db, book, item, current_user.library_id)
         if item.cover_url:
             img = await download_cover_bytes(item.cover_url)
             if img:
@@ -440,11 +453,35 @@ def get_book(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> BookOut:
-    book = db.query(Book).filter(Book.id == book_id, Book.user_id == current_user.id).first()
+    book = db.query(Book).filter(Book.id == book_id, Book.library_id == current_user.library_id).first()
     if book is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found")
     status_by_book_id = _load_statuses(db, current_user.id, [book.id])
-    return _to_book_out(book, status_by_book_id)
+    out = _to_book_out(book, status_by_book_id)
+    out.member_statuses = _member_statuses(db, current_user.library_id, book.id)
+    return out
+
+
+def _member_statuses(db: Session, library_id: int, book_id: int) -> list[MemberStatusOut]:
+    rows = (
+        db.query(User, UserBookStatus)
+        .outerjoin(
+            UserBookStatus,
+            (UserBookStatus.user_id == User.id) & (UserBookStatus.book_id == book_id),
+        )
+        .filter(User.library_id == library_id)
+        .order_by(User.id)
+        .all()
+    )
+    return [
+        MemberStatusOut(
+            user_id=user.id,
+            display_name=user.display_name,
+            status=user_status.status if user_status else ReadStatus.unread,
+            rating=user_status.rating if user_status else None,
+        )
+        for user, user_status in rows
+    ]
 
 
 @router.patch("/{book_id}", response_model=BookOut)
@@ -454,7 +491,7 @@ async def update_book(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> BookOut:
-    book = db.query(Book).filter(Book.id == book_id, Book.user_id == current_user.id).first()
+    book = db.query(Book).filter(Book.id == book_id, Book.library_id == current_user.library_id).first()
     if book is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found")
 
@@ -463,7 +500,7 @@ async def update_book(
         if isinstance(value, str):
             value = value.strip() or None
         setattr(book, field, value)
-    _apply_relations(db, book, payload, current_user.id)
+    _apply_relations(db, book, payload, current_user.library_id)
 
     if payload.cover_url:
         image_bytes = await download_cover_bytes(payload.cover_url)
@@ -482,7 +519,7 @@ def delete_book(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> None:
-    book = db.query(Book).filter(Book.id == book_id, Book.user_id == current_user.id).first()
+    book = db.query(Book).filter(Book.id == book_id, Book.library_id == current_user.library_id).first()
     if book is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found")
     db.delete(book)
@@ -496,7 +533,7 @@ async def upload_cover(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> BookOut:
-    book = db.query(Book).filter(Book.id == book_id, Book.user_id == current_user.id).first()
+    book = db.query(Book).filter(Book.id == book_id, Book.library_id == current_user.library_id).first()
     if book is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found")
 
@@ -523,7 +560,7 @@ def update_my_status(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> BookOut:
-    book = db.query(Book).filter(Book.id == book_id, Book.user_id == current_user.id).first()
+    book = db.query(Book).filter(Book.id == book_id, Book.library_id == current_user.library_id).first()
     if book is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found")
 

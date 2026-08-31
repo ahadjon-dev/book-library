@@ -8,6 +8,13 @@ export interface MyStatus {
   finished_at: string | null;
 }
 
+export interface MemberStatus {
+  user_id: number;
+  display_name: string;
+  status: ReadStatus;
+  rating: number | null;
+}
+
 export interface Book {
   id: number;
   title: string;
@@ -27,6 +34,8 @@ export interface Book {
   authors: string[];
   tags: string[];
   my_status: MyStatus | null;
+  added_by: string | null;
+  member_statuses: MemberStatus[] | null;
   created_at: string;
   updated_at: string;
 }

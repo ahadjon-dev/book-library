@@ -1,9 +1,12 @@
 from datetime import datetime
 
-from sqlalchemy import Boolean, DateTime, String, func
+from sqlalchemy import DateTime, ForeignKey, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
+
+ROLE_OWNER = "owner"
+ROLE_MEMBER = "member"
 
 
 class User(Base):
@@ -13,10 +16,8 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
     password_hash: Mapped[str] = mapped_column(String(255))
     display_name: Mapped[str] = mapped_column(String(100))
-    share_slug: Mapped[str | None] = mapped_column(String(100), unique=True, index=True)
-    is_public_shelf: Mapped[bool] = mapped_column(Boolean, server_default="true", default=True)
+    library_id: Mapped[int] = mapped_column(ForeignKey("libraries.id"), index=True)
+    role: Mapped[str] = mapped_column(String(20), server_default=ROLE_OWNER, default=ROLE_OWNER)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
-    books: Mapped[list["Book"]] = relationship(  # noqa: F821
-        back_populates="user", cascade="all, delete-orphan"
-    )
+    library: Mapped["Library"] = relationship(back_populates="members")  # noqa: F821

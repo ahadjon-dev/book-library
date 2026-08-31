@@ -82,6 +82,8 @@ export const en = {
     notes: "Notes",
     notesSaved: "Notes saved",
     notesPlaceholder: "Highlights, quotes, thoughts…",
+    addedBy: "Added by: ",
+    householdReading: "Household reading",
   },
   bookForm: {
     noIsbnMatch: "No match found for that ISBN — enter the details manually.",
@@ -137,6 +139,10 @@ export const en = {
     alreadyHaveAccount: "Already have an account? Sign in",
     dontHaveAccount: "Don't have an account? Create one",
     registrationSuccess: "Account created successfully!",
+    inviteCode: "Invite code (optional)",
+    invitePlaceholder: "Join a family library with a code",
+    joiningLibrary: "You will join \"{name}\" ({count} member(s))",
+    invalidInvite: "This invite code is invalid or revoked.",
   },
   stats: {
     booksOwned: "Books owned",
@@ -164,6 +170,8 @@ export const en = {
     average: "Average",
     booksColumn: "Books",
     pagesColumn: "Pages",
+    myReading: "My reading",
+    ourLibrary: "Our library",
   },
   table: {
     title: "Title",
@@ -215,6 +223,7 @@ export const en = {
     loanCreated: "Book loan recorded",
     loanReturned: "Marked as returned",
     loanDeleted: "Loan record deleted",
+    lentBy: "Lent by:",
   },
   goals: {
     title: "Annual Reading Goal",
@@ -282,6 +291,21 @@ export const en = {
     noUnread: "You have no unread books on your shelf! Add some books or mark one as unread.",
     matchScore: "{score}% Match",
     startReading: "Start Reading",
+  },
+  library: {
+    title: "Our Library",
+    nameLabel: "Library name",
+    renamed: "Library renamed",
+    membersTitle: "Members",
+    roleOwner: "Owner",
+    roleMember: "Member",
+    inviteTitle: "Invite a member",
+    inviteSubtitle: "Share one link. Your partner or family member signs up and lands in this library.",
+    generateInvite: "Create invite link",
+    copyJoinLink: "Copy join link",
+    joinLinkCopied: "Join link copied to clipboard!",
+    revokeInvite: "Revoke",
+    inviteRevoked: "Invite link revoked",
   },
   addHub: {
     title: "Add Books to Library",

@@ -90,19 +90,18 @@ export function Stats() {
 
   return (
     <div className="max-w-4xl space-y-8 pb-8">
-      {/* Annual Reading Goal */}
-      <ReadingGoalCard />
+      <section className="space-y-4">
+        <h2 className="text-lg font-semibold">{t("stats.myReading")}</h2>
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <StatTile label={t("stats.booksOwned")} value={data.total_books} />
-        <StatTile label={t("stats.unread")} value={sc.unread} />
-        <StatTile label={t("stats.reading")} value={sc.reading} />
-        <StatTile label={t("stats.finished")} value={sc.finished} />
-        <StatTile label={t("stats.totalPages")} value={data.total_pages.toLocaleString()} />
-        <StatTile label={t("stats.avgPublicationYear")} value={data.avg_publication_year ?? dash} />
-        <StatTile label={t("stats.mostCommonAuthor")} value={data.most_common_author ?? dash} />
-        <StatTile label={t("stats.mostCommonGenre")} value={data.most_common_genre ?? dash} />
-      </div>
+        {/* Annual Reading Goal */}
+        <ReadingGoalCard />
+
+        <div className="grid grid-cols-3 gap-4">
+          <StatTile label={t("stats.unread")} value={sc.unread} />
+          <StatTile label={t("stats.reading")} value={sc.reading} />
+          <StatTile label={t("stats.finished")} value={sc.finished} />
+        </div>
+      </section>
 
       <section className="space-y-4">
         <h2 className="text-lg font-semibold">{t("stats.readingPace")}</h2>
@@ -130,6 +129,17 @@ export function Stats() {
         ) : (
           <p className="text-sm text-ink-muted">{t("stats.pacePrompt")}</p>
         )}
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="text-lg font-semibold">{t("stats.ourLibrary")}</h2>
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <StatTile label={t("stats.booksOwned")} value={data.total_books} />
+          <StatTile label={t("stats.totalPages")} value={data.total_pages.toLocaleString()} />
+          <StatTile label={t("stats.avgPublicationYear")} value={data.avg_publication_year ?? dash} />
+          <StatTile label={t("stats.mostCommonAuthor")} value={data.most_common_author ?? dash} />
+          <StatTile label={t("stats.mostCommonGenre")} value={data.most_common_genre ?? dash} />
+        </div>
       </section>
 
       {data.genre_counts.length > 0 && (
