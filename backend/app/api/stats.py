@@ -40,7 +40,7 @@ def get_stats(db: Session = Depends(get_db), current_user: User = Depends(get_cu
             func.coalesce(func.sum(Book.page_count), 0).label("total_pages"),
             func.avg(Book.publication_year).label("avg_year"),
         )
-        .filter(Book.user_id == current_user.id)
+        .filter(Book.library_id == current_user.library_id)
         .first()
     )
 
@@ -72,7 +72,7 @@ def get_stats(db: Session = Depends(get_db), current_user: User = Depends(get_cu
     # 3. Genre breakdown (direct SQL GROUP BY)
     genre_rows = (
         db.query(Book.genre, func.count(Book.id))
-        .filter(Book.genre.is_not(None), Book.user_id == current_user.id)
+        .filter(Book.genre.is_not(None), Book.library_id == current_user.library_id)
         .group_by(Book.genre)
         .order_by(func.count(Book.id).desc())
         .all()
@@ -85,7 +85,7 @@ def get_stats(db: Session = Depends(get_db), current_user: User = Depends(get_cu
         db.query(Author.name, func.count(book_authors.c.book_id))
         .join(book_authors, book_authors.c.author_id == Author.id)
         .join(Book, Book.id == book_authors.c.book_id)
-        .filter(Book.user_id == current_user.id)
+        .filter(Book.library_id == current_user.library_id)
         .group_by(Author.name)
         .order_by(func.count(book_authors.c.book_id).desc())
         .first()
@@ -96,7 +96,7 @@ def get_stats(db: Session = Depends(get_db), current_user: User = Depends(get_cu
     decade_expr = (func.floor(Book.publication_year / 10.0) * 10).cast(sa.Integer)
     decade_rows = (
         db.query(decade_expr, func.count(Book.id))
-        .filter(Book.publication_year.is_not(None), Book.user_id == current_user.id)
+        .filter(Book.publication_year.is_not(None), Book.library_id == current_user.library_id)
         .group_by(decade_expr)
         .order_by(decade_expr)
         .all()
@@ -109,7 +109,7 @@ def get_stats(db: Session = Depends(get_db), current_user: User = Depends(get_cu
         .join(Book, Book.id == UserBookStatus.book_id)
         .filter(
             UserBookStatus.user_id == current_user.id,
-            Book.user_id == current_user.id,
+            Book.library_id == current_user.library_id,
             UserBookStatus.status == ReadStatus.finished,
         )
         .all()

@@ -24,7 +24,7 @@ def _to_loan_out(loan: BookLoan) -> LoanOut:
     )
     return LoanOut(
         id=loan.id,
-        user_id=loan.user_id,
+        created_by=loan.created_by.display_name if loan.created_by else None,
         book_id=loan.book_id,
         book_title=loan.book.title if loan.book else "Unknown Book",
         borrower_name=loan.borrower_name,
@@ -47,8 +47,8 @@ def list_loans(
 ) -> list[LoanOut]:
     query = (
         db.query(BookLoan)
-        .options(selectinload(BookLoan.book))
-        .filter(BookLoan.user_id == current_user.id)
+        .options(selectinload(BookLoan.book), selectinload(BookLoan.created_by))
+        .filter(BookLoan.library_id == current_user.library_id)
     )
 
     if status_filter == "active":
@@ -66,12 +66,13 @@ def create_loan(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> LoanOut:
-    book = db.query(Book).filter(Book.id == payload.book_id, Book.user_id == current_user.id).first()
+    book = db.query(Book).filter(Book.id == payload.book_id, Book.library_id == current_user.library_id).first()
     if book is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found")
 
     loan = BookLoan(
-        user_id=current_user.id,
+        library_id=current_user.library_id,
+        created_by_user_id=current_user.id,
         book_id=payload.book_id,
         borrower_name=payload.borrower_name.strip(),
         borrower_contact=payload.borrower_contact.strip() if payload.borrower_contact else None,
@@ -93,8 +94,8 @@ def return_loan(
 ) -> LoanOut:
     loan = (
         db.query(BookLoan)
-        .options(selectinload(BookLoan.book))
-        .filter(BookLoan.id == loan_id, BookLoan.user_id == current_user.id)
+        .options(selectinload(BookLoan.book), selectinload(BookLoan.created_by))
+        .filter(BookLoan.id == loan_id, BookLoan.library_id == current_user.library_id)
         .first()
     )
     if loan is None:
@@ -115,8 +116,8 @@ def update_loan(
 ) -> LoanOut:
     loan = (
         db.query(BookLoan)
-        .options(selectinload(BookLoan.book))
-        .filter(BookLoan.id == loan_id, BookLoan.user_id == current_user.id)
+        .options(selectinload(BookLoan.book), selectinload(BookLoan.created_by))
+        .filter(BookLoan.id == loan_id, BookLoan.library_id == current_user.library_id)
         .first()
     )
     if loan is None:
@@ -138,7 +139,7 @@ def delete_loan(
 ) -> None:
     loan = (
         db.query(BookLoan)
-        .filter(BookLoan.id == loan_id, BookLoan.user_id == current_user.id)
+        .filter(BookLoan.id == loan_id, BookLoan.library_id == current_user.library_id)
         .first()
     )
     if loan is None:

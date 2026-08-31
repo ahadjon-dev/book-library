@@ -194,8 +194,8 @@ async def _match_single_spine(
     )
 
 
-async def scan_shelf_image(image_bytes: bytes, db: Session, user_id: int | None = None) -> ShelfScanResult:
-    """Main pipeline: Gemini Vision OCR -> Multi-source Metadata Enrichment -> User Duplicate Check."""
+async def scan_shelf_image(image_bytes: bytes, db: Session, library_id: int | None = None) -> ShelfScanResult:
+    """Main pipeline: Gemini Vision OCR -> Multi-source Metadata Enrichment -> Library Duplicate Check."""
     try:
         detected_spines = await extract_spines(image_bytes)
     except ValueError as e:
@@ -212,10 +212,10 @@ async def scan_shelf_image(image_bytes: bytes, db: Session, user_id: int | None 
     if not detected_spines:
         return ShelfScanResult(detected_count=0, matched_count=0, items=[])
 
-    # Load existing books for current user
+    # Load the library's existing books for duplicate checking
     query = db.query(Book.id, Book.title, Book.isbn)
-    if user_id is not None:
-        query = query.filter(Book.user_id == user_id)
+    if library_id is not None:
+        query = query.filter(Book.library_id == library_id)
     db_books = query.all()
 
     # Match all detected spines concurrently

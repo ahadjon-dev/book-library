@@ -1,5 +1,7 @@
 from pydantic import BaseModel, EmailStr, Field
 
+from app.schemas.library import LibraryBrief
+
 
 class LoginRequest(BaseModel):
     email: EmailStr
@@ -10,6 +12,8 @@ class RegisterRequest(BaseModel):
     email: EmailStr
     password: str = Field(..., min_length=8, max_length=72)
     display_name: str = Field(..., min_length=1, max_length=100)
+    # Joins an existing household library instead of creating a new one
+    invite_code: str | None = Field(default=None, max_length=32)
 
 
 class TokenResponse(BaseModel):
@@ -21,6 +25,8 @@ class MeResponse(BaseModel):
     id: int
     email: str
     display_name: str
+    role: str
+    library: LibraryBrief
 
     model_config = {"from_attributes": True}
 

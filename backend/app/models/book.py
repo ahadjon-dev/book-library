@@ -23,12 +23,13 @@ book_tags = Table(
 class Book(Base):
     __tablename__ = "books"
     __table_args__ = (
-        Index("ix_books_user_genre", "user_id", "genre"),
-        Index("ix_books_user_isbn", "user_id", "isbn"),
+        Index("ix_books_library_genre", "library_id", "genre"),
+        Index("ix_books_library_isbn", "library_id", "isbn"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    library_id: Mapped[int] = mapped_column(ForeignKey("libraries.id", ondelete="CASCADE"), index=True)
+    added_by_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     title: Mapped[str] = mapped_column(String(500), index=True)
     subtitle: Mapped[str | None] = mapped_column(String(500))
     isbn: Mapped[str | None] = mapped_column(String(20), index=True)
@@ -48,7 +49,8 @@ class Book(Base):
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
 
-    user: Mapped["User"] = relationship(back_populates="books")  # noqa: F821
+    library: Mapped["Library"] = relationship(back_populates="books")  # noqa: F821
+    added_by: Mapped["User | None"] = relationship()  # noqa: F821
     authors: Mapped[list["Author"]] = relationship(secondary=book_authors, back_populates="books")  # noqa: F821
     tags: Mapped[list["Tag"]] = relationship(secondary=book_tags, back_populates="books")  # noqa: F821
     shelf: Mapped["Shelf | None"] = relationship(back_populates="books")  # noqa: F821

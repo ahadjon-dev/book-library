@@ -152,6 +152,11 @@ export function Loans() {
                       <span className="text-ink-muted">Contact:</span> {loan.borrower_contact}
                     </p>
                   )}
+                  {loan.created_by && (
+                    <p>
+                      <span className="text-ink-muted">{t("loans.lentBy")}</span> {loan.created_by}
+                    </p>
+                  )}
                   <p>
                     <span className="text-ink-muted">{t("loans.loanDate")}:</span> {loan.loan_date}
                   </p>

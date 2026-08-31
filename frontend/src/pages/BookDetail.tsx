@@ -31,6 +31,7 @@ export function BookDetail() {
     mutationFn: (update: StatusUpdate) => updateMyStatus(bookId, update),
     onSuccess: (updated) => {
       queryClient.setQueryData(["book", bookId], updated);
+      queryClient.invalidateQueries({ queryKey: ["book", bookId] });
       queryClient.invalidateQueries({ queryKey: ["books"] });
     },
   });
@@ -178,6 +179,12 @@ export function BookDetail() {
               <dd className="inline text-ink-secondary">{book.isbn}</dd>
             </div>
           )}
+          {book.added_by && (
+            <div>
+              <dt className="inline text-ink-muted">{t("bookDetail.addedBy")}</dt>
+              <dd className="inline text-ink-secondary">{book.added_by}</dd>
+            </div>
+          )}
           {book.purchase_date && (
             <div>
               <dt className="inline text-ink-muted">{t("bookDetail.purchased")}</dt>
@@ -280,6 +287,36 @@ export function BookDetail() {
             />
           </div>
         </div>
+        )}
+
+        {book.member_statuses && book.member_statuses.length > 1 && (
+          <div className="space-y-3 rounded-lg border border-line bg-surface p-4">
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-ink-muted">
+              {t("bookDetail.householdReading")}
+            </h2>
+            <div className="space-y-2">
+              {book.member_statuses.map((m) => (
+                <div key={m.user_id} className="flex items-center justify-between gap-3 text-sm">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent text-[11px] font-bold text-on-accent">
+                      {m.display_name[0]?.toUpperCase()}
+                    </span>
+                    <span className="truncate text-ink">{m.display_name}</span>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-2">
+                    {m.rating != null && (
+                      <span className="rounded bg-amber-400/10 px-1.5 py-0.5 text-xs font-semibold text-amber-400">
+                        ★ {m.rating}
+                      </span>
+                    )}
+                    <span className="rounded-full bg-surface-hover px-2.5 py-0.5 text-xs text-ink-secondary">
+                      {t(`status.${m.status}`)}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         )}
       </div>
 

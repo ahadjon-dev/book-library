@@ -155,17 +155,18 @@ def import_books_from_csv(file_content: bytes, db: Session, user: User) -> Impor
         purchase_price = _parse_float(row.get("Purchase Price") or row.get("purchase_price"))
         notes = (row.get("Notes") or row.get("My Review") or row.get("notes") or "").strip() or None
 
-        # Check existing book by ISBN or exact Title for THIS user
+        # Check existing book by ISBN or exact Title in this library
         existing_book = None
         if isbn:
-            existing_book = db.query(Book).filter(Book.isbn == isbn, Book.user_id == user.id).first()
+            existing_book = db.query(Book).filter(Book.isbn == isbn, Book.library_id == user.library_id).first()
         if existing_book is None:
-            existing_book = db.query(Book).filter(Book.title.ilike(title), Book.user_id == user.id).first()
+            existing_book = db.query(Book).filter(Book.title.ilike(title), Book.library_id == user.library_id).first()
 
         try:
             if existing_book is None:
                 book = Book(
-                    user_id=user.id,
+                    library_id=user.library_id,
+                    added_by_user_id=user.id,
                     title=title,
                     subtitle=subtitle,
                     isbn=isbn,
@@ -179,11 +180,11 @@ def import_books_from_csv(file_content: bytes, db: Session, user: User) -> Impor
                     purchase_price=purchase_price,
                 )
                 if shelf_name:
-                    book.shelf = get_or_create_shelf(db, shelf_name, user.id)
+                    book.shelf = get_or_create_shelf(db, shelf_name, user.library_id)
                 if author_names:
                     book.authors = resolve_authors(db, author_names)
                 if tag_names:
-                    book.tags = resolve_tags(db, tag_names, user.id)
+                    book.tags = resolve_tags(db, tag_names, user.library_id)
                 db.add(book)
                 db.flush()
             else:

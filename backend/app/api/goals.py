@@ -15,7 +15,7 @@ from app.schemas.goal import GoalCreateOrUpdate, GoalOut
 router = APIRouter(prefix="/goals", tags=["goals"])
 
 
-def _calculate_goal_progress(goal: ReadingGoal, db: Session, user_id: int) -> GoalOut:
+def _calculate_goal_progress(goal: ReadingGoal, db: Session, user: User) -> GoalOut:
     target_year = goal.year
     today = date.today()
 
@@ -24,8 +24,8 @@ def _calculate_goal_progress(goal: ReadingGoal, db: Session, user_id: int) -> Go
         db.query(UserBookStatus.id, Book.page_count)
         .join(Book, Book.id == UserBookStatus.book_id)
         .filter(
-            UserBookStatus.user_id == user_id,
-            Book.user_id == user_id,
+            UserBookStatus.user_id == user.id,
+            Book.library_id == user.library_id,
             UserBookStatus.status == ReadStatus.finished,
             extract("year", UserBookStatus.finished_at) == target_year,
         )
@@ -83,7 +83,7 @@ def get_reading_goal(
         # Default goal if not explicitly set yet
         goal = ReadingGoal(user_id=current_user.id, year=year, target_books=25)
 
-    return _calculate_goal_progress(goal, db, current_user.id)
+    return _calculate_goal_progress(goal, db, current_user)
 
 
 @router.post("", response_model=GoalOut, status_code=status.HTTP_200_OK)
@@ -109,4 +109,4 @@ def set_reading_goal(
 
     db.commit()
     db.refresh(goal)
-    return _calculate_goal_progress(goal, db, current_user.id)
+    return _calculate_goal_progress(goal, db, current_user)

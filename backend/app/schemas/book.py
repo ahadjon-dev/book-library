@@ -58,6 +58,13 @@ class MyStatus(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class MemberStatusOut(BaseModel):
+    user_id: int
+    display_name: str
+    status: ReadStatus
+    rating: int | None = None
+
+
 class BookOut(BaseModel):
     id: int
     title: str
@@ -77,6 +84,9 @@ class BookOut(BaseModel):
     authors: list[str]
     tags: list[str]
     my_status: MyStatus | None = None
+    added_by: str | None = None
+    # Every library member's status; filled on the book detail endpoint only
+    member_statuses: list[MemberStatusOut] | None = None
     created_at: datetime
     updated_at: datetime
 

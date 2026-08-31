@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Share2, Settings, Palette, Languages, LogOut, ChevronDown } from "lucide-react";
+import { Share2, Settings, Palette, Languages, LogOut, ChevronDown, Users } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
 import { THEMES, useTheme, type Theme } from "@/lib/ThemeContext";
 import { LANGUAGES, useTranslation, type Language } from "@/lib/LanguageContext";
@@ -7,10 +7,11 @@ import { LANGUAGES, useTranslation, type Language } from "@/lib/LanguageContext"
 interface Props {
   onOpenProfile: () => void;
   onOpenShare: () => void;
+  onOpenLibrary: () => void;
   onLogout: () => void;
 }
 
-export function UserMenuDropdown({ onOpenProfile, onOpenShare, onLogout }: Props) {
+export function UserMenuDropdown({ onOpenProfile, onOpenShare, onOpenLibrary, onLogout }: Props) {
   const { user } = useAuth();
   const { theme, setTheme } = useTheme();
   const { language, setLanguage, t } = useTranslation();
@@ -64,6 +65,17 @@ export function UserMenuDropdown({ onOpenProfile, onOpenShare, onLogout }: Props
 
           {/* Quick Actions */}
           <div className="space-y-0.5">
+            <button
+              onClick={() => {
+                setIsOpen(false);
+                onOpenLibrary();
+              }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-ink hover:bg-surface-hover transition text-left"
+            >
+              <Users className="h-4 w-4 text-accent" />
+              <span>{t("library.title")}</span>
+            </button>
+
             <button
               onClick={() => {
                 setIsOpen(false);

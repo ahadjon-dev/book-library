@@ -5,6 +5,7 @@ import { Navbar } from "@/components/Navbar";
 import { BottomNav } from "@/components/BottomNav";
 import { MobileMoreDrawer } from "@/components/MobileMoreDrawer";
 import { AddBooksHubModal } from "@/components/AddBooksHubModal";
+import { LibraryModal } from "@/components/LibraryModal";
 import { WhatToReadModal } from "@/components/WhatToReadModal";
 import { ProfileModal } from "@/components/ProfileModal";
 import { ShareShelfModal } from "@/components/ShareShelfModal";
@@ -25,6 +26,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
   const [moreOpen, setMoreOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
+  const [libraryOpen, setLibraryOpen] = useState(false);
   const { logout } = useAuth();
   const navigate = useNavigate();
 
@@ -55,6 +57,10 @@ function AppLayout({ children }: { children: React.ReactNode }) {
         isOpen={shareOpen}
         onClose={() => setShareOpen(false)}
       />
+      <LibraryModal
+        isOpen={libraryOpen}
+        onClose={() => setLibraryOpen(false)}
+      />
       <MobileMoreDrawer
         isOpen={moreOpen}
         onClose={() => setMoreOpen(false)}
@@ -65,6 +71,10 @@ function AppLayout({ children }: { children: React.ReactNode }) {
         onOpenShare={() => {
           setMoreOpen(false);
           setShareOpen(true);
+        }}
+        onOpenLibrary={() => {
+          setMoreOpen(false);
+          setLibraryOpen(true);
         }}
         onLogout={() => {
           setMoreOpen(false);
@@ -82,6 +92,7 @@ export function App() {
   return (
     <Routes>
       <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} />
+      <Route path="/join/:inviteCode" element={user ? <Navigate to="/" replace /> : <Login />} />
       <Route path="/share/:slug" element={<PublicView />} />
       <Route path="/u/:slug" element={<PublicView />} />
       <Route
