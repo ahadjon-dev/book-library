@@ -1,0 +1,20 @@
+frontend/Dockerfile
+  h_780173feefb83a 15-17,19
+frontend/docker-entrypoint.sh
+  h_780173feefb83a 1-13
+frontend/index.html
+  h_780173feefb83a 11-12
+frontend/src/api/client.ts
+  h_780173feefb83a 3-10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "32c3b51111fe093ef0827cb0574ea7cd30847079",
+  "prompts": {},
+  "humans": {
+    "h_780173feefb83a": {
+      "author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}
