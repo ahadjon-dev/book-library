@@ -1,0 +1,21 @@
+backend/tests/test_bulk_add.py
+  s_14713a5d049f03::t_db1b1184479837 1-30
+backend/app/api/books.py
+  s_14713a5d049f03::t_5249914a331ed1 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "cd879381af09abfb5832eda612e00ebf9a6a5f16",
+  "prompts": {},
+  "sessions": {
+    "s_14713a5d049f03": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "549f393b-a895-47e8-b1ac-32548719570b",
+        "model": "claude-fable-5"
+      },
+      "human_author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}
