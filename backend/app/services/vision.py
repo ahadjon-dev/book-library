@@ -37,8 +37,14 @@ async def extract_spines(image_bytes: bytes) -> list[DetectedSpine]:
     if not key:
         raise ValueError("GEMINI_API_KEY is not configured on the server.")
 
-    model = settings.vision_model or "gemini-3.6-flash"
-    url = GEMINI_GENERATE_URL.format(model=model) + f"?key={key}"
+    requested_model = settings.vision_model or "gemini-3.5-flash"
+    if "2.5" in requested_model:
+        requested_model = "gemini-3.5-flash"
+
+    candidate_models = [requested_model]
+    for fallback in ("gemini-3.5-flash", "gemini-3.5-flash-lite", "gemini-3.1-flash-lite"):
+        if fallback not in candidate_models:
+            candidate_models.append(fallback)
     mime_type = _detect_mime_type(image_bytes)
     b64_data = base64.b64encode(image_bytes).decode("utf-8")
 
@@ -85,33 +91,41 @@ async def extract_spines(image_bytes: bytes) -> list[DetectedSpine]:
         },
     }
 
+    last_error = None
     async with httpx.AsyncClient(timeout=30.0) as client:
-        resp = await client.post(url, json=payload, headers={"Content-Type": "application/json"})
-        if resp.status_code != 200:
-            error_msg = f"Gemini API returned status {resp.status_code}: {resp.text}"
-            raise RuntimeError(error_msg)
+        for model in candidate_models:
+            url = GEMINI_GENERATE_URL.format(model=model) + f"?key={key}"
+            try:
+                resp = await client.post(url, json=payload, headers={"Content-Type": "application/json"})
+                if resp.status_code == 200:
+                    data = resp.json()
+                    candidates = data.get("candidates", [])
+                    if not candidates:
+                        return []
 
-        data = resp.json()
-        candidates = data.get("candidates", [])
-        if not candidates:
-            return []
+                    text_content = candidates[0].get("content", {}).get("parts", [{}])[0].get("text", "")
+                    if not text_content:
+                        return []
 
-        text_content = candidates[0].get("content", {}).get("parts", [{}])[0].get("text", "")
-        if not text_content:
-            return []
+                    parsed_json = json.loads(text_content)
+                    if not isinstance(parsed_json, list):
+                        return []
 
-        parsed_json = json.loads(text_content)
-        if not isinstance(parsed_json, list):
-            return []
+                    results: list[DetectedSpine] = []
+                    for item in parsed_json:
+                        if isinstance(item, dict) and item.get("title"):
+                            results.append(
+                                DetectedSpine(
+                                    title=str(item["title"]).strip(),
+                                    author=str(item["author"]).strip() if item.get("author") else None,
+                                    confidence=float(item.get("confidence", 0.8)),
+                                )
+                            )
+                    return results
 
-        results: list[DetectedSpine] = []
-        for item in parsed_json:
-            if isinstance(item, dict) and item.get("title"):
-                results.append(
-                    DetectedSpine(
-                        title=str(item["title"]).strip(),
-                        author=str(item["author"]).strip() if item.get("author") else None,
-                        confidence=float(item.get("confidence", 0.8)),
-                    )
-                )
-        return results
+                # If status is not 200 (e.g. 404 deprecated or 503 overloaded), try next fallback
+                last_error = f"Gemini API ({model}) returned status {resp.status_code}: {resp.text}"
+            except Exception as exc:
+                last_error = f"Gemini API ({model}) exception: {exc}"
+
+    raise RuntimeError(last_error or "Gemini API failed across all available models.")
