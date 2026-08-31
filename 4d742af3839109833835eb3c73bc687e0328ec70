@@ -1,0 +1,22 @@
+backend/Dockerfile
+  h_780173feefb83a 12
+backend/railway.json
+  h_780173feefb83a 1-14
+frontend/Dockerfile
+  h_780173feefb83a 14-15,17-18
+frontend/nginx.conf
+  h_780173feefb83a 2
+frontend/railway.json
+  h_780173feefb83a 1-13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "4d742af3839109833835eb3c73bc687e0328ec70",
+  "prompts": {},
+  "humans": {
+    "h_780173feefb83a": {
+      "author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+backend/app/services/isbn_lookup.py
+  s_7b63a69b9016ef::t_eb4183f459d7ec 171-177,179-190
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "168c40b93400c774eae75c735bec0b97a1509496",
+  "prompts": {},
+  "sessions": {
+    "s_7b63a69b9016ef": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f9fdf94a-38d4-466b-bc4b-291a121e5d22",
+        "model": "claude-fable-5"
+      },
+      "human_author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}

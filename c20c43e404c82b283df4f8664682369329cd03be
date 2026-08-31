@@ -1,0 +1,14 @@
+frontend/src/components/BarcodeScanner.tsx
+  h_780173feefb83a 20-21,23-45,47-72,74-77,80,82-87
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "c20c43e404c82b283df4f8664682369329cd03be",
+  "prompts": {},
+  "humans": {
+    "h_780173feefb83a": {
+      "author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}

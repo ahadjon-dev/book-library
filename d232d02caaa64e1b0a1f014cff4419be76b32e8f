@@ -1,0 +1,14 @@
+frontend/railway.json
+  h_780173feefb83a 5-8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "d232d02caaa64e1b0a1f014cff4419be76b32e8f",
+  "prompts": {},
+  "humans": {
+    "h_780173feefb83a": {
+      "author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}
