@@ -1,5 +1,6 @@
 import { BrowserMultiFormatReader } from "@zxing/browser";
 import type { IScannerControls } from "@zxing/browser";
+import { BarcodeFormat, DecodeHintType } from "@zxing/library";
 import { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
 
@@ -10,33 +11,113 @@ interface BarcodeScannerProps {
   onClose: () => void;
 }
 
+function isValidIsbnChecksum(code: string): boolean {
+  const clean = code.replace(/[\s\-]/g, "").toUpperCase();
+  if (clean.length === 13 && (clean.startsWith("978") || clean.startsWith("979")) && /^\d{13}$/.test(clean)) {
+    let total = 0;
+    for (let i = 0; i < 13; i++) {
+      total += parseInt(clean[i], 10) * (i % 2 === 0 ? 1 : 3);
+    }
+    return total % 10 === 0;
+  }
+  if (clean.length === 10 && /^\d{9}[\dX]$/.test(clean)) {
+    let total = 0;
+    for (let i = 0; i < 10; i++) {
+      const val = clean[i] === "X" ? 10 : parseInt(clean[i], 10);
+      total += val * (10 - i);
+    }
+    return total % 11 === 0;
+  }
+  return false;
+}
+
 export function BarcodeScanner({ onDetected, onClose }: BarcodeScannerProps) {
   const { t } = useTranslation();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const reader = new BrowserMultiFormatReader();
     let controls: IScannerControls | undefined;
+    let stream: MediaStream | undefined;
+    let isMounted = true;
+    let detected = false;
 
-    reader
-      .decodeFromVideoDevice(undefined, videoRef.current!, (result, err) => {
-        if (result) {
-          onDetected(result.getText());
+    async function startScanner() {
+      try {
+        const hints = new Map();
+        hints.set(DecodeHintType.POSSIBLE_FORMATS, [
+          BarcodeFormat.EAN_13,
+          BarcodeFormat.EAN_8,
+        ]);
+
+        const reader = new BrowserMultiFormatReader(hints);
+
+        // 1. Try to obtain camera stream with environment (back) camera preference
+        const constraints: MediaStreamConstraints = {
+          video: {
+            facingMode: { ideal: "environment" },
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+          },
+        };
+
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          stream = await navigator.mediaDevices.getUserMedia(constraints);
+          if (!isMounted) {
+            stream.getTracks().forEach((track) => track.stop());
+            return;
+          }
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+            await videoRef.current.play().catch(() => {});
+          }
         }
-        if (err && err.name !== "NotFoundException") {
-          setError(t("scanner.cameraError"));
+
+        if (!isMounted) return;
+
+        controls = await reader.decodeFromVideoElement(
+          videoRef.current!,
+          (result) => {
+            if (result && isMounted && !detected) {
+              const text = result.getText().trim();
+              if (isValidIsbnChecksum(text)) {
+                detected = true;
+                controls?.stop();
+                if (stream) {
+                  stream.getTracks().forEach((track) => track.stop());
+                }
+                onDetected(text);
+              }
+            }
+          }
+        );
+      } catch (err: any) {
+        console.error("Camera access error:", err);
+        if (isMounted) {
+          if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
+            setError("Camera permission denied. Please allow camera access in your browser settings.");
+          } else if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
+            setError("No camera found on this device.");
+          } else if (err.name === "NotReadableError" || err.name === "TrackStartError") {
+            setError("Camera is currently in use by another app.");
+          } else {
+            setError(t("scanner.cameraError"));
+          }
         }
-      })
-      .then((c) => {
-        controls = c;
-      })
-      .catch(() => {
-        setError(t("scanner.cameraError"));
-      });
+      }
+    }
+
+    startScanner();
 
     return () => {
+      isMounted = false;
       controls?.stop();
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
+      }
+      if (videoRef.current) {
+        videoRef.current.srcObject = null;
+      }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

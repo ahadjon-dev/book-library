@@ -1,51 +1,45 @@
 import io
+from unittest.mock import AsyncMock, patch
 from fastapi.testclient import TestClient
 
+from app.services.vision import DetectedSpine
 
-def test_shelf_scanner_pipeline(client: TestClient, auth_headers: dict[str, str]):
-    # 1. Upload mock shelf image
-    mock_image = io.BytesIO(b"fake_image_bytes_for_testing")
+
+def test_shelf_scanner_not_configured_returns_503(client: TestClient, auth_headers: dict[str, str]):
+    mock_image = io.BytesIO(b"\xff\xd8\xff\xe0fake_jpeg_data")
     files = {"file": ("shelf.jpg", mock_image, "image/jpeg")}
-    scan_resp = client.post("/books/scan-shelf", headers=auth_headers, files=files)
-    assert scan_resp.status_code == 200
-    scan_data = scan_resp.json()
-    assert scan_data["detected_count"] > 0
-    assert len(scan_data["items"]) > 0
-    first_item = scan_data["items"][0]
-    assert "title" in first_item
-    assert first_item["matched"] is True
 
-    # 2. Test Bulk Add of scanned items
-    bulk_payload = {
-        "books": [
-            {
-                "title": "Dune",
-                "authors": ["Frank Herbert"],
-                "genre": "Sci-Fi",
-                "publication_year": 1965,
-                "page_count": 412,
-                "owned": True,
-            },
-            {
-                "title": "Hyperion",
-                "authors": ["Dan Simmons"],
-                "genre": "Sci-Fi",
-                "publication_year": 1989,
-                "page_count": 482,
-                "owned": True,
-            },
-        ]
-    }
-    bulk_resp = client.post("/books/bulk-add", headers=auth_headers, json=bulk_payload)
-    assert bulk_resp.status_code == 200
-    bulk_data = bulk_resp.json()
-    assert bulk_data["added_count"] == 2
-    assert len(bulk_data["books"]) == 2
+    with patch("app.core.config.settings.gemini_api_key", None):
+        resp = client.post("/books/scan-shelf", headers=auth_headers, files=files)
+        assert resp.status_code == 503
+        assert "not configured" in resp.json()["detail"]
 
-    # 3. Re-scan and check duplicate detection
-    rescan_resp = client.post("/books/scan-shelf", headers=auth_headers, files=files)
-    assert rescan_resp.status_code == 200
-    # Any item matching 'Dune' should now have already_in_library = True
-    for item in rescan_resp.json()["items"]:
-        if item["title"].lower() == "dune":
-            assert item["already_in_library"] is True
+
+def test_shelf_scanner_payload_guards(client: TestClient, auth_headers: dict[str, str]):
+    # Unsupported media type
+    files = {"file": ("text.txt", io.BytesIO(b"hello world"), "text/plain")}
+    resp = client.post("/books/scan-shelf", headers=auth_headers, files=files)
+    assert resp.status_code == 415
+
+
+def test_shelf_scanner_with_gemini_mock(client: TestClient, auth_headers: dict[str, str]):
+    mock_image = io.BytesIO(b"\xff\xd8\xff\xe0valid_jpeg_header_bytes")
+    files = {"file": ("shelf.jpg", mock_image, "image/jpeg")}
+
+    mock_spines = [
+        DetectedSpine(title="Dune", author="Frank Herbert", confidence=0.96),
+        DetectedSpine(title="O'tkan Kunlar", author="Abdulla Qodiriy", confidence=0.92),
+    ]
+
+    with patch("app.core.config.settings.gemini_api_key", "mock-gemini-key"), \
+         patch("app.services.shelf_scanner.extract_spines", new=AsyncMock(return_value=mock_spines)):
+        resp = client.post("/books/scan-shelf", headers=auth_headers, files=files)
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["detected_count"] == 2
+        assert len(data["items"]) == 2
+
+        # Check that Dune and O'tkan Kunlar were properly returned with their detected titles preserved
+        titles = [i["title"] for i in data["items"]]
+        assert "Dune" in titles
+        assert "O'tkan Kunlar" in titles

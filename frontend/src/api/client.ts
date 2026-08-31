@@ -1,6 +1,13 @@
 import axios from "axios";
 
-export const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
+// Runtime config is injected by docker-entrypoint.sh into /env-config.js
+// which sets window.__RUNTIME_CONFIG__.VITE_API_URL at container start.
+// Falls back to build-time VITE_API_URL, then localhost for local dev.
+const _runtimeConfig = (window as any).__RUNTIME_CONFIG__ ?? {};
+export const API_URL: string =
+  _runtimeConfig.VITE_API_URL ||
+  import.meta.env.VITE_API_URL ||
+  "http://localhost:8000";
 
 const TOKEN_KEY = "library_token";
 
@@ -16,7 +23,7 @@ export function clearToken(): void {
   localStorage.removeItem(TOKEN_KEY);
 }
 
-export const api = axios.create({ baseURL: API_URL });
+export const api = axios.create({ baseURL: API_URL, timeout: 30000 });
 
 api.interceptors.request.use((config) => {
   const token = getToken();

@@ -1,10 +1,10 @@
-const MAX_DIMENSION = 1000;
+const DEFAULT_MAX_DIMENSION = 1000;
 const JPEG_QUALITY = 0.82;
 
-export async function compressImage(file: File): Promise<File> {
+export async function compressImage(file: File, maxDimension: number = DEFAULT_MAX_DIMENSION): Promise<File> {
   try {
     const bitmap = await createImageBitmap(file);
-    const scale = Math.min(1, MAX_DIMENSION / Math.max(bitmap.width, bitmap.height));
+    const scale = Math.min(1, maxDimension / Math.max(bitmap.width, bitmap.height));
     const width = Math.round(bitmap.width * scale);
     const height = Math.round(bitmap.height * scale);
 

@@ -41,16 +41,8 @@ def optimize_and_save_image(content: bytes) -> str:
 
 
 def save_cover_bytes(content: bytes, extension: str = ".webp") -> str:
-    """Save cover bytes with optimization, falling back to raw save if needed."""
-    try:
-        return optimize_and_save_image(content)
-    except UnsupportedImageType:
-        # Fallback to direct write if Pillow encounters format issue
-        filename = f"{uuid.uuid4().hex}{extension}"
-        covers_dir = Path(settings.uploads_dir) / "covers"
-        covers_dir.mkdir(parents=True, exist_ok=True)
-        (covers_dir / filename).write_bytes(content)
-        return f"covers/{filename}"
+    """Save cover bytes with optimization. Rejects invalid or malicious bytes."""
+    return optimize_and_save_image(content)
 
 
 def save_cover_image(file: UploadFile, contents: bytes) -> str:
