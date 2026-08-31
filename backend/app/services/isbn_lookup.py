@@ -168,7 +168,26 @@ def parse_metadata(raw: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+ALLOWED_COVER_HOSTS = {
+    "covers.openlibrary.org",
+    "books.google.com",
+    "books.googleusercontent.com",
+}
+
+
 async def download_cover_bytes(url: str) -> bytes | None:
+    if not url:
+        return None
+    try:
+        from urllib.parse import urlparse
+        parsed = urlparse(url)
+        if parsed.scheme not in ("http", "https"):
+            return None
+        if parsed.netloc.lower() not in ALLOWED_COVER_HOSTS:
+            return None
+    except Exception:
+        return None
+
     data = await _async_get(url)
     if data is None or len(data) < 1500:
         return None

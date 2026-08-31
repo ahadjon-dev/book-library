@@ -1,14 +1,17 @@
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
+from sqlalchemy import text
+from sqlalchemy.orm import Session
 
 from app.api import auth, books, goals, loans, lookups, public, stats
 from app.core.config import settings
 from app.core.limiter import limiter
+from app.db.session import get_db
 
 app = FastAPI(title="Book Library API")
 
@@ -39,5 +42,12 @@ app.include_router(public.router)
 
 
 @app.get("/health")
-def health() -> dict:
-    return {"status": "ok"}
+def health(db: Session = Depends(get_db)) -> dict:
+    try:
+        db.execute(text("SELECT 1"))
+        return {"status": "ok", "db": "healthy"}
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Database connection failed",
+        ) from exc

@@ -3,12 +3,12 @@ from pydantic import BaseModel, EmailStr, Field
 
 class LoginRequest(BaseModel):
     email: EmailStr
-    password: str
+    password: str = Field(..., max_length=72)
 
 
 class RegisterRequest(BaseModel):
     email: EmailStr
-    password: str = Field(..., min_length=8)
+    password: str = Field(..., min_length=8, max_length=72)
     display_name: str = Field(..., min_length=1, max_length=100)
 
 
@@ -30,8 +30,8 @@ class ProfileUpdateRequest(BaseModel):
 
 
 class ChangePasswordRequest(BaseModel):
-    current_password: str
-    new_password: str = Field(..., min_length=8, description="New password with minimum 8 characters")
+    current_password: str = Field(..., max_length=72)
+    new_password: str = Field(..., min_length=8, max_length=72, description="New password with minimum 8 and max 72 characters")
 
 
 class MessageResponse(BaseModel):

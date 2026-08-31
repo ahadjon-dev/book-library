@@ -5,6 +5,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
+    env: str = "development"
     database_url: str = "postgresql+psycopg://library:library@db:5432/library"
     jwt_secret: str = "change-me"
     jwt_algorithm: str = "HS256"
@@ -19,6 +20,11 @@ class Settings(BaseSettings):
 
     def model_post_init(self, __context) -> None:
         if self.jwt_secret == "change-me":
+            if self.env.lower() in ("production", "prod"):
+                raise RuntimeError(
+                    "FATAL: Refusing to start in production mode with default JWT_SECRET='change-me'. "
+                    "Set a secure JWT_SECRET environment variable."
+                )
             warnings.warn(
                 "⚠️  JWT_SECRET is set to the insecure default 'change-me'. "
                 "Set a strong JWT_SECRET environment variable before deploying to production.",

@@ -48,7 +48,7 @@ def register(
         password_hash=hash_password(payload.password),
         display_name=payload.display_name.strip(),
         share_slug=slug,
-        is_public_shelf=True,
+        is_public_shelf=False,
     )
     db.add(user)
     db.commit()
@@ -61,7 +61,8 @@ def register(
 @router.post("/login", response_model=TokenResponse)
 @limiter.limit("10/minute")
 def login(request: Request, payload: LoginRequest, db: Session = Depends(get_db)) -> TokenResponse:
-    user = db.query(User).filter(User.email == payload.email).first()
+    email = payload.email.lower().strip()
+    user = db.query(User).filter(User.email == email).first()
     if user is None or not verify_password(payload.password, user.password_hash):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email or password")
 

@@ -407,8 +407,21 @@ async def bulk_add_books(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> BulkAddResponse:
+    if len(payload.books) > 100:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot bulk-add more than 100 books in a single request.",
+        )
+
+    # 1. Concurrently fetch all valid remote covers
+    cover_tasks = [
+        download_cover_bytes(item.cover_url) if item.cover_url else asyncio.sleep(0, result=None)
+        for item in payload.books
+    ]
+    downloaded_covers = await asyncio.gather(*cover_tasks, return_exceptions=True)
+
     added_books: list[Book] = []
-    for item in payload.books:
+    for idx, item in enumerate(payload.books):
         book = Book(
             user_id=current_user.id,
             title=item.title,
@@ -426,10 +439,15 @@ async def bulk_add_books(
         )
         db.add(book)
         _apply_relations(db, book, item, current_user.id)
-        if item.cover_url:
-            img = await download_cover_bytes(item.cover_url)
-            if img:
-                book.cover_image_path = save_cover_bytes(img, ".webp")
+
+        # Attach pre-downloaded cover if valid
+        raw_img = downloaded_covers[idx] if idx < len(downloaded_covers) else None
+        if isinstance(raw_img, bytes) and raw_img:
+            try:
+                book.cover_image_path = save_cover_bytes(raw_img, ".webp")
+            except Exception:
+                pass
+
         added_books.append(book)
 
     db.commit()
