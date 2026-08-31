@@ -11,8 +11,6 @@ RUN npm run build
 # --- Production Stage ---
 FROM nginx:alpine
 COPY --from=build /app/dist /usr/share/nginx/html
-# Store template; envsubst fills $PORT at container start
-COPY nginx.conf /etc/nginx/templates/default.conf.template
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
-# envsubst replaces ${PORT:-80} then starts nginx
-CMD ["/bin/sh", "-c", "envsubst '${PORT}' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]
+CMD ["nginx", "-g", "daemon off;"]
