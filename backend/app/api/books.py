@@ -33,6 +33,7 @@ from app.services.book_presenter import load_statuses, to_book_out
 from app.services.csv_importer import import_books_from_csv
 from app.services.image_storage import UnsupportedImageType, save_cover_bytes, save_cover_image
 from app.services.isbn_lookup import download_cover_bytes, fetch_isbn_metadata, parse_metadata
+from app.services.isbn_utils import both_forms, is_valid, normalize
 from app.services.lookup_service import get_or_create_shelf, resolve_authors, resolve_tags
 from app.services.recommendation_engine import recommend_next_books
 from app.services.shelf_scanner import scan_shelf_image
@@ -238,11 +239,19 @@ async def lookup_isbn(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> IsbnLookupResult:
-    clean_isbn = isbn.strip().replace("-", "").replace(" ", "")
+    clean_isbn = normalize(isbn)
 
+    if not is_valid(clean_isbn):
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Invalid ISBN checksum or length. Please check the digits.",
+        )
+
+    # Check for duplicate in current user's library using all equivalent forms (ISBN-10 & 13)
+    equivalent_isbns = both_forms(clean_isbn)
     existing = (
         db.query(Book)
-        .filter(Book.isbn == clean_isbn, Book.user_id == current_user.id)
+        .filter(Book.isbn.in_(equivalent_isbns), Book.user_id == current_user.id)
         .first()
     )
     already_in_library = IsbnLookupMatch(id=existing.id, owned=existing.owned) if existing else None
@@ -378,7 +387,17 @@ async def scan_shelf(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> ShelfScanResult:
+    if file.content_type not in ("image/jpeg", "image/png", "image/webp", "image/jpg"):
+        raise HTTPException(
+            status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+            detail="Only JPEG, PNG, and WEBP image files are supported.",
+        )
     image_bytes = await file.read()
+    if len(image_bytes) > 10 * 1024 * 1024:
+        raise HTTPException(
+            status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+            detail="Image size exceeds maximum allowed limit (10MB).",
+        )
     return await scan_shelf_image(image_bytes, db, current_user.id)
 
 

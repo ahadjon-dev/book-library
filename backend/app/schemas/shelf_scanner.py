@@ -5,8 +5,8 @@ from app.schemas.book import BookCreate, BookOut
 class ShelfScanItem(BaseModel):
     detected_title: str
     detected_author: str | None = None
-    confidence: float = 0.9
-    matched: bool = True
+    confidence: float = 0.0
+    matched: bool = False
     title: str
     authors: list[str] = []
     isbn: str | None = None

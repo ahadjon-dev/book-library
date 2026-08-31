@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Camera, BookOpen, X, UploadCloud } from "lucide-react";
 import { scanShelfImage, bulkAddBooks } from "@/api/books";
 import type { ShelfScanItem, ShelfScanResult } from "@/types/scanner";
+import { compressImage } from "@/lib/compressImage";
 import { useTranslation } from "@/lib/LanguageContext";
 import { useToast } from "@/lib/ToastContext";
 
@@ -25,16 +26,29 @@ export function ShelfPhotoScanner({ isOpen, onClose, onSuccess }: Props) {
   async function handleFileChange(selectedFile: File) {
     try {
       setScanning(true);
-      const data = await scanShelfImage(selectedFile);
+      // High-resolution 1600px compression to preserve spine typography
+      const compressed = await compressImage(selectedFile, 1600);
+      const data = await scanShelfImage(compressed);
       setResult(data);
-      // Select all books by default that are NOT already in library
-      const unowned = data.items
-        .map((item: ShelfScanItem, idx: number) => (!item.already_in_library ? idx : null))
+
+      // Default-select: matched && !already_in_library && confidence >= 0.7
+      const validIndices = data.items
+        .map((item: ShelfScanItem, idx: number) => {
+          if (item.already_in_library) return null;
+          if (item.matched || item.confidence >= 0.7) return idx;
+          return null;
+        })
         .filter((idx: number | null): idx is number => idx !== null);
-      setSelectedIndices(unowned.length > 0 ? unowned : data.items.map((_: ShelfScanItem, i: number) => i));
+
+      setSelectedIndices(validIndices.length > 0 ? validIndices : data.items.map((_: ShelfScanItem, i: number) => i));
     } catch (err: any) {
       console.error("Shelf scan failed", err);
-      showToast(err.response?.data?.detail || "Failed to analyze bookshelf photo", "error");
+      const detail = err.response?.data?.detail;
+      if (err.response?.status === 503) {
+        showToast(t("shelfScanner.notConfigured"), "error");
+      } else {
+        showToast(detail || "Failed to analyze bookshelf photo", "error");
+      }
     } finally {
       setScanning(false);
     }
@@ -154,7 +168,7 @@ export function ShelfPhotoScanner({ isOpen, onClose, onSuccess }: Props) {
                       isSelected
                         ? "border-accent bg-accent/5"
                         : "border-line bg-canvas hover:bg-surface-hover"
-                    }`}
+                    } ${!item.matched ? "border-dashed" : ""}`}
                   >
                     <input
                       type="checkbox"
@@ -176,17 +190,33 @@ export function ShelfPhotoScanner({ isOpen, onClose, onSuccess }: Props) {
                     )}
 
                     <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1.5 flex-wrap">
                         <p className="text-sm font-semibold text-ink truncate">{item.title}</p>
                         {item.already_in_library && (
                           <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20 shrink-0">
                             {t("shelfScanner.alreadyInLibrary")}
                           </span>
                         )}
+                        {!item.matched && (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-neutral-500/10 text-ink-secondary border border-line shrink-0">
+                            {t("shelfScanner.unmatched")}
+                          </span>
+                        )}
+                        {item.confidence < 0.6 && (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-red-500/10 text-red-400 border border-red-500/20 shrink-0">
+                            {t("shelfScanner.lowConfidence")}
+                          </span>
+                        )}
                       </div>
                       <p className="text-xs text-ink-secondary truncate">
-                        {item.authors.join(", ") || "Unknown Author"}
+                        {item.authors.join(", ") || item.detected_author || "Unknown Author"}
                       </p>
+                    </div>
+
+                    <div className="text-right shrink-0">
+                      <span className="text-[11px] font-mono text-ink-secondary">
+                        {Math.round(item.confidence * 100)}%
+                      </span>
                     </div>
                   </div>
                 );
@@ -199,7 +229,7 @@ export function ShelfPhotoScanner({ isOpen, onClose, onSuccess }: Props) {
                 onClick={() => setResult(null)}
                 className="rounded-lg border border-line px-4 py-2 text-xs font-medium text-ink-secondary hover:text-ink hover:bg-surface-hover transition"
               >
-                Scan Another Photo
+                {t("shelfScanner.scanAnother")}
               </button>
               <button
                 type="button"

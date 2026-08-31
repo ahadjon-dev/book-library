@@ -1,5 +1,6 @@
 import { BrowserMultiFormatReader } from "@zxing/browser";
 import type { IScannerControls } from "@zxing/browser";
+import { BarcodeFormat, DecodeHintType } from "@zxing/library";
 import { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
 
@@ -8,6 +9,26 @@ import { useTranslation } from "@/lib/LanguageContext";
 interface BarcodeScannerProps {
   onDetected: (code: string) => void;
   onClose: () => void;
+}
+
+function isValidIsbnChecksum(code: string): boolean {
+  const clean = code.replace(/[\s\-]/g, "").toUpperCase();
+  if (clean.length === 13 && (clean.startsWith("978") || clean.startsWith("979")) && /^\d{13}$/.test(clean)) {
+    let total = 0;
+    for (let i = 0; i < 13; i++) {
+      total += parseInt(clean[i], 10) * (i % 2 === 0 ? 1 : 3);
+    }
+    return total % 10 === 0;
+  }
+  if (clean.length === 10 && /^\d{9}[\dX]$/.test(clean)) {
+    let total = 0;
+    for (let i = 0; i < 10; i++) {
+      const val = clean[i] === "X" ? 10 : parseInt(clean[i], 10);
+      total += val * (10 - i);
+    }
+    return total % 11 === 0;
+  }
+  return false;
 }
 
 export function BarcodeScanner({ onDetected, onClose }: BarcodeScannerProps) {
@@ -19,10 +40,17 @@ export function BarcodeScanner({ onDetected, onClose }: BarcodeScannerProps) {
     let controls: IScannerControls | undefined;
     let stream: MediaStream | undefined;
     let isMounted = true;
+    let detected = false;
 
     async function startScanner() {
       try {
-        const reader = new BrowserMultiFormatReader();
+        const hints = new Map();
+        hints.set(DecodeHintType.POSSIBLE_FORMATS, [
+          BarcodeFormat.EAN_13,
+          BarcodeFormat.EAN_8,
+        ]);
+
+        const reader = new BrowserMultiFormatReader(hints);
 
         // 1. Try to obtain camera stream with environment (back) camera preference
         const constraints: MediaStreamConstraints = {
@@ -49,12 +77,17 @@ export function BarcodeScanner({ onDetected, onClose }: BarcodeScannerProps) {
 
         controls = await reader.decodeFromVideoElement(
           videoRef.current!,
-          (result, err) => {
-            if (result && isMounted) {
-              onDetected(result.getText());
-            }
-            if (err && err.name !== "NotFoundException" && isMounted) {
-              // Ignore standard frame-level decode misses
+          (result) => {
+            if (result && isMounted && !detected) {
+              const text = result.getText().trim();
+              if (isValidIsbnChecksum(text)) {
+                detected = true;
+                controls?.stop();
+                if (stream) {
+                  stream.getTracks().forEach((track) => track.stop());
+                }
+                onDetected(text);
+              }
             }
           }
         );

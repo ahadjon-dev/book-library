@@ -11,7 +11,9 @@ class Settings(BaseSettings):
     jwt_expires_minutes: int = 60 * 24 * 14
     uploads_dir: str = "uploads"
     cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000"
-    openai_api_key: str | None = None
+    gemini_api_key: str | None = None
+    vision_model: str = "gemini-2.5-flash"
+    google_books_api_key: str | None = None
     database_pool_size: int = 10
     database_max_overflow: int = 20
 
