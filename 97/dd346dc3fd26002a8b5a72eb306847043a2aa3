@@ -1,0 +1,16 @@
+.env.example
+  h_780173feefb83a 13
+docker-compose.yml
+  h_780173feefb83a 24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "97dd346dc3fd26002a8b5a72eb306847043a2aa3",
+  "prompts": {},
+  "humans": {
+    "h_780173feefb83a": {
+      "author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}
