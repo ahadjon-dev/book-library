@@ -16,27 +16,75 @@ export function BarcodeScanner({ onDetected, onClose }: BarcodeScannerProps) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const reader = new BrowserMultiFormatReader();
     let controls: IScannerControls | undefined;
+    let stream: MediaStream | undefined;
+    let isMounted = true;
 
-    reader
-      .decodeFromVideoDevice(undefined, videoRef.current!, (result, err) => {
-        if (result) {
-          onDetected(result.getText());
+    async function startScanner() {
+      try {
+        const reader = new BrowserMultiFormatReader();
+
+        // 1. Try to obtain camera stream with environment (back) camera preference
+        const constraints: MediaStreamConstraints = {
+          video: {
+            facingMode: { ideal: "environment" },
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+          },
+        };
+
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          stream = await navigator.mediaDevices.getUserMedia(constraints);
+          if (!isMounted) {
+            stream.getTracks().forEach((track) => track.stop());
+            return;
+          }
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+            await videoRef.current.play().catch(() => {});
+          }
         }
-        if (err && err.name !== "NotFoundException") {
-          setError(t("scanner.cameraError"));
+
+        if (!isMounted) return;
+
+        controls = await reader.decodeFromVideoElement(
+          videoRef.current!,
+          (result, err) => {
+            if (result && isMounted) {
+              onDetected(result.getText());
+            }
+            if (err && err.name !== "NotFoundException" && isMounted) {
+              // Ignore standard frame-level decode misses
+            }
+          }
+        );
+      } catch (err: any) {
+        console.error("Camera access error:", err);
+        if (isMounted) {
+          if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
+            setError("Camera permission denied. Please allow camera access in your browser settings.");
+          } else if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
+            setError("No camera found on this device.");
+          } else if (err.name === "NotReadableError" || err.name === "TrackStartError") {
+            setError("Camera is currently in use by another app.");
+          } else {
+            setError(t("scanner.cameraError"));
+          }
         }
-      })
-      .then((c) => {
-        controls = c;
-      })
-      .catch(() => {
-        setError(t("scanner.cameraError"));
-      });
+      }
+    }
+
+    startScanner();
 
     return () => {
+      isMounted = false;
       controls?.stop();
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
+      }
+      if (videoRef.current) {
+        videoRef.current.srcObject = null;
+      }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
