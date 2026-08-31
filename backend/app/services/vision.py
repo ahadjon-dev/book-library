@@ -36,7 +36,7 @@ async def extract_spines(image_bytes: bytes) -> list[DetectedSpine]:
     if not key:
         raise ValueError("GEMINI_API_KEY is not configured on the server.")
 
-    model = settings.vision_model or "gemini-2.5-flash"
+    model = settings.vision_model or "gemini-3.6-flash"
     url = GEMINI_GENERATE_URL.format(model=model) + f"?key={key}"
     mime_type = _detect_mime_type(image_bytes)
     b64_data = base64.b64encode(image_bytes).decode("utf-8")
