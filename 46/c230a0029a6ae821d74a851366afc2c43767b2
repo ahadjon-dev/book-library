@@ -1,0 +1,86 @@
+backend/app/core/config.py
+  s_14713a5d049f03::t_9cee8d85150b4a 8,15-17,23-27
+frontend/railway.json
+  s_14713a5d049f03::t_9cee8d85150b4a 1-16
+frontend/src/components/ShelfPhotoScanner.tsx
+  s_14713a5d049f03::t_9cee8d85150b4a 5,29-31,33-40,42-43,46-51,171,193,200-209,212,215-220,232
+backend/tests/test_shelf_scanner.py
+  s_14713a5d049f03::t_9cee8d85150b4a 2,5,7-26,28-45
+frontend/index.html
+  s_14713a5d049f03::t_9cee8d85150b4a 11-12
+backend/app/services/image_storage.py
+  s_14713a5d049f03::t_9cee8d85150b4a 44-45
+backend/app/services/isbn_lookup.py
+  s_14713a5d049f03::t_9cee8d85150b4a 8-10,12-13,15,18,27,31,33,38-57,61-121,123-158,162-167,171-177,179-192
+backend/tests/test_isbn_utils.py
+  s_14713a5d049f03::t_9cee8d85150b4a 1-67
+backend/app/schemas/auth.py
+  s_14713a5d049f03::t_9cee8d85150b4a 8,13,39-40
+backend/app/schemas/shelf_scanner.py
+  s_14713a5d049f03::t_9cee8d85150b4a 8-9
+backend/app/core/limiter.py
+  s_14713a5d049f03::t_9cee8d85150b4a 1,4-14
+backend/app/services/vision.py
+  s_14713a5d049f03::t_9cee8d85150b4a 1-116
+frontend/Dockerfile
+  s_14713a5d049f03::t_9cee8d85150b4a 15-17,19
+docker-compose.prod.yml
+  s_14713a5d049f03::t_9cee8d85150b4a 1-52
+backend/app/api/auth.py
+  s_14713a5d049f03::t_9cee8d85150b4a 97-98
+frontend/src/lib/compressImage.ts
+  s_14713a5d049f03::t_9cee8d85150b4a 1,4,7
+backend/app/main.py
+  s_14713a5d049f03::t_9cee8d85150b4a 3,8-9,14,46-54
+backend/app/services/isbn_utils.py
+  s_14713a5d049f03::t_9cee8d85150b4a 1-86
+backend/Dockerfile
+  s_14713a5d049f03::t_9cee8d85150b4a 7-10,14-20,23
+frontend/src/components/BarcodeScanner.tsx
+  s_14713a5d049f03::t_9cee8d85150b4a 3,14-33,41-53,55-73,75-105,107-110,113,115-120
+backend/app/api/books.py
+  s_14713a5d049f03::t_9cee8d85150b4a 37,249,251-258,402-406,408-412,422-434,436,455-463
+  s_14713a5d049f03::t_2cc9274b109578 261
+docker-compose.yml
+  s_14713a5d049f03::t_9cee8d85150b4a 24
+backend/pyproject.toml
+  s_14713a5d049f03::t_9cee8d85150b4a 17-18
+.env.example
+  s_14713a5d049f03::t_9cee8d85150b4a 11-13
+  s_14713a5d049f03::t_bc1db795309456 21
+frontend/src/lib/i18n/en.ts
+  s_14713a5d049f03::t_9cee8d85150b4a 265,271-274
+frontend/src/lib/i18n/uz.ts
+  s_14713a5d049f03::t_9cee8d85150b4a 268,274-277
+frontend/src/api/client.ts
+  s_14713a5d049f03::t_9cee8d85150b4a 3-10,26
+frontend/docker-entrypoint.sh
+  s_14713a5d049f03::t_9cee8d85150b4a 1-13
+backend/app/core/security.py
+  s_14713a5d049f03::t_9cee8d85150b4a 3-4,10-12,16-19,32
+backend/railway.json
+  s_14713a5d049f03::t_9cee8d85150b4a 1-14
+frontend/nginx.conf
+  s_14713a5d049f03::t_9cee8d85150b4a 6-18,23
+backend/app/services/shelf_scanner.py
+  s_14713a5d049f03::t_5acb44a4f5c9d7 198,215-216
+  s_14713a5d049f03::t_9cee8d85150b4a 2,7,14-15,18-28,33,36-67,70-71,73-177,180-192,199-214,219-222,225-226,228-229,232
+frontend/src/api/books.ts
+  s_14713a5d049f03::t_9cee8d85150b4a 99-101,104
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "46c230a0029a6ae821d74a851366afc2c43767b2",
+  "prompts": {},
+  "sessions": {
+    "s_14713a5d049f03": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "549f393b-a895-47e8-b1ac-32548719570b",
+        "model": "claude-fable-5"
+      },
+      "human_author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}
