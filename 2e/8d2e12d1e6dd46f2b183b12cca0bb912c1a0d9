@@ -1,0 +1,19 @@
+.env.example
+  s_7b63a69b9016ef::t_3c8e6d9293c8e0 11-14,21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "2e8d2e12d1e6dd46f2b183b12cca0bb912c1a0d9",
+  "prompts": {},
+  "sessions": {
+    "s_7b63a69b9016ef": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f9fdf94a-38d4-466b-bc4b-291a121e5d22",
+        "model": "claude-fable-5"
+      },
+      "human_author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}
