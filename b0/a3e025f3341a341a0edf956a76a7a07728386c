@@ -1,0 +1,21 @@
+backend/app/api/books.py
+  s_14713a5d049f03::t_c39f7840addbe4 1
+backend/app/core/config.py
+  s_14713a5d049f03::t_fc759d32054c43 16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "b0a3e025f3341a341a0edf956a76a7a07728386c",
+  "prompts": {},
+  "sessions": {
+    "s_14713a5d049f03": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "549f393b-a895-47e8-b1ac-32548719570b",
+        "model": "claude-fable-5"
+      },
+      "human_author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}
