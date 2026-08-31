@@ -14,6 +14,7 @@ class DetectedSpine(BaseModel):
     confidence: float = Field(default=0.8, ge=0.0, le=1.0)
 
 
+# Production Vision OCR Engine powered by Google Gemini 3.6 Flash
 GEMINI_GENERATE_URL = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
 
 
@@ -44,7 +45,6 @@ async def extract_spines(image_bytes: bytes) -> list[DetectedSpine]:
     for fallback in ("gemini-3.5-flash", "gemini-3.5-flash-lite", "gemini-3.1-flash-lite"):
         if fallback not in candidate_models:
             candidate_models.append(fallback)
-
     mime_type = _detect_mime_type(image_bytes)
     b64_data = base64.b64encode(image_bytes).decode("utf-8")
 
