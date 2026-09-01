@@ -1,0 +1,26 @@
+backend/tests/test_isbn_lookup.py
+  s_14713a5d049f03::t_07ef3bede116f7 1-156
+  s_14713a5d049f03::t_e5330f4168ab13 157-208
+backend/app/services/isbn_lookup.py
+  s_14713a5d049f03::t_c1103fe1502f93 2,83-106,147-214,229-233,235-238,240-246,279
+frontend/src/components/AddBooksHubModal.tsx
+  s_14713a5d049f03::t_8054ab7f8d55c1 43,479-488
+frontend/src/pages/BookForm.tsx
+  s_14713a5d049f03::t_df64b0621acef6 51,229-238
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "866b94184694c3f2d9291c8d2fa2b7a055713dd3",
+  "prompts": {},
+  "sessions": {
+    "s_14713a5d049f03": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "549f393b-a895-47e8-b1ac-32548719570b",
+        "model": "claude-fable-5"
+      },
+      "human_author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}
