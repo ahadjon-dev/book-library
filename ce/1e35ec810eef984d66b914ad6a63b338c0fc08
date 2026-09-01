@@ -1,0 +1,44 @@
+backend/app/services/recommendation_engine.py
+  s_14713a5d049f03::t_943f8309db8f4b 1-11,13,16,25,28-89,91-94,96-155,186-189,191-195,197-203,208-210
+  s_14713a5d049f03::t_c8ea2de274eb88 212
+backend/app/services/book_enrichment.py
+  s_14713a5d049f03::t_c7e724df399512 1-135
+  s_14713a5d049f03::t_1e5c13152b2317 136-151
+backend/scripts/backfill_enrichment.py
+  s_14713a5d049f03::t_4283e04eee09b5 1-79
+  s_14713a5d049f03::t_a6c73be0717d69 80
+backend/tests/test_recommendation_engine.py
+  s_14713a5d049f03::t_9d9385be3b05d5 1-154
+backend/alembic/versions/0008_book_enrichment.py
+  s_14713a5d049f03::t_7e062e3f9db4c7 1-24
+backend/app/api/books.py
+  s_14713a5d049f03::t_cd8cc7183d66e3 34-35,241-258,498-499,505
+backend/app/core/config.py
+  s_14713a5d049f03::t_c0732fba094958 18-20
+backend/app/models/book.py
+  s_14713a5d049f03::t_bf7d624a475c2b 3,43-45
+backend/app/schemas/book.py
+  s_14713a5d049f03::t_176a7426c52550 80
+backend/app/services/book_presenter.py
+  s_14713a5d049f03::t_e85f88dc14aa54 33
+frontend/src/pages/BookDetail.tsx
+  s_14713a5d049f03::t_766e0c7fd838f4 202,209-216
+frontend/src/types/book.ts
+  s_14713a5d049f03::t_dc9b58e6be5056 30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "ce1e35ec810eef984d66b914ad6a63b338c0fc08",
+  "prompts": {},
+  "sessions": {
+    "s_14713a5d049f03": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "549f393b-a895-47e8-b1ac-32548719570b",
+        "model": "claude-fable-5"
+      },
+      "human_author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}
