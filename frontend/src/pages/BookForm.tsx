@@ -48,7 +48,7 @@ export function BookForm({ mode }: { mode: "create" | "edit" }) {
   const bookId = id ? Number(id) : undefined;
   const navigate = useNavigate();
   const { showToast } = useToast();
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const [searchParams] = useSearchParams();
 
   const { data: existing } = useQuery({
@@ -226,14 +226,16 @@ export function BookForm({ mode }: { mode: "create" | "edit" }) {
           >
             {lookupLoading ? t("bookForm.lookingUp") : t("bookForm.lookUp")}
           </button>
-          <button
-            type="button"
-            onClick={() => setShowScanner(true)}
-            className="shrink-0 inline-flex items-center gap-1.5 rounded-md border border-line-strong px-3 py-2 text-sm hover:bg-surface-hover"
-          >
-            <Barcode className="h-4 w-4" />
-            <span>{t("bookForm.scan")}</span>
-          </button>
+          {language !== "uz" && (
+            <button
+              type="button"
+              onClick={() => setShowScanner(true)}
+              className="shrink-0 inline-flex items-center gap-1.5 rounded-md border border-line-strong px-3 py-2 text-sm hover:bg-surface-hover"
+            >
+              <Barcode className="h-4 w-4" />
+              <span>{t("bookForm.scan")}</span>
+            </button>
+          )}
           <button
             type="button"
             onClick={() => setShowShelfScanner(true)}

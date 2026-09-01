@@ -40,7 +40,7 @@ interface Props {
 type TabType = "shelf" | "barcode" | "manual" | "import";
 
 export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSuccess }: Props) {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const { showToast } = useToast();
   const navigate = useNavigate();
 
@@ -476,14 +476,16 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
                 >
                   {lookingUpIsbn ? t("bookForm.lookingUp") : t("bookForm.lookUp")}
                 </button>
-                <button
-                  type="button"
-                  onClick={() => setShowLiveScanner(true)}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-line bg-surface px-3 py-2 text-xs font-medium text-ink hover:bg-surface-hover transition shrink-0"
-                >
-                  <Barcode className="h-4 w-4" />
-                  <span>{t("bookForm.scan")}</span>
-                </button>
+                {language !== "uz" && (
+                  <button
+                    type="button"
+                    onClick={() => setShowLiveScanner(true)}
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-line bg-surface px-3 py-2 text-xs font-medium text-ink hover:bg-surface-hover transition shrink-0"
+                  >
+                    <Barcode className="h-4 w-4" />
+                    <span>{t("bookForm.scan")}</span>
+                  </button>
+                )}
               </div>
 
               {isbnResult && (
