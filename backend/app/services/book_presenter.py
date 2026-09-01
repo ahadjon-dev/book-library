@@ -30,6 +30,7 @@ def to_book_out(book: Book, status_by_book_id: dict[int, UserBookStatus]) -> Boo
         cover_image_path=book.cover_image_path,
         description=book.description,
         genre=book.genre,
+        mood_tags=book.mood_tags or [],
         owned=book.owned,
         shelf=book.shelf.name if book.shelf else None,
         purchase_date=book.purchase_date,

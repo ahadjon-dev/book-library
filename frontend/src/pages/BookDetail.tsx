@@ -199,10 +199,18 @@ export function BookDetail() {
 
         {book.description && <p className="text-sm leading-relaxed text-ink-secondary">{book.description}</p>}
 
-        {book.tags.length > 0 && (
+        {(book.tags.length > 0 || book.mood_tags.length > 0) && (
           <div className="flex flex-wrap gap-2">
             {book.tags.map((tag) => (
               <span key={tag} className="rounded-full bg-surface-hover px-2.5 py-1 text-xs text-ink-secondary">
+                {tag}
+              </span>
+            ))}
+            {book.mood_tags.map((tag) => (
+              <span
+                key={`mood-${tag}`}
+                className="rounded-full bg-accent/10 border border-accent/20 px-2.5 py-1 text-xs text-accent"
+              >
                 {tag}
               </span>
             ))}

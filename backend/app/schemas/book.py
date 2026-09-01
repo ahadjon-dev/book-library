@@ -77,6 +77,7 @@ class BookOut(BaseModel):
     cover_image_path: str | None
     description: str | None
     genre: str | None
+    mood_tags: list[str] = []
     owned: bool
     shelf: str | None = None
     purchase_date: date | None

@@ -1,6 +1,6 @@
 from datetime import date, datetime
 
-from sqlalchemy import Boolean, Column, Date, DateTime, ForeignKey, Index, Numeric, String, Table, Text, func
+from sqlalchemy import JSON, Boolean, Column, Date, DateTime, ForeignKey, Index, Numeric, String, Table, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -40,6 +40,9 @@ class Book(Base):
     cover_image_path: Mapped[str | None] = mapped_column(String(500))
     description: Mapped[str | None] = mapped_column(Text)
     genre: Mapped[str | None] = mapped_column(String(100), index=True)
+    # AI enrichment: mood/theme tags for display, embedding for semantic recommendations
+    mood_tags: Mapped[list | None] = mapped_column(JSON)
+    embedding: Mapped[list | None] = mapped_column(JSON)
     owned: Mapped[bool] = mapped_column(Boolean, server_default="true", index=True)
     shelf_id: Mapped[int | None] = mapped_column(ForeignKey("shelves.id", ondelete="SET NULL"))
     purchase_date: Mapped[date | None] = mapped_column(Date, index=True)

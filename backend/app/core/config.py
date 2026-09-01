@@ -15,6 +15,9 @@ class Settings(BaseSettings):
     gemini_api_key: str | None = None
     vision_model: str = "gemini-3.5-flash"
     google_books_api_key: str | None = None
+    embedding_model: str = "gemini-embedding-001"
+    embedding_dimensions: int = 768
+    recommendation_min_similarity: float = 0.60
     database_pool_size: int = 10
     database_max_overflow: int = 20
 

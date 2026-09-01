@@ -27,6 +27,7 @@ export interface Book {
   cover_image_path: string | null;
   description: string | null;
   genre: string | null;
+  mood_tags: string[];
   owned: boolean;
   shelf: string | null;
   purchase_date: string | null;
