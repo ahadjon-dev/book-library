@@ -31,6 +31,8 @@ from app.schemas.book import (
 from app.schemas.import_export import ImportSummary
 from app.schemas.recommendation import RecommendNextRequest, RecommendNextResponse
 from app.schemas.shelf_scanner import BulkAddRequest, BulkAddResponse, ShelfScanResult
+from app.core.config import settings
+from app.services import book_enrichment
 from app.services.book_presenter import load_statuses, to_book_out
 from app.services.csv_importer import import_books_from_csv
 from app.services.image_storage import UnsupportedImageType, save_cover_bytes, save_cover_image
@@ -235,6 +237,24 @@ async def create_book(
         image_bytes = await download_cover_bytes(payload.cover_url)
         if image_bytes:
             book.cover_image_path = save_cover_bytes(image_bytes, ".webp")
+
+    # AI enrichment (mood tags + embedding); failure leaves the book plain
+    if settings.gemini_api_key:
+        text = book_enrichment.book_text(
+            book.title,
+            [a.name for a in book.authors],
+            book.genre,
+            [t.name for t in book.tags],
+            book.description,
+        )
+        mood_tags, vectors = await asyncio.gather(
+            book_enrichment.generate_mood_tags(text),
+            book_enrichment.embed_texts([text]),
+        )
+        if mood_tags:
+            book.mood_tags = mood_tags
+        if vectors and vectors[0]:
+            book.embedding = vectors[0]
 
     db.commit()
     db.refresh(book)
@@ -475,14 +495,14 @@ async def bulk_add_books(
 
 
 @router.post("/recommend-next", response_model=RecommendNextResponse)
-@limiter.limit("20/minute")
-def recommend_next(
+@limiter.limit("10/minute")
+async def recommend_next(
     request: Request,
     payload: RecommendNextRequest,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> RecommendNextResponse:
-    return recommend_next_books(db, current_user, payload)
+    return await recommend_next_books(db, current_user, payload)
 
 
 @router.get("/{book_id}", response_model=BookOut)
