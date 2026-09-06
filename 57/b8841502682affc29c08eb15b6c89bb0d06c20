@@ -1,0 +1,24 @@
+frontend/package-lock.json
+  h_780173feefb83a 19,6799-6803,6805
+frontend/package.json
+  h_780173feefb83a 21
+frontend/src/components/ImageCropAdjuster.tsx
+  h_780173feefb83a 1-20,31-32,42-43,45-99,101-103,105-120,123-134,137-138,140-145,149,151,154,158-159,161,177,185-211,214-222,225-231,233,235,238-240,242-271,276,279-282,289-292,300-301,311,315,324,340-361
+frontend/src/lib/cropImage.ts
+  h_780173feefb83a 1-7,9-27,29-33,36-38,47-48,50,52-55,57-58,60,62-67,70-71,75
+frontend/src/lib/i18n/en.ts
+  h_780173feefb83a 267,271-274
+frontend/src/lib/i18n/uz.ts
+  h_780173feefb83a 270,274-277
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "57b8841502682affc29c08eb15b6c89bb0d06c20",
+  "prompts": {},
+  "humans": {
+    "h_780173feefb83a": {
+      "author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}
