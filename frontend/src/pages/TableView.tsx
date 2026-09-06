@@ -150,7 +150,7 @@ export function TableView() {
                           <th
                             key={header.id}
                             onClick={header.column.getToggleSortingHandler()}
-                            className="cursor-pointer select-none whitespace-nowrap border-r border-line-strong px-3 py-2 font-medium last:border-r-0"
+                            className="sticky top-0 z-10 bg-canvas cursor-pointer select-none whitespace-nowrap border-r border-b border-line-strong px-3 py-2 font-medium last:border-r-0"
                           >
                             <div className="inline-flex items-center gap-1">
                               <span>{flexRender(header.column.columnDef.header, header.getContext())}</span>
