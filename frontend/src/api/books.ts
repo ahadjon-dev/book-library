@@ -98,9 +98,10 @@ export async function importBooksCsv(file: File): Promise<{
 
 import type { ShelfScanResult } from "@/types/scanner";
 
-export async function scanShelfImage(file: File): Promise<ShelfScanResult> {
+export async function scanShelfImage(file: File | Blob): Promise<ShelfScanResult> {
   const formData = new FormData();
-  formData.append("file", file);
+  const fileName = (file as File).name || "shelf-scan.jpg";
+  formData.append("file", file, fileName);
   const { data } = await api.post<ShelfScanResult>("/books/scan-shelf", formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });

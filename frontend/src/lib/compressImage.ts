@@ -1,7 +1,10 @@
-const DEFAULT_MAX_DIMENSION = 1000;
-const JPEG_QUALITY = 0.82;
+const DEFAULT_MAX_DIMENSION = 1600;
+const JPEG_QUALITY = 0.90;
 
-export async function compressImage(file: File, maxDimension: number = DEFAULT_MAX_DIMENSION): Promise<File> {
+export async function compressImage(file: File | Blob, maxDimension: number = DEFAULT_MAX_DIMENSION): Promise<File> {
+  const fileName = (file as File).name || "shelf-scan.jpg";
+  const cleanName = fileName.replace(/\.\w+$/, "") + ".jpg";
+
   try {
     const bitmap = await createImageBitmap(file);
     const scale = Math.min(1, maxDimension / Math.max(bitmap.width, bitmap.height));
@@ -12,16 +15,19 @@ export async function compressImage(file: File, maxDimension: number = DEFAULT_M
     canvas.width = width;
     canvas.height = height;
     const ctx = canvas.getContext("2d");
-    if (!ctx) return file;
+    if (!ctx) {
+      return file instanceof File ? file : new File([file], cleanName, { type: "image/jpeg" });
+    }
 
     ctx.drawImage(bitmap, 0, 0, width, height);
 
     const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/jpeg", JPEG_QUALITY));
-    if (!blob || blob.size >= file.size) return file;
+    if (!blob) {
+      return file instanceof File ? file : new File([file], cleanName, { type: "image/jpeg" });
+    }
 
-    return new File([blob], file.name.replace(/\.\w+$/, ".jpg"), { type: "image/jpeg" });
+    return new File([blob], cleanName, { type: "image/jpeg" });
   } catch {
-    // Unsupported format or decode failure — fall back to the original file.
-    return file;
+    return file instanceof File ? file : new File([file], cleanName, { type: "image/jpeg" });
   }
 }
