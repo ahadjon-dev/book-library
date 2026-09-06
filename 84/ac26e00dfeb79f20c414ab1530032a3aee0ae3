@@ -1,0 +1,19 @@
+frontend/src/api/client.ts
+  s_abd9b5931a916d::t_9b066b457f1c9e 51-53
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "84ac26e00dfeb79f20c414ab1530032a3aee0ae3",
+  "prompts": {},
+  "sessions": {
+    "s_abd9b5931a916d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6368b717-99a7-405b-bec7-c4d98af9263c",
+        "model": "claude-opus-5"
+      },
+      "human_author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}
