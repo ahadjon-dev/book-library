@@ -37,16 +37,20 @@ async def extract_spines(image_bytes: bytes) -> list[DetectedSpine]:
     if not key:
         raise ValueError("GEMINI_API_KEY is not configured on the server.")
 
-    requested_model = settings.vision_model or "gemini-2.5-flash"
+    requested_model = settings.vision_model or "gemini-3.6-flash"
 
     candidate_models = [requested_model]
     for fallback in (
+        "gemini-3.6-flash",
+        "gemini-3.5-flash",
+        "gemini-3.5-flash-lite",
+        "gemini-3.1-flash-lite",
+        "gemini-3.7-flash",
+        "gemini-3.8-flash",
         "gemini-2.5-flash",
         "gemini-2.0-flash",
         "gemini-1.5-flash",
-        "gemini-1.5-flash-latest",
         "gemini-1.5-pro",
-        "gemini-2.0-flash-exp",
     ):
         if fallback not in candidate_models:
             candidate_models.append(fallback)
