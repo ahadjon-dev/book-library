@@ -1,0 +1,51 @@
+backend/app/services/book_enrichment.py
+  s_14713a5d049f03::t_1f007f884fc2e3 20,53-60,97-99
+  s_14713a5d049f03::t_06fc21d4374fa9 7,21,69-84,101-106
+  s_14713a5d049f03::t_f924ca6ef98f62 130-131
+  s_14713a5d049f03::t_0e62f31d3fb617 1-6,8-19,22-52,61-68,85-96,100,107-129,132-151
+backend/app/api/books.py
+  s_14713a5d049f03::t_0ada3cf5f4cae9 254-255
+  s_14713a5d049f03::t_f141b8e917e797 34-35,241-253,256-258,498-499,505
+backend/app/services/recommendation_engine.py
+  s_14713a5d049f03::t_06fc21d4374fa9 110-111
+  s_14713a5d049f03::t_8343194f0db36e 1-11,13,16,25,28-89,91-94,96-109,112-155,186-189,191-195,197-203,208-210,212
+backend/scripts/backfill_enrichment.py
+  s_14713a5d049f03::t_06fc21d4374fa9 44-55
+  s_14713a5d049f03::t_ca0a0165404050 1-43,56-80
+backend/alembic/versions/0008_book_enrichment.py
+  s_14713a5d049f03::t_fb0bba592d4d13 1-24
+backend/app/core/config.py
+  s_14713a5d049f03::t_a44cc40f39796c 18-20
+backend/app/models/book.py
+  s_14713a5d049f03::t_20e0efbbad21dc 3,43-45
+backend/app/schemas/book.py
+  s_14713a5d049f03::t_4d2fc714ac457b 80
+backend/app/services/book_presenter.py
+  s_14713a5d049f03::t_206fa88b5cb3a9 33
+backend/app/services/isbn_lookup.py
+  s_14713a5d049f03::t_636875ab167fef 2,83-106,147-214,229-233,235-238,240-246,279
+frontend/src/components/AddBooksHubModal.tsx
+  s_14713a5d049f03::t_35878fa4a43c17 43,479-488
+frontend/src/pages/BookDetail.tsx
+  s_14713a5d049f03::t_52f2a0a3f10bea 202,209-216
+frontend/src/pages/BookForm.tsx
+  s_14713a5d049f03::t_dc8b37eb54e0c4 51,229-238
+frontend/src/types/book.ts
+  s_14713a5d049f03::t_552a7aeaa1aea5 30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "8800606e7650737541e10e77735ec70dd47f5313",
+  "prompts": {},
+  "sessions": {
+    "s_14713a5d049f03": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "549f393b-a895-47e8-b1ac-32548719570b",
+        "model": "claude-fable-5"
+      },
+      "human_author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}
