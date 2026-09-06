@@ -108,8 +108,8 @@ export function ShelfPhotoScanner({ isOpen, onClose, onSuccess }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="w-full max-w-2xl max-h-[85vh] flex flex-col rounded-2xl border border-line bg-surface p-6 shadow-2xl transition">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
+      <div className="w-full max-w-4xl lg:max-w-5xl h-[92vh] sm:h-[88vh] sm:max-h-[820px] flex flex-col rounded-2xl border border-line bg-surface p-6 sm:p-7 shadow-2xl transition">
         <div className="flex items-center justify-between border-b border-line pb-4 mb-4">
           <div className="flex items-center gap-2.5">
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent/10 text-accent border border-accent/20">
@@ -130,7 +130,7 @@ export function ShelfPhotoScanner({ isOpen, onClose, onSuccess }: Props) {
 
         {!result ? (
           imageSrc ? (
-            <div className="flex-1 overflow-y-auto min-h-0 py-2">
+            <div className="flex-1 overflow-y-auto min-h-0 py-1">
               <ImageCropAdjuster
                 imageSrc={imageSrc}
                 onConfirm={handleConfirmCrop}
@@ -147,18 +147,18 @@ export function ShelfPhotoScanner({ isOpen, onClose, onSuccess }: Props) {
                   e.preventDefault();
                   if (e.dataTransfer.files?.[0]) handleFileChange(e.dataTransfer.files[0]);
                 }}
-                className="w-full flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-line hover:border-accent/50 bg-canvas p-10 text-center transition cursor-pointer"
+                className="w-full flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-line hover:border-accent/50 bg-canvas p-12 text-center transition cursor-pointer"
               >
-                <UploadCloud className="h-12 w-12 text-accent mb-3" />
-                <p className="text-sm font-medium text-ink mb-1">{t("shelfScanner.dropzone")}</p>
-                <p className="text-xs text-ink-secondary mb-4">PNG, JPG, WEBP photos up to 10MB</p>
+                <UploadCloud className="h-14 w-14 text-accent mb-3" />
+                <p className="text-base font-semibold text-ink mb-1">{t("shelfScanner.dropzone")}</p>
+                <p className="text-xs text-ink-secondary mb-5">PNG, JPG, WEBP photos up to 10MB</p>
                 <input
                   type="file"
                   accept="image/*"
                   onChange={(e) => {
                     if (e.target.files?.[0]) handleFileChange(e.target.files[0]);
                   }}
-                  className="block text-xs text-ink-secondary file:mr-4 file:rounded-lg file:border-0 file:bg-accent file:px-4 file:py-2 file:text-xs file:font-semibold file:text-on-accent hover:file:bg-accent-hover cursor-pointer"
+                  className="block text-xs text-ink-secondary file:mr-4 file:rounded-xl file:border-0 file:bg-accent file:px-5 file:py-2.5 file:text-xs file:font-semibold file:text-on-accent hover:file:bg-accent-hover cursor-pointer shadow-sm"
                 />
               </div>
             </div>
@@ -177,7 +177,7 @@ export function ShelfPhotoScanner({ isOpen, onClose, onSuccess }: Props) {
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto space-y-2 pr-1">
+            <div className="flex-1 overflow-y-auto grid sm:grid-cols-2 gap-2.5 pr-1">
               {result.items.map((item, idx) => {
                 const isSelected = selectedIndices.includes(idx);
                 return (

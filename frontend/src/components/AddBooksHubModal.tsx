@@ -265,12 +265,12 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm p-0 sm:p-4">
-      <div className="w-full max-w-2xl h-[85vh] sm:h-[580px] flex flex-col rounded-t-3xl sm:rounded-2xl border border-line bg-surface p-5 sm:p-6 shadow-2xl transition">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/75 backdrop-blur-sm p-0 sm:p-4">
+      <div className="w-full max-w-4xl lg:max-w-5xl h-[92vh] sm:h-[88vh] sm:max-h-[820px] flex flex-col rounded-t-3xl sm:rounded-2xl border border-line bg-surface p-5 sm:p-7 shadow-2xl transition">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-line pb-4 mb-4">
           <div className="flex items-center gap-2.5">
-            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-accent/10 text-accent border border-accent/20">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent/10 text-accent border border-accent/20">
               <Plus className="h-4 w-4" />
             </span>
             <div>
@@ -292,7 +292,7 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
         <div className="flex gap-1.5 p-1 rounded-xl bg-canvas border border-line overflow-x-auto scrollbar-hide mb-4 shrink-0">
           <button
             onClick={() => setActiveTab("shelf")}
-            className={`flex-1 min-w-[110px] py-2 px-3 rounded-lg text-xs font-semibold transition inline-flex items-center justify-center gap-1.5 truncate ${
+            className={`flex-1 min-w-[120px] py-2.5 px-3 rounded-lg text-xs font-semibold transition inline-flex items-center justify-center gap-1.5 truncate ${
               activeTab === "shelf"
                 ? "bg-accent text-on-accent shadow-sm"
                 : "text-ink-secondary hover:text-ink hover:bg-surface-hover"
@@ -303,7 +303,7 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
           </button>
           <button
             onClick={() => setActiveTab("barcode")}
-            className={`flex-1 min-w-[110px] py-2 px-3 rounded-lg text-xs font-semibold transition inline-flex items-center justify-center gap-1.5 truncate ${
+            className={`flex-1 min-w-[120px] py-2.5 px-3 rounded-lg text-xs font-semibold transition inline-flex items-center justify-center gap-1.5 truncate ${
               activeTab === "barcode"
                 ? "bg-accent text-on-accent shadow-sm"
                 : "text-ink-secondary hover:text-ink hover:bg-surface-hover"
@@ -314,7 +314,7 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
           </button>
           <button
             onClick={() => setActiveTab("manual")}
-            className={`flex-1 min-w-[100px] py-2 px-3 rounded-lg text-xs font-semibold transition inline-flex items-center justify-center gap-1.5 truncate ${
+            className={`flex-1 min-w-[110px] py-2.5 px-3 rounded-lg text-xs font-semibold transition inline-flex items-center justify-center gap-1.5 truncate ${
               activeTab === "manual"
                 ? "bg-accent text-on-accent shadow-sm"
                 : "text-ink-secondary hover:text-ink hover:bg-surface-hover"
@@ -325,7 +325,7 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
           </button>
           <button
             onClick={() => setActiveTab("import")}
-            className={`flex-1 min-w-[110px] py-2 px-3 rounded-lg text-xs font-semibold transition inline-flex items-center justify-center gap-1.5 truncate ${
+            className={`flex-1 min-w-[120px] py-2.5 px-3 rounded-lg text-xs font-semibold transition inline-flex items-center justify-center gap-1.5 truncate ${
               activeTab === "import"
                 ? "bg-accent text-on-accent shadow-sm"
                 : "text-ink-secondary hover:text-ink hover:bg-surface-hover"
@@ -345,7 +345,7 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
 
               {!shelfResult ? (
                 shelfImageSrc ? (
-                  <div className="py-2">
+                  <div className="py-1">
                     <ImageCropAdjuster
                       imageSrc={shelfImageSrc}
                       onConfirm={handleConfirmShelfCrop}
@@ -355,17 +355,17 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
                     />
                   </div>
                 ) : (
-                  <div className="py-6 flex flex-col items-center justify-center">
-                    <label className="w-full flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-line hover:border-accent bg-canvas p-8 text-center transition cursor-pointer group">
-                      <Camera className="h-12 w-12 text-accent mb-3 group-hover:scale-110 transition" />
-                      <p className="text-sm font-semibold text-ink mb-1">
+                  <div className="py-10 flex flex-col items-center justify-center">
+                    <label className="w-full flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-line hover:border-accent bg-canvas p-10 text-center transition cursor-pointer group">
+                      <Camera className="h-14 w-14 text-accent mb-3 group-hover:scale-110 transition" />
+                      <p className="text-base font-semibold text-ink mb-1">
                         Snap Photo or Upload Image
                       </p>
-                      <p className="text-xs text-ink-secondary mb-4">
-                        Tap here to open your mobile camera or pick photo
+                      <p className="text-xs text-ink-secondary mb-5">
+                        Tap here to open your mobile camera or choose a bookshelf picture
                       </p>
-                      <span className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2 text-xs font-semibold text-on-accent group-hover:bg-accent-hover transition">
-                        <Camera className="h-3.5 w-3.5" />
+                      <span className="inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-2.5 text-xs font-semibold text-on-accent group-hover:bg-accent-hover shadow-md transition">
+                        <Camera className="h-4 w-4" />
                         <span>Open Camera / Gallery</span>
                       </span>
                       <input
@@ -381,7 +381,7 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
                   </div>
                 )
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-semibold text-ink">
                       {t("shelfScanner.detected", { count: shelfResult.items.length })}
@@ -402,7 +402,7 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
                     </button>
                   </div>
 
-                  <div className="max-h-64 overflow-y-auto space-y-2 pr-1">
+                  <div className="max-h-[460px] overflow-y-auto grid sm:grid-cols-2 gap-2.5 pr-1">
                     {shelfResult.items.map((item, idx) => {
                       const isSelected = selectedShelfIndices.includes(idx);
                       return (
@@ -413,7 +413,7 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
                               prev.includes(idx) ? prev.filter((i) => i !== idx) : [...prev, idx]
                             );
                           }}
-                          className={`flex items-center gap-3 p-2.5 rounded-xl border transition cursor-pointer ${
+                          className={`flex items-center gap-3 p-3 rounded-xl border transition cursor-pointer ${
                             isSelected
                               ? "border-accent bg-accent/5"
                               : "border-line bg-canvas hover:bg-surface-hover"
@@ -429,15 +429,15 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
                             <img
                               src={item.cover_url}
                               alt=""
-                              className="h-10 w-7 object-cover rounded shadow-sm shrink-0"
+                              className="h-12 w-8 object-cover rounded shadow-sm shrink-0"
                             />
                           ) : (
-                            <div className="h-10 w-7 bg-surface-hover rounded flex items-center justify-center text-[10px] text-ink-secondary shrink-0">
-                              <BookOpen className="h-4 w-4 text-ink-muted" />
+                            <div className="h-12 w-8 bg-surface-hover rounded flex items-center justify-center text-[10px] text-ink-secondary shrink-0">
+                              <BookOpen className="h-5 w-5 text-ink-muted" />
                             </div>
                           )}
                           <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1.5">
                               <p className="text-xs font-semibold text-ink truncate">{item.title}</p>
                               {item.already_in_library && (
                                 <span className="px-1.5 py-0.5 rounded text-[9px] font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20 shrink-0">
@@ -458,7 +458,7 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
                     <button
                       type="button"
                       onClick={handleResetShelf}
-                      className="text-xs text-ink-secondary hover:text-ink"
+                      className="rounded-xl border border-line px-4 py-2 text-xs font-medium text-ink-secondary hover:text-ink hover:bg-surface-hover transition"
                     >
                       Scan Another Photo
                     </button>
@@ -466,7 +466,7 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
                       type="button"
                       disabled={addingShelfBooks || selectedShelfIndices.length === 0}
                       onClick={handleBulkAddShelf}
-                      className="rounded-lg bg-accent px-5 py-2 text-xs font-semibold text-on-accent hover:bg-accent-hover transition disabled:opacity-50"
+                      className="rounded-xl bg-accent px-6 py-2.5 text-xs font-semibold text-on-accent hover:bg-accent-hover shadow-md transition disabled:opacity-50"
                     >
                       {addingShelfBooks
                         ? t("common.saving")
@@ -483,19 +483,19 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
             <div className="space-y-4">
               <p className="text-xs text-ink-secondary">{t("addHub.barcodeDesc")}</p>
 
-              <div className="flex gap-2">
+              <div className="flex gap-2.5">
                 <input
                   type="text"
                   value={isbnInput}
                   onChange={(e) => setIsbnInput(e.target.value)}
                   placeholder="e.g. 9780547928227"
-                  className="flex-1 rounded-lg border border-line bg-canvas px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none"
+                  className="flex-1 rounded-xl border border-line bg-canvas px-4 py-2.5 text-sm text-ink focus:border-accent focus:outline-none"
                 />
                 <button
                   type="button"
                   disabled={lookingUpIsbn || !isbnInput.trim()}
                   onClick={() => handleIsbnLookup(isbnInput)}
-                  className="rounded-lg bg-accent px-4 py-2 text-xs font-semibold text-on-accent hover:bg-accent-hover transition disabled:opacity-50 shrink-0"
+                  className="rounded-xl bg-accent px-5 py-2.5 text-xs font-semibold text-on-accent hover:bg-accent-hover transition disabled:opacity-50 shrink-0 shadow-sm"
                 >
                   {lookingUpIsbn ? t("bookForm.lookingUp") : t("bookForm.lookUp")}
                 </button>
@@ -503,7 +503,7 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
                   <button
                     type="button"
                     onClick={() => setShowLiveScanner(true)}
-                    className="inline-flex items-center gap-1.5 rounded-lg border border-line bg-surface px-3 py-2 text-xs font-medium text-ink hover:bg-surface-hover transition shrink-0"
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-line bg-surface px-4 py-2.5 text-xs font-medium text-ink hover:bg-surface-hover transition shrink-0"
                   >
                     <Barcode className="h-4 w-4" />
                     <span>{t("bookForm.scan")}</span>
@@ -512,46 +512,51 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
               </div>
 
               {isbnResult && (
-                <div className="p-4 rounded-xl border border-line bg-canvas space-y-3">
-                  <div className="flex gap-3">
+                <div className="p-5 rounded-2xl border border-line bg-canvas space-y-4">
+                  <div className="flex gap-4">
                     {isbnResult.cover_url ? (
                       <img
                         src={isbnResult.cover_url}
                         alt=""
-                        className="h-20 w-14 object-cover rounded shadow-sm shrink-0"
+                        className="h-28 w-20 object-cover rounded-lg shadow-md shrink-0 border border-line"
                       />
                     ) : (
-                      <div className="h-20 w-14 bg-surface-hover rounded flex items-center justify-center text-xs text-ink-secondary shrink-0">
-                        <BookOpen className="h-6 w-6 text-ink-muted" />
+                      <div className="h-28 w-20 bg-surface-hover rounded-lg flex items-center justify-center text-xs text-ink-secondary shrink-0">
+                        <BookOpen className="h-8 w-8 text-ink-muted" />
                       </div>
                     )}
-                    <div className="min-w-0 flex-1">
-                      <h4 className="font-bold text-sm text-ink truncate">{isbnResult.title}</h4>
-                      <p className="text-xs text-ink-secondary truncate">
+                    <div className="min-w-0 flex-1 space-y-1">
+                      <h4 className="font-bold text-base text-ink">{isbnResult.title}</h4>
+                      <p className="text-xs text-ink-secondary">
                         {isbnResult.authors?.join(", ") || "Unknown Author"}
                       </p>
-                      <p className="text-xs text-ink-muted mt-1">
+                      <p className="text-xs text-ink-muted">
                         {isbnResult.publisher ? `${isbnResult.publisher} • ` : ""}
                         {isbnResult.publication_year ? `${isbnResult.publication_year} • ` : ""}
                         {isbnResult.page_count ? `${isbnResult.page_count} pages` : ""}
                       </p>
+                      {isbnResult.genre && (
+                        <span className="inline-block px-2 py-0.5 text-[11px] rounded-md bg-accent/10 text-accent font-medium mt-1">
+                          {isbnResult.genre}
+                        </span>
+                      )}
                       {isbnMatch && (
-                        <p className="text-[11px] text-amber-400 mt-1">
-                          Already in your collection!{" "}
+                        <p className="text-xs text-amber-400 mt-2 font-medium">
+                          ⚠️ Already in your collection!{" "}
                           <Link to={`/books/${isbnMatch.id}`} className="underline">
-                            View
+                            View Book
                           </Link>
                         </p>
                       )}
                     </div>
                   </div>
 
-                  <div className="flex justify-end pt-2 border-t border-line">
+                  <div className="flex justify-end pt-3 border-t border-line">
                     <button
                       type="button"
                       disabled={addingIsbnBook}
                       onClick={handleAddIsbnBook}
-                      className="rounded-lg bg-accent px-5 py-2 text-xs font-semibold text-on-accent hover:bg-accent-hover transition disabled:opacity-50"
+                      className="rounded-xl bg-accent px-6 py-2.5 text-xs font-semibold text-on-accent hover:bg-accent-hover transition disabled:opacity-50 shadow-md"
                     >
                       {addingIsbnBook ? t("common.saving") : "Add Book to Library"}
                     </button>
@@ -576,125 +581,135 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
 
           {/* TAB 3: MANUAL FORM */}
           {activeTab === "manual" && (
-            <form onSubmit={handleManualSubmit} className="space-y-3">
+            <form onSubmit={handleManualSubmit} className="space-y-4">
               <p className="text-xs text-ink-secondary">{t("addHub.manualDesc")}</p>
 
-              <div>
-                <label className="block text-xs font-semibold text-ink-secondary mb-1">
-                  Title *
-                </label>
-                <input
-                  type="text"
-                  value={manualTitle}
-                  onChange={(e) => setManualTitle(e.target.value)}
-                  placeholder="Book Title"
-                  required
-                  className="w-full rounded-lg border border-line bg-canvas px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none"
-                />
-              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Left Column */}
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-ink-secondary mb-1">
+                      Title *
+                    </label>
+                    <input
+                      type="text"
+                      value={manualTitle}
+                      onChange={(e) => setManualTitle(e.target.value)}
+                      placeholder="Book Title"
+                      required
+                      className="w-full rounded-xl border border-line bg-canvas px-3.5 py-2 text-sm text-ink focus:border-accent focus:outline-none"
+                    />
+                  </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-ink-secondary mb-1">
-                  Authors (comma separated)
-                </label>
-                <input
-                  type="text"
-                  value={manualAuthors}
-                  onChange={(e) => setManualAuthors(e.target.value)}
-                  placeholder="e.g. Frank Herbert, Brian Herbert"
-                  className="w-full rounded-lg border border-line bg-canvas px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none"
-                />
-              </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-ink-secondary mb-1">
+                      Authors (comma separated)
+                    </label>
+                    <input
+                      type="text"
+                      value={manualAuthors}
+                      onChange={(e) => setManualAuthors(e.target.value)}
+                      placeholder="e.g. Frank Herbert, Brian Herbert"
+                      className="w-full rounded-xl border border-line bg-canvas px-3.5 py-2 text-sm text-ink focus:border-accent focus:outline-none"
+                    />
+                  </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-ink-secondary mb-1">
-                    Genre
-                  </label>
-                  <input
-                    type="text"
-                    value={manualGenre}
-                    onChange={(e) => setManualGenre(e.target.value)}
-                    placeholder="e.g. Sci-Fi, Fiction"
-                    className="w-full rounded-lg border border-line bg-canvas px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none"
-                  />
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-ink-secondary mb-1">
+                        Genre
+                      </label>
+                      <input
+                        type="text"
+                        value={manualGenre}
+                        onChange={(e) => setManualGenre(e.target.value)}
+                        placeholder="e.g. Sci-Fi, Fiction"
+                        className="w-full rounded-xl border border-line bg-canvas px-3.5 py-2 text-sm text-ink focus:border-accent focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-ink-secondary mb-1">
+                        Shelf
+                      </label>
+                      <input
+                        type="text"
+                        value={manualShelf}
+                        onChange={(e) => setManualShelf(e.target.value)}
+                        placeholder="e.g. Living Room Shelf"
+                        list="shelf-suggestions"
+                        className="w-full rounded-xl border border-line bg-canvas px-3.5 py-2 text-sm text-ink focus:border-accent focus:outline-none"
+                      />
+                      <datalist id="shelf-suggestions">
+                        {shelves.map((s) => (
+                          <option key={s} value={s} />
+                        ))}
+                      </datalist>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-xs font-semibold text-ink-secondary mb-1">
-                    Shelf
-                  </label>
-                  <input
-                    type="text"
-                    value={manualShelf}
-                    onChange={(e) => setManualShelf(e.target.value)}
-                    placeholder="e.g. Living Room Shelf"
-                    list="shelf-suggestions"
-                    className="w-full rounded-lg border border-line bg-canvas px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none"
-                  />
-                  <datalist id="shelf-suggestions">
-                    {shelves.map((s) => (
-                      <option key={s} value={s} />
-                    ))}
-                  </datalist>
+
+                {/* Right Column */}
+                <div className="space-y-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-ink-secondary mb-1">
+                        Publication Year
+                      </label>
+                      <input
+                        type="number"
+                        value={manualYear}
+                        onChange={(e) => setManualYear(e.target.value)}
+                        placeholder="2024"
+                        className="w-full rounded-xl border border-line bg-canvas px-3.5 py-2 text-sm text-ink focus:border-accent focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-ink-secondary mb-1">
+                        Page Count
+                      </label>
+                      <input
+                        type="number"
+                        value={manualPages}
+                        onChange={(e) => setManualPages(e.target.value)}
+                        placeholder="350"
+                        className="w-full rounded-xl border border-line bg-canvas px-3.5 py-2 text-sm text-ink focus:border-accent focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-ink-secondary mb-1">
+                      Cover Image (Optional)
+                    </label>
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          if (e.target.files?.[0]) {
+                            setManualCoverFile(e.target.files[0]);
+                            setManualCoverPreview(URL.createObjectURL(e.target.files[0]));
+                          }
+                        }}
+                        className="block w-full text-xs text-ink-secondary file:mr-3 file:rounded-lg file:border-0 file:bg-accent/10 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-accent hover:file:bg-accent/20 cursor-pointer"
+                      />
+                      {manualCoverPreview && (
+                        <img
+                          src={manualCoverPreview}
+                          alt=""
+                          className="h-14 w-10 object-cover rounded-md border border-line shrink-0 shadow-sm"
+                        />
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-ink-secondary mb-1">
-                    Year
-                  </label>
-                  <input
-                    type="number"
-                    value={manualYear}
-                    onChange={(e) => setManualYear(e.target.value)}
-                    placeholder="2024"
-                    className="w-full rounded-lg border border-line bg-canvas px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-ink-secondary mb-1">
-                    Pages
-                  </label>
-                  <input
-                    type="number"
-                    value={manualPages}
-                    onChange={(e) => setManualPages(e.target.value)}
-                    placeholder="350"
-                    className="w-full rounded-lg border border-line bg-canvas px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-ink-secondary mb-1">
-                  Cover Image
-                </label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    if (e.target.files?.[0]) {
-                      setManualCoverFile(e.target.files[0]);
-                      setManualCoverPreview(URL.createObjectURL(e.target.files[0]));
-                    }
-                  }}
-                  className="block w-full text-xs text-ink-secondary file:mr-3 file:rounded-lg file:border-0 file:bg-accent/10 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-accent hover:file:bg-accent/20 cursor-pointer"
-                />
-                {manualCoverPreview && (
-                  <img
-                    src={manualCoverPreview}
-                    alt=""
-                    className="h-16 w-11 object-cover rounded mt-2 border border-line"
-                  />
-                )}
-              </div>
-
-              <div className="flex justify-end pt-2">
+              <div className="flex justify-end pt-3 border-t border-line">
                 <button
                   type="submit"
                   disabled={savingManual || !manualTitle.trim()}
-                  className="rounded-lg bg-accent px-6 py-2 text-xs font-semibold text-on-accent hover:bg-accent-hover transition disabled:opacity-50"
+                  className="rounded-xl bg-accent px-7 py-2.5 text-xs font-semibold text-on-accent hover:bg-accent-hover transition disabled:opacity-50 shadow-md"
                 >
                   {savingManual ? t("common.saving") : t("common.save")}
                 </button>
@@ -715,11 +730,11 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
                       e.preventDefault();
                       if (e.dataTransfer.files?.[0]) setCsvFile(e.dataTransfer.files[0]);
                     }}
-                    className={`flex flex-col items-center justify-center rounded-2xl border-2 border-dashed p-8 text-center transition ${
-                      csvFile ? "border-accent bg-accent/5" : "border-line bg-canvas"
+                    className={`flex flex-col items-center justify-center rounded-2xl border-2 border-dashed p-10 text-center transition ${
+                      csvFile ? "border-accent bg-accent/5" : "border-line bg-canvas hover:border-accent/50"
                     }`}
                   >
-                    <FileSpreadsheet className="h-10 w-10 text-accent mb-2" />
+                    <FileSpreadsheet className="h-12 w-12 text-accent mb-3" />
                     {csvFile ? (
                       <div>
                         <p className="text-sm font-semibold text-ink">{csvFile.name}</p>
@@ -730,13 +745,16 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
                     ) : (
                       <div>
                         <p className="text-sm font-medium text-ink">{t("import.dragDrop")}</p>
+                        <p className="text-xs text-ink-secondary mt-1 mb-4">
+                          Supports standard CSV files and Goodreads exports
+                        </p>
                         <input
                           type="file"
                           accept=".csv"
                           onChange={(e) => {
                             if (e.target.files?.[0]) setCsvFile(e.target.files[0]);
                           }}
-                          className="mt-3 block w-full text-xs text-ink-secondary file:mr-4 file:rounded-lg file:border-0 file:bg-accent file:px-4 file:py-2 file:text-xs file:font-semibold file:text-on-accent hover:file:bg-accent-hover cursor-pointer"
+                          className="block w-full text-xs text-ink-secondary file:mr-4 file:rounded-lg file:border-0 file:bg-accent file:px-4 file:py-2 file:text-xs file:font-semibold file:text-on-accent hover:file:bg-accent-hover cursor-pointer"
                         />
                       </div>
                     )}
@@ -747,7 +765,7 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
                       type="button"
                       disabled={!csvFile || importingCsv}
                       onClick={handleCsvImport}
-                      className="rounded-lg bg-accent px-5 py-2 text-xs font-semibold text-on-accent hover:bg-accent-hover transition disabled:opacity-50"
+                      className="rounded-xl bg-accent px-6 py-2.5 text-xs font-semibold text-on-accent hover:bg-accent-hover transition disabled:opacity-50 shadow-md"
                     >
                       {importingCsv ? t("import.importing") : t("import.importButton")}
                     </button>
@@ -756,21 +774,21 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
               ) : (
                 <div className="space-y-4">
                   <div className="grid grid-cols-3 gap-3 text-center">
-                    <div className="rounded-xl border border-line bg-canvas p-3">
-                      <span className="block text-xl font-bold text-ink">{csvResult.total_rows}</span>
-                      <span className="text-[11px] text-ink-secondary">Total Rows</span>
+                    <div className="rounded-xl border border-line bg-canvas p-4">
+                      <span className="block text-2xl font-bold text-ink">{csvResult.total_rows}</span>
+                      <span className="text-xs text-ink-secondary">Total Rows</span>
                     </div>
-                    <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-3">
-                      <span className="block text-xl font-bold text-emerald-400">
+                    <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4">
+                      <span className="block text-2xl font-bold text-emerald-400">
                         {csvResult.imported}
                       </span>
-                      <span className="text-[11px] text-emerald-400/80">Imported</span>
+                      <span className="text-xs text-emerald-400/80">Imported</span>
                     </div>
-                    <div className="rounded-xl border border-line bg-canvas p-3">
-                      <span className="block text-xl font-bold text-ink-secondary">
+                    <div className="rounded-xl border border-line bg-canvas p-4">
+                      <span className="block text-2xl font-bold text-ink-secondary">
                         {csvResult.skipped}
                       </span>
-                      <span className="text-[11px] text-ink-secondary">Skipped</span>
+                      <span className="text-xs text-ink-secondary">Skipped</span>
                     </div>
                   </div>
 
@@ -782,7 +800,7 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
                         setCsvResult(null);
                         onClose();
                       }}
-                      className="rounded-lg bg-accent px-5 py-2 text-xs font-semibold text-on-accent hover:bg-accent-hover transition"
+                      className="rounded-xl bg-accent px-6 py-2.5 text-xs font-semibold text-on-accent hover:bg-accent-hover transition shadow-md"
                     >
                       Done
                     </button>
