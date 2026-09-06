@@ -33,9 +33,17 @@ export function rotateImage(imageSrc: string, degree: number): Promise<string> {
   });
 }
 
+export interface CropArea {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  unit?: "%" | "px";
+}
+
 export async function getCroppedCanvasImg(
   image: HTMLImageElement,
-  crop?: { x: number; y: number; width: number; height: number } | null
+  crop?: CropArea | null
 ): Promise<Blob> {
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
@@ -44,18 +52,40 @@ export async function getCroppedCanvasImg(
     throw new Error("No 2d context");
   }
 
-  const scaleX = image.naturalWidth / image.width;
-  const scaleY = image.naturalHeight / image.height;
+  const naturalWidth = image.naturalWidth || image.width;
+  const naturalHeight = image.naturalHeight || image.height;
 
-  const hasCrop = crop && crop.width > 0 && crop.height > 0;
+  let pixelX = 0;
+  let pixelY = 0;
+  let pixelWidth = naturalWidth;
+  let pixelHeight = naturalHeight;
 
-  const pixelX = hasCrop ? Math.round(crop.x * scaleX) : 0;
-  const pixelY = hasCrop ? Math.round(crop.y * scaleY) : 0;
-  const pixelWidth = hasCrop ? Math.round(crop.width * scaleX) : image.naturalWidth;
-  const pixelHeight = hasCrop ? Math.round(crop.height * scaleY) : image.naturalHeight;
+  if (crop && crop.width > 0 && crop.height > 0) {
+    if (crop.unit === "%" || (!crop.unit && crop.width <= 100 && crop.height <= 100)) {
+      pixelX = Math.round((crop.x / 100) * naturalWidth);
+      pixelY = Math.round((crop.y / 100) * naturalHeight);
+      pixelWidth = Math.round((crop.width / 100) * naturalWidth);
+      pixelHeight = Math.round((crop.height / 100) * naturalHeight);
+    } else {
+      const renderedWidth = image.clientWidth || image.width || naturalWidth;
+      const renderedHeight = image.clientHeight || image.height || naturalHeight;
+      const scaleX = naturalWidth / renderedWidth;
+      const scaleY = naturalHeight / renderedHeight;
+      pixelX = Math.round(crop.x * scaleX);
+      pixelY = Math.round(crop.y * scaleY);
+      pixelWidth = Math.round(crop.width * scaleX);
+      pixelHeight = Math.round(crop.height * scaleY);
+    }
+  }
 
-  canvas.width = Math.max(pixelWidth, 1);
-  canvas.height = Math.max(pixelHeight, 1);
+  // Clamp within image bounds to guarantee valid canvas draw
+  pixelX = Math.max(0, Math.min(pixelX, naturalWidth - 1));
+  pixelY = Math.max(0, Math.min(pixelY, naturalHeight - 1));
+  pixelWidth = Math.max(1, Math.min(pixelWidth, naturalWidth - pixelX));
+  pixelHeight = Math.max(1, Math.min(pixelHeight, naturalHeight - pixelY));
+
+  canvas.width = pixelWidth;
+  canvas.height = pixelHeight;
 
   ctx.imageSmoothingQuality = "high";
 
@@ -67,8 +97,8 @@ export async function getCroppedCanvasImg(
     pixelHeight,
     0,
     0,
-    canvas.width,
-    canvas.height
+    pixelWidth,
+    pixelHeight
   );
 
   return new Promise((resolve, reject) => {
