@@ -1,0 +1,16 @@
+frontend/src/pages/Gallery.tsx
+  h_780173feefb83a 19-20,262-264,266-282,286,288,290
+frontend/src/pages/TableView.tsx
+  h_780173feefb83a 153
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "d446a8e5f43ef9b1e15420948cd4990f47190a31",
+  "prompts": {},
+  "humans": {
+    "h_780173feefb83a": {
+      "author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}
