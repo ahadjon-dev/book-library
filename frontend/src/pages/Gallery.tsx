@@ -16,6 +16,8 @@ import {
   Download,
   ChevronLeft,
   ChevronRight,
+  ChevronUp,
+  ChevronDown,
   Sparkles,
   Plus,
   Share2,
@@ -257,28 +259,35 @@ function TableSection({
         </button>
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-line bg-surface shadow-sm">
-        <table className="w-full text-left text-sm">
-          <thead>
+      <div className="overflow-auto max-h-[calc(100vh-230px)] sm:max-h-[calc(100vh-240px)] rounded-xl border border-line bg-surface shadow-sm">
+        <table className="w-full text-left text-sm border-separate border-spacing-0">
+          <thead className="sticky top-0 z-20">
             {table.getHeaderGroups().map((group) => (
-              <tr key={group.id} className="border-b border-line bg-canvas/50 text-ink-muted text-xs font-semibold">
-                {group.headers.map((header) => (
-                  <th
-                    key={header.id}
-                    onClick={header.column.getToggleSortingHandler()}
-                    className="px-3 py-2.5 cursor-pointer select-none hover:text-ink transition"
-                  >
-                    {flexRender(header.column.columnDef.header, header.getContext())}
-                  </th>
-                ))}
+              <tr key={group.id} className="text-ink-muted text-xs font-semibold">
+                {group.headers.map((header) => {
+                  const isSorted = header.column.getIsSorted();
+                  return (
+                    <th
+                      key={header.id}
+                      onClick={header.column.getToggleSortingHandler()}
+                      className="sticky top-0 z-20 bg-surface/95 backdrop-blur-md px-3 py-2.5 cursor-pointer select-none hover:text-ink transition border-b border-line shadow-xs whitespace-nowrap"
+                    >
+                      <div className="inline-flex items-center gap-1">
+                        <span>{flexRender(header.column.columnDef.header, header.getContext())}</span>
+                        {isSorted === "asc" && <ChevronUp className="h-3 w-3 text-accent" />}
+                        {isSorted === "desc" && <ChevronDown className="h-3 w-3 text-accent" />}
+                      </div>
+                    </th>
+                  );
+                })}
               </tr>
             ))}
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-line">
             {table.getRowModel().rows.map((row) => (
-              <tr key={row.id} className="border-b border-line last:border-0 hover:bg-surface-hover/50 transition">
+              <tr key={row.id} className="hover:bg-surface-hover/50 transition">
                 {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className="px-3 py-2">
+                  <td key={cell.id} className="px-3 py-2 border-b border-line last:border-b-0">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
