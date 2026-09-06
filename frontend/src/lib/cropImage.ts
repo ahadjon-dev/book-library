@@ -1,31 +1,42 @@
-export const createImage = (url: string): Promise<HTMLImageElement> =>
-  new Promise((resolve, reject) => {
-    const image = new Image();
-    image.addEventListener("load", () => resolve(image));
-    image.addEventListener("error", (error) => reject(error));
-    image.setAttribute("crossOrigin", "anonymous");
-    image.src = url;
+export function rotateImage(imageSrc: string, degree: number): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const normalizedDegree = ((degree % 360) + 360) % 360;
+    if (normalizedDegree === 0) {
+      resolve(imageSrc);
+      return;
+    }
+
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        reject(new Error("No 2d context"));
+        return;
+      }
+
+      const rad = (normalizedDegree * Math.PI) / 180;
+      const is90or270 = normalizedDegree === 90 || normalizedDegree === 270;
+
+      canvas.width = is90or270 ? img.height : img.width;
+      canvas.height = is90or270 ? img.width : img.height;
+
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.rotate(rad);
+      ctx.drawImage(img, -img.width / 2, -img.height / 2);
+
+      resolve(canvas.toDataURL("image/jpeg", 0.95));
+    };
+    img.onerror = (err) => reject(err);
+    img.src = imageSrc;
   });
-
-export function getRadianAngle(degreeValue: number) {
-  return (degreeValue * Math.PI) / 180;
 }
 
-export function rotateSize(width: number, height: number, rotation: number) {
-  const rotRad = getRadianAngle(rotation);
-  return {
-    width: Math.abs(Math.cos(rotRad) * width) + Math.abs(Math.sin(rotRad) * height),
-    height: Math.abs(Math.sin(rotRad) * width) + Math.abs(Math.cos(rotRad) * height),
-  };
-}
-
-export async function getCroppedImg(
-  imageSrc: string,
-  pixelCrop: { x: number; y: number; width: number; height: number },
-  rotation = 0,
-  flip = { horizontal: false, vertical: false }
+export async function getCroppedCanvasImg(
+  image: HTMLImageElement,
+  crop?: { x: number; y: number; width: number; height: number } | null
 ): Promise<Blob> {
-  const image = await createImage(imageSrc);
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
 
@@ -33,43 +44,35 @@ export async function getCroppedImg(
     throw new Error("No 2d context");
   }
 
-  const rotRad = getRadianAngle(rotation);
-  const { width: bBoxWidth, height: bBoxHeight } = rotateSize(image.width, image.height, rotation);
+  const scaleX = image.naturalWidth / image.width;
+  const scaleY = image.naturalHeight / image.height;
 
-  canvas.width = bBoxWidth;
-  canvas.height = bBoxHeight;
+  const hasCrop = crop && crop.width > 0 && crop.height > 0;
 
-  ctx.translate(bBoxWidth / 2, bBoxHeight / 2);
-  ctx.rotate(rotRad);
-  ctx.scale(flip.horizontal ? -1 : 1, flip.vertical ? -1 : 1);
-  ctx.translate(-image.width / 2, -image.height / 2);
+  const pixelX = hasCrop ? Math.round(crop.x * scaleX) : 0;
+  const pixelY = hasCrop ? Math.round(crop.y * scaleY) : 0;
+  const pixelWidth = hasCrop ? Math.round(crop.width * scaleX) : image.naturalWidth;
+  const pixelHeight = hasCrop ? Math.round(crop.height * scaleY) : image.naturalHeight;
 
-  ctx.drawImage(image, 0, 0);
+  canvas.width = Math.max(pixelWidth, 1);
+  canvas.height = Math.max(pixelHeight, 1);
 
-  const croppedCanvas = document.createElement("canvas");
-  const croppedCtx = croppedCanvas.getContext("2d");
+  ctx.imageSmoothingQuality = "high";
 
-  if (!croppedCtx) {
-    throw new Error("No 2d context");
-  }
-
-  croppedCanvas.width = Math.max(pixelCrop.width, 1);
-  croppedCanvas.height = Math.max(pixelCrop.height, 1);
-
-  croppedCtx.drawImage(
-    canvas,
-    pixelCrop.x,
-    pixelCrop.y,
-    pixelCrop.width,
-    pixelCrop.height,
+  ctx.drawImage(
+    image,
+    pixelX,
+    pixelY,
+    pixelWidth,
+    pixelHeight,
     0,
     0,
-    pixelCrop.width,
-    pixelCrop.height
+    canvas.width,
+    canvas.height
   );
 
   return new Promise((resolve, reject) => {
-    croppedCanvas.toBlob(
+    canvas.toBlob(
       (blob) => {
         if (!blob) {
           reject(new Error("Canvas is empty"));
