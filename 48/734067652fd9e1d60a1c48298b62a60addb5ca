@@ -1,0 +1,30 @@
+README.md
+  h_780173feefb83a 9,11-12,18,60,68,71-72,75,92,94-96
+frontend/package-lock.json
+  h_780173feefb83a 19,6291-6296,6805-6817
+frontend/package.json
+  h_780173feefb83a 21
+frontend/src/components/AddBooksHubModal.tsx
+  h_780173feefb83a 29-31,54,89-97,100-101,108,114-119,347-358,376,381-382,460
+frontend/src/components/ImageCropAdjuster.tsx
+  h_780173feefb83a 1-200
+frontend/src/components/ShelfPhotoScanner.tsx
+  h_780173feefb83a 6,22,28-36,40,100,105-109,132-143,164-165
+frontend/src/lib/cropImage.ts
+  h_780173feefb83a 1-84
+frontend/src/lib/i18n/en.ts
+  h_780173feefb83a 8,266-273
+frontend/src/lib/i18n/uz.ts
+  h_780173feefb83a 10,269-276
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "48734067652fd9e1d60a1c48298b62a60addb5ca",
+  "prompts": {},
+  "humans": {
+    "h_780173feefb83a": {
+      "author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}
