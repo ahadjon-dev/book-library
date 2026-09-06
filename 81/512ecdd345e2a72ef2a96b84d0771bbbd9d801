@@ -1,0 +1,18 @@
+backend/scripts/generate_docs.py
+  h_780173feefb83a 1-304
+docs/USER_GUIDE.md
+  h_780173feefb83a 1-201
+docs/USER_GUIDE.pdf
+  h_780173feefb83a 1-212
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "81512ecdd345e2a72ef2a96b84d0771bbbd9d801",
+  "prompts": {},
+  "humans": {
+    "h_780173feefb83a": {
+      "author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}
