@@ -3,6 +3,7 @@ import { Camera, BookOpen, X, UploadCloud } from "lucide-react";
 import { scanShelfImage, bulkAddBooks } from "@/api/books";
 import type { ShelfScanItem, ShelfScanResult } from "@/types/scanner";
 import { compressImage } from "@/lib/compressImage";
+import { ImageCropAdjuster } from "@/components/ImageCropAdjuster";
 import { useTranslation } from "@/lib/LanguageContext";
 import { useToast } from "@/lib/ToastContext";
 
@@ -18,16 +19,25 @@ export function ShelfPhotoScanner({ isOpen, onClose, onSuccess }: Props) {
 
   const [scanning, setScanning] = useState(false);
   const [adding, setAdding] = useState(false);
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [result, setResult] = useState<ShelfScanResult | null>(null);
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
 
   if (!isOpen) return null;
 
-  async function handleFileChange(selectedFile: File) {
+  function handleFileChange(selectedFile: File) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      setImageSrc(reader.result as string);
+    };
+    reader.readAsDataURL(selectedFile);
+  }
+
+  async function handleConfirmCrop(croppedBlob: Blob) {
     try {
       setScanning(true);
       // High-resolution 1600px compression to preserve spine typography
-      const compressed = await compressImage(selectedFile, 1600);
+      const compressed = await compressImage(croppedBlob as File, 1600);
       const data = await scanShelfImage(compressed);
       setResult(data);
 
@@ -87,8 +97,14 @@ export function ShelfPhotoScanner({ isOpen, onClose, onSuccess }: Props) {
 
   function handleReset() {
     setResult(null);
+    setImageSrc(null);
     setSelectedIndices([]);
     onClose();
+  }
+
+  function handleResetPhoto() {
+    setImageSrc(null);
+    setResult(null);
   }
 
   return (
@@ -113,14 +129,18 @@ export function ShelfPhotoScanner({ isOpen, onClose, onSuccess }: Props) {
         </div>
 
         {!result ? (
-          <div className="flex-1 flex flex-col items-center justify-center p-8 space-y-4">
-            {scanning ? (
-              <div className="text-center space-y-3">
-                <div className="h-10 w-10 animate-spin rounded-full border-4 border-accent border-t-transparent mx-auto" />
-                <p className="text-sm font-semibold text-ink">{t("shelfScanner.scanning")}</p>
-                <p className="text-xs text-ink-secondary">Vision AI is reading book spines...</p>
-              </div>
-            ) : (
+          imageSrc ? (
+            <div className="flex-1 overflow-y-auto min-h-0 py-2">
+              <ImageCropAdjuster
+                imageSrc={imageSrc}
+                onConfirm={handleConfirmCrop}
+                onCancel={handleResetPhoto}
+                onChangePhoto={handleResetPhoto}
+                isProcessing={scanning}
+              />
+            </div>
+          ) : (
+            <div className="flex-1 flex flex-col items-center justify-center p-8 space-y-4">
               <div
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={(e) => {
@@ -141,8 +161,8 @@ export function ShelfPhotoScanner({ isOpen, onClose, onSuccess }: Props) {
                   className="block text-xs text-ink-secondary file:mr-4 file:rounded-lg file:border-0 file:bg-accent file:px-4 file:py-2 file:text-xs file:font-semibold file:text-on-accent hover:file:bg-accent-hover cursor-pointer"
                 />
               </div>
-            )}
-          </div>
+            </div>
+          )
         ) : (
           <div className="flex-1 flex flex-col min-h-0 space-y-4">
             <div className="flex items-center justify-between">

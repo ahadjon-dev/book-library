@@ -26,6 +26,9 @@ import type { IsbnLookupMatch } from "@/types/lookup";
 import type { ImportSummary } from "@/types/import";
 import type { BookFormValues } from "@/types/book";
 
+import { ImageCropAdjuster } from "@/components/ImageCropAdjuster";
+import { compressImage } from "@/lib/compressImage";
+
 const BarcodeScanner = lazy(() =>
   import("@/components/BarcodeScanner").then((m) => ({ default: m.BarcodeScanner }))
 );
@@ -48,6 +51,7 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
 
   // --- Tab 1: Shelf Scanner State ---
   const [scanningShelf, setScanningShelf] = useState(false);
+  const [shelfImageSrc, setShelfImageSrc] = useState<string | null>(null);
   const [shelfResult, setShelfResult] = useState<ShelfScanResult | null>(null);
   const [selectedShelfIndices, setSelectedShelfIndices] = useState<number[]>([]);
   const [addingShelfBooks, setAddingShelfBooks] = useState(false);
@@ -82,20 +86,35 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
   // ----------------------------------------------------
   // Handlers for Tab 1: Shelf Scanner
   // ----------------------------------------------------
-  async function handleShelfFile(file: File) {
+  function handleShelfFileSelect(file: File) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      setShelfImageSrc(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  async function handleConfirmShelfCrop(croppedBlob: Blob) {
     try {
       setScanningShelf(true);
-      const data = await scanShelfImage(file);
+      const compressed = await compressImage(croppedBlob as File, 1600);
+      const data = await scanShelfImage(compressed);
       setShelfResult(data);
       const unowned = data.items
         .map((item: any, idx: number) => (!item.already_in_library ? idx : null))
         .filter((idx: number | null): idx is number => idx !== null);
       setSelectedShelfIndices(unowned);
     } catch (err: any) {
-      showToast(err.response?.data?.detail || "Failed to scan bookshelf");
+      showToast(err.response?.data?.detail || "Failed to scan bookshelf", "error");
     } finally {
       setScanningShelf(false);
     }
+  }
+
+  function handleResetShelf() {
+    setShelfResult(null);
+    setShelfImageSrc(null);
+    setSelectedShelfIndices([]);
   }
 
   async function handleBulkAddShelf() {
@@ -325,14 +344,18 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
               <p className="text-xs text-ink-secondary">{t("addHub.shelfDesc")}</p>
 
               {!shelfResult ? (
-                <div className="py-6 flex flex-col items-center justify-center">
-                  {scanningShelf ? (
-                    <div className="text-center space-y-3 py-8">
-                      <div className="h-10 w-10 animate-spin rounded-full border-4 border-accent border-t-transparent mx-auto" />
-                      <p className="text-sm font-semibold text-ink">{t("shelfScanner.scanning")}</p>
-                      <p className="text-xs text-ink-secondary">Vision AI is analyzing book spines...</p>
-                    </div>
-                  ) : (
+                shelfImageSrc ? (
+                  <div className="py-2">
+                    <ImageCropAdjuster
+                      imageSrc={shelfImageSrc}
+                      onConfirm={handleConfirmShelfCrop}
+                      onCancel={handleResetShelf}
+                      onChangePhoto={handleResetShelf}
+                      isProcessing={scanningShelf}
+                    />
+                  </div>
+                ) : (
+                  <div className="py-6 flex flex-col items-center justify-center">
                     <label className="w-full flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-line hover:border-accent bg-canvas p-8 text-center transition cursor-pointer group">
                       <Camera className="h-12 w-12 text-accent mb-3 group-hover:scale-110 transition" />
                       <p className="text-sm font-semibold text-ink mb-1">
@@ -350,13 +373,13 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
                         accept="image/*"
                         capture="environment"
                         onChange={(e) => {
-                          if (e.target.files?.[0]) handleShelfFile(e.target.files[0]);
+                          if (e.target.files?.[0]) handleShelfFileSelect(e.target.files[0]);
                         }}
                         className="hidden"
                       />
                     </label>
-                  )}
-                </div>
+                  </div>
+                )
               ) : (
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
@@ -434,7 +457,7 @@ export function AddBooksHubModal({ isOpen, onClose, initialTab = "shelf", onSucc
                   <div className="flex justify-between items-center pt-3 border-t border-line">
                     <button
                       type="button"
-                      onClick={() => setShelfResult(null)}
+                      onClick={handleResetShelf}
                       className="text-xs text-ink-secondary hover:text-ink"
                     >
                       Scan Another Photo

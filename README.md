@@ -6,15 +6,16 @@ A modern, multi-tenant Book Library SaaS platform built with **FastAPI**, **Post
 
 ## ✨ Features
 
-- 👤 **Multi-Tenant SaaS & Data Isolation**: Self-serve sign-up with isolated private libraries, shelves, tags, stats, and loans.
+- 👤 **Multi-Tenant SaaS & Household Sharing**: Self-serve sign-up with isolated private libraries, plus household library collaboration via invite links.
 - ⚡ **1-Tap Progress & Rating**: Instantly toggle reading status (⏳ Unread ➔ 📖 Reading ➔ ✅ Finished) and set star ratings directly from gallery book cards.
-- 📸 **AI Shelf Photo Scanner**: Photograph your physical bookshelf to auto-extract titles and match metadata against Open Library via AI vision.
+- 📸 **AI Shelf Photo Scanner with Crop & Adjust**: Upload bookshelf photos with interactive zoom, rotation, and cropping controls before Gemini Vision AI extracts titles and enriches metadata.
+- 📱 **Mobile Barcode Scanner & ISBN Lookup**: Scan barcodes directly from phone cameras or enter ISBNs for instant metadata lookup.
 - 📥 **CSV & Goodreads Importer**: Migrate existing libraries in seconds with native CSV or Goodreads export format auto-detection.
 - 🤖 **AI "Recommend Next" Engine**: Unread shelf book recommendations matched to your mood and time constraints.
 - 🤝 **Lending & Loan Tracker**: Track books borrowed by friends with due dates and overdue calculations.
 - 🎯 **Yearly Reading Goals**: Set annual book targets with real-time pace tracking (*Ahead*, *On Track*, *Behind*).
 - 🌐 **Public Shareable Shelves**: Share your curated library with friends via custom vanity slugs (e.g. `/public/your-name`) with sensitive notes hidden.
-- 📱 **Installable PWA**: Offline-ready Progressive Web App with mobile barcode camera scanning.
+- 📱 **Installable PWA**: Offline-ready Progressive Web App with mobile camera scanning.
 - 🎨 **7 Visual Themes & Multilingual**: Dark, Onyx, Sky, Plum, Blue, Light, and Lime palettes with English (`en`) and Uzbek (`uz`) support.
 
 ---
@@ -56,7 +57,7 @@ docker compose exec backend python -m scripts.seed_users \
 | `POSTGRES_USER` | PostgreSQL superuser username | `library` | No |
 | `POSTGRES_PASSWORD` | PostgreSQL superuser password | `library` | No |
 | `POSTGRES_DB` | PostgreSQL primary database name | `library` | No |
-| `OPENAI_API_KEY` | Key for Vision spine extraction & recommendation LLM | `sk-...` | Optional |
+| `GEMINI_API_KEY` | Key for Vision spine extraction & recommendation LLM | `AIzaSy...` | Optional |
 | `DATABASE_POOL_SIZE` | Connection pool size for PostgreSQL engine | `10` | No |
 | `DATABASE_MAX_OVERFLOW` | Maximum overflow connections above pool size | `20` | No |
 
@@ -64,14 +65,14 @@ docker compose exec backend python -m scripts.seed_users \
 
 ## 🧪 Testing & Code Coverage
 
-The backend maintains **94%+ statement coverage** across all API routes, data isolation barriers, and services.
+The backend maintains comprehensive coverage across all API routes, multi-tenant isolation barriers, and AI services.
 
 ```bash
-# Run full test suite with coverage report
-docker compose exec backend pytest -v --cov=app --cov-report=term-missing
+# Run backend test suite
+cd backend && .venv/bin/pytest
 
 # Test frontend production build
-docker compose exec frontend npm run build
+cd frontend && npm run build
 ```
 
 ---
@@ -88,8 +89,9 @@ The production `frontend/Dockerfile` uses a multi-stage build that compiles Vite
 
 ---
 
-## 📖 Architecture & Documentation
+## 📖 Documentation & User Guide
 
-- [Backend Architecture & Schema Reference](docs/BACKEND.md)
-- [Frontend Architecture, Theming & i18n Guide](docs/FRONTEND.md)
+- 📘 [**User Guide (Markdown)**](docs/USER_GUIDE.md) / [**PDF Format**](docs/USER_GUIDE.pdf) / [**Word Document (DOCX)**](docs/USER_GUIDE.docx) — Non-technical end-user manual with illustrations.
+- ⚙️ [**Backend Architecture & Schema Reference**](docs/BACKEND.md)
+- 🎨 [**Frontend Architecture, Theming & i18n Guide**](docs/FRONTEND.md)
 
