@@ -48,5 +48,8 @@ api.interceptors.response.use(
 
 export function coverUrl(path: string | null): string | null {
   if (!path) return null;
+  if (path.startsWith("http://") || path.startsWith("https://")) {
+    return path;
+  }
   return `${API_URL}/uploads/${path}`;
 }

@@ -8,6 +8,9 @@ venv/
 backend/uploads/*
 !backend/uploads/.gitkeep
 backend/test_uploads/
+*.dump
+*.tar.gz
+local_uploads/
 
 node_modules/
 dist/
