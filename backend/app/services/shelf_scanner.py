@@ -12,6 +12,7 @@ from app.core.config import settings
 from app.models.book import Book
 from app.schemas.shelf_scanner import ShelfScanItem, ShelfScanResult
 from app.services.isbn_utils import both_forms, normalize
+from app.services.translit import contains_cyrillic, to_latin
 from app.services.vision import DetectedSpine, extract_spines
 
 OPEN_LIBRARY_SEARCH_URL = "https://openlibrary.org/search.json"
@@ -138,6 +139,17 @@ async def _match_single_spine(
     ol_val = ol_match if isinstance(ol_match, dict) else None
     gb_val = gb_match if isinstance(gb_match, dict) else None
 
+    if not ol_val and not gb_val and contains_cyrillic(spine.title):
+        lat_title = to_latin(spine.title)
+        lat_author = to_latin(spine.author) if spine.author else None
+        ol_lat, gb_lat = await asyncio.gather(
+            _search_open_library(lat_title, lat_author),
+            _search_google_books(lat_title, lat_author),
+            return_exceptions=True,
+        )
+        ol_val = ol_lat if isinstance(ol_lat, dict) else None
+        gb_val = gb_lat if isinstance(gb_lat, dict) else None
+
     if ol_val and gb_val:
         best_match = ol_val if ol_val.get("score", 0) >= gb_val.get("score", 0) else gb_val
     else:
@@ -155,11 +167,11 @@ async def _match_single_spine(
     final_genre = best_match.get("genre") if is_matched else None
     final_cover = best_match.get("cover_url") if is_matched else None
 
-    # 2. Duplicate detection in user's library
+    # 2. Duplicate detection in user's library (cross-script normalized)
     already_in_library = False
     existing_id = None
 
-    norm_target_title = final_title.strip().lower()
+    norm_target_title = to_latin(final_title).strip().lower()
     target_isbns = set(both_forms(final_isbn)) if final_isbn else set()
 
     for b_id, b_title, b_isbn in db_books:
@@ -170,8 +182,9 @@ async def _match_single_spine(
                 already_in_library = True
                 existing_id = b_id
                 break
-        # Check by title similarity
-        if _similarity(b_title, norm_target_title) >= 0.85:
+        # Check by title similarity across scripts
+        norm_b_title = to_latin(b_title).strip().lower()
+        if _similarity(norm_b_title, norm_target_title) >= 0.85:
             already_in_library = True
             existing_id = b_id
             break

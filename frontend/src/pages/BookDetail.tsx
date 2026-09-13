@@ -17,7 +17,7 @@ export function BookDetail() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { showToast } = useToast();
-  const { t } = useTranslation();
+  const { t, translitBookText } = useTranslation();
   const statusOptions = useStatusOptions();
   const [notesDraft, setNotesDraft] = useState<string | null>(null);
   const [lendOpen, setLendOpen] = useState(false);
@@ -62,6 +62,13 @@ export function BookDetail() {
   const rating = book.my_status?.rating ?? null;
   const notes = notesDraft ?? book.my_status?.notes ?? "";
 
+  const displayTitle = translitBookText(book.title);
+  const displaySubtitle = book.subtitle ? translitBookText(book.subtitle) : null;
+  const displayAuthors = book.authors.map((a) => translitBookText(a)).join(", ");
+  const displayGenre = book.genre ? translitBookText(book.genre) : null;
+  const displayShelf = book.shelf ? translitBookText(book.shelf) : null;
+  const displayDescription = book.description ? translitBookText(book.description) : null;
+
   function handleDelete() {
     if (confirm(t("bookDetail.deleteConfirm", { title: book!.title }))) {
       deleteMutation.mutate();
@@ -85,10 +92,10 @@ export function BookDetail() {
       <div className="mx-auto w-40 shrink-0 sm:mx-0 sm:w-56">
         <div className="aspect-[2/3] overflow-hidden rounded-lg border border-line bg-surface">
           {cover ? (
-            <img src={cover} alt={book.title} className="h-full w-full object-cover" />
+            <img src={cover} alt={displayTitle} className="h-full w-full object-cover" />
           ) : (
             <div className="flex h-full items-center justify-center p-4 text-center text-sm text-ink-muted">
-              {book.title}
+              {displayTitle}
             </div>
           )}
         </div>
@@ -135,10 +142,10 @@ export function BookDetail() {
               </button>
             )}
           </div>
-          <h1 className="text-2xl font-semibold">{book.title}</h1>
-          {book.subtitle && <p className="text-ink-secondary">{book.subtitle}</p>}
-          {book.authors.length > 0 && (
-            <p className="mt-1 text-ink-secondary">{t("bookDetail.by", { authors: book.authors.join(", ") })}</p>
+          <h1 className="text-2xl font-semibold">{displayTitle}</h1>
+          {displaySubtitle && <p className="text-ink-secondary">{displaySubtitle}</p>}
+          {displayAuthors && (
+            <p className="mt-1 text-ink-secondary">{t("bookDetail.by", { authors: displayAuthors })}</p>
           )}
         </div>
 
@@ -146,7 +153,7 @@ export function BookDetail() {
           {book.publisher && (
             <div>
               <dt className="inline text-ink-muted">{t("bookDetail.publisher")}</dt>
-              <dd className="inline text-ink-secondary">{book.publisher}</dd>
+              <dd className="inline text-ink-secondary">{translitBookText(book.publisher)}</dd>
             </div>
           )}
           {book.publication_year && (
@@ -155,10 +162,10 @@ export function BookDetail() {
               <dd className="inline text-ink-secondary">{book.publication_year}</dd>
             </div>
           )}
-          {book.genre && (
+          {displayGenre && (
             <div>
               <dt className="inline text-ink-muted">{t("bookDetail.genre")}</dt>
-              <dd className="inline text-ink-secondary">{book.genre}</dd>
+              <dd className="inline text-ink-secondary">{displayGenre}</dd>
             </div>
           )}
           {book.page_count && (
@@ -167,10 +174,10 @@ export function BookDetail() {
               <dd className="inline text-ink-secondary">{book.page_count}</dd>
             </div>
           )}
-          {book.shelf && (
+          {displayShelf && (
             <div>
               <dt className="inline text-ink-muted">{t("bookDetail.shelf")}</dt>
-              <dd className="inline text-ink-secondary">{book.shelf}</dd>
+              <dd className="inline text-ink-secondary">{displayShelf}</dd>
             </div>
           )}
           {book.isbn && (
@@ -197,13 +204,13 @@ export function BookDetail() {
           )}
         </dl>
 
-        {book.description && <p className="text-sm leading-relaxed text-ink-secondary">{book.description}</p>}
+        {displayDescription && <p className="text-sm leading-relaxed text-ink-secondary">{displayDescription}</p>}
 
         {(book.tags.length > 0 || book.mood_tags.length > 0) && (
           <div className="flex flex-wrap gap-2">
             {book.tags.map((tag) => (
               <span key={tag} className="rounded-full bg-surface-hover px-2.5 py-1 text-xs text-ink-secondary">
-                {tag}
+                {translitBookText(tag)}
               </span>
             ))}
             {book.mood_tags.map((tag) => (

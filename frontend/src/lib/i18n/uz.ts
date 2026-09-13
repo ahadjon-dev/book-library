@@ -288,6 +288,7 @@ export const uz: typeof en = {
     lowConfidence: "Past aniqlik",
     scanAnother: "Boshqa rasm skanerlash",
     notConfigured: "Serverda Gemini Vision sozlanmagan (GEMINI_API_KEY zarur).",
+    latinToggle: "Kirilldan lotin yozuviga o'girish",
   },
   shareShelf: {
     title: "Javonni ulashish",
@@ -326,6 +327,12 @@ export const uz: typeof en = {
     joinLinkCopied: "Havola nusxalandi!",
     revokeInvite: "Bekor qilish",
     inviteRevoked: "Taklif havolasi bekor qilindi",
+    transliterateTitle: "Yozuvni o'zgartirish",
+    transliterateDesc: "Kutubxonangizdagi kitob sarlavhalari, mualliflar va javonlarni lotin yoki kirill yozuviga o'tkazish.",
+    convertToLatin: "Kutubxonani lotin yozuviga o'tkazish",
+    convertToCyrillic: "Kutubxonani kirill yozuviga o'tkazish",
+    converting: "O'tkazilmoqda…",
+    convertedSuccess: "{count} ta kitob muvaffaqiyatli o'tkazildi!",
   },
   addHub: {
     title: "Kutubxonaga kitob qo'shish",

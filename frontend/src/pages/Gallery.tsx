@@ -70,7 +70,7 @@ function Row({ title, books }: { title: string; books: Book[] }) {
 }
 
 function GenreRows() {
-  const { t } = useTranslation();
+  const { t, translitBookText } = useTranslation();
   const { data: genres = [] } = useQuery({ queryKey: ["genres"], queryFn: fetchGenres });
 
   const recentQuery = useQuery({
@@ -95,7 +95,7 @@ function GenreRows() {
       <Row title={t("gallery.recentlyAdded")} books={recentQuery.data?.items ?? []} />
       <Row title={t("status.unread")} books={unreadQuery.data?.items ?? []} />
       {genres.map((genre, i) => (
-        <Row key={genre} title={genre} books={genreQueries[i]?.data?.items ?? []} />
+        <Row key={genre} title={translitBookText(genre)} books={genreQueries[i]?.data?.items ?? []} />
       ))}
     </div>
   );
@@ -123,7 +123,7 @@ function TableSection({
   filters: BookFilters;
   onChangePage: (offset: number) => void;
 }) {
-  const { t } = useTranslation();
+  const { t, translitBookText } = useTranslation();
   const statusLabels = useStatusLabels();
   const { showToast } = useToast();
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -150,7 +150,8 @@ function TableSection({
           );
         },
       }),
-      columnHelper.accessor("title", {
+      columnHelper.accessor((row) => translitBookText(row.title), {
+        id: "title",
         header: t("table.title"),
         cell: (info) => (
           <Link to={`/books/${info.row.original.id}`} className="font-semibold text-ink hover:underline">
@@ -158,12 +159,13 @@ function TableSection({
           </Link>
         ),
       }),
-      columnHelper.accessor((row) => row.authors.join(", "), {
+      columnHelper.accessor((row) => row.authors.map((a) => translitBookText(a)).join(", "), {
         id: "authors",
         header: t("table.author"),
         cell: (info) => <span className="text-ink-secondary">{info.getValue() || "—"}</span>,
       }),
-      columnHelper.accessor("genre", {
+      columnHelper.accessor((row) => translitBookText(row.genre), {
+        id: "genre",
         header: t("table.genre"),
         cell: (info) => <span className="text-ink-secondary">{info.getValue() || "—"}</span>,
       }),
@@ -205,7 +207,7 @@ function TableSection({
       }),
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [t, statusLabels]
+    [t, statusLabels, translitBookText]
   );
 
   const table = useReactTable({

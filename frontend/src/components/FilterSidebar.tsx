@@ -51,10 +51,12 @@ function OptionList({
   options,
   selected,
   onSelect,
+  labelFn,
 }: {
   options: string[];
   selected?: string;
   onSelect: (val: string | undefined) => void;
+  labelFn?: (val: string) => string;
 }) {
   return (
     <div className="space-y-0.5">
@@ -76,7 +78,7 @@ function OptionList({
               : "text-ink-secondary hover:text-ink"
           }`}
         >
-          {opt}
+          {labelFn ? labelFn(opt) : opt}
         </button>
       ))}
     </div>
@@ -84,7 +86,7 @@ function OptionList({
 }
 
 export function FilterSidebar({ filters, onChange }: FilterSidebarProps) {
-  const { t } = useTranslation();
+  const { t, translitBookText } = useTranslation();
   const statusOptions = useStatusOptions();
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState(filters.search ?? "");
@@ -113,33 +115,33 @@ export function FilterSidebar({ filters, onChange }: FilterSidebarProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearch, debouncedAuthor, debouncedYearMin, debouncedYearMax]);
 
-  const activeCount = [
-    filters.search,
-    filters.author,
-    filters.genre,
-    filters.shelf,
-    filters.tag,
-    filters.status,
-    filters.year_min,
-    filters.year_max,
-  ].filter(Boolean).length;
-
   function clearAll() {
     setSearch("");
     setAuthor("");
     setYearMin("");
     setYearMax("");
-    onChange({ limit: filters.limit, offset: 0 });
+    onChange({
+      limit: filters.limit,
+      offset: 0,
+    });
   }
 
+  const activeCount = [
+    filters.search,
+    filters.genre,
+    filters.tag,
+    filters.author,
+    filters.shelf,
+    filters.status,
+    filters.year_min,
+    filters.year_max,
+  ].filter(Boolean).length;
+
   const body = (
-    <div className="space-y-4 text-xs">
-      <div>
-        <label className="mb-1 block font-semibold uppercase tracking-wide text-ink-muted">
-          Search
-        </label>
+    <div className="space-y-1 text-sm">
+      <div className="border-b border-line pb-3">
         <input
-          type="search"
+          type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={t("filters.searchPlaceholder")}
@@ -147,27 +149,39 @@ export function FilterSidebar({ filters, onChange }: FilterSidebarProps) {
         />
       </div>
 
-      <CollapsibleSection title={t("filters.genre")} activeLabel={filters.genre}>
+      <CollapsibleSection
+        title={t("filters.genre")}
+        activeLabel={filters.genre ? translitBookText(filters.genre) : undefined}
+      >
         <OptionList
           options={genres}
           selected={filters.genre}
           onSelect={(genre) => onChange({ ...filters, genre, offset: 0 })}
+          labelFn={translitBookText}
         />
       </CollapsibleSection>
 
-      <CollapsibleSection title={t("filters.shelf")} activeLabel={filters.shelf}>
+      <CollapsibleSection
+        title={t("filters.shelf")}
+        activeLabel={filters.shelf ? translitBookText(filters.shelf) : undefined}
+      >
         <OptionList
           options={shelves}
           selected={filters.shelf}
           onSelect={(shelf) => onChange({ ...filters, shelf, offset: 0 })}
+          labelFn={translitBookText}
         />
       </CollapsibleSection>
 
-      <CollapsibleSection title={t("filters.tags")} activeLabel={filters.tag}>
+      <CollapsibleSection
+        title={t("filters.tags")}
+        activeLabel={filters.tag ? translitBookText(filters.tag) : undefined}
+      >
         <OptionList
           options={tags}
           selected={filters.tag}
           onSelect={(tag) => onChange({ ...filters, tag, offset: 0 })}
+          labelFn={translitBookText}
         />
       </CollapsibleSection>
 

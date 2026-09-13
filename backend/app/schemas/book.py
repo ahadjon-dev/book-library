@@ -133,3 +133,8 @@ class IsbnLookupResult(BaseModel):
     page_count: int | None = None
     cover_url: str | None = None
     already_in_library: IsbnLookupMatch | None = None
+
+
+class TransliterateResponse(BaseModel):
+    converted_books_count: int
+    message: str

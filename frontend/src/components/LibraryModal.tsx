@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { Check, Copy, Link2, Trash2, Users, X } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { fetchInvite, fetchLibrary, renameLibrary, revokeInvite, rotateInvite } from "@/api/library";
+import { transliterateLibrary } from "@/api/books";
 import type { InviteInfo, LibraryInfo } from "@/types/library";
 import { useTranslation } from "@/lib/LanguageContext";
 import { useToast } from "@/lib/ToastContext";
@@ -21,6 +23,8 @@ export function LibraryModal({ isOpen, onClose }: Props) {
   const [name, setName] = useState("");
   const [saving, setSaving] = useState(false);
   const [inviteBusy, setInviteBusy] = useState(false);
+  const [converting, setConverting] = useState(false);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (isOpen) load();
@@ -87,6 +91,20 @@ export function LibraryModal({ isOpen, onClose }: Props) {
     if (!invite?.join_path) return;
     navigator.clipboard.writeText(`${window.location.origin}${invite.join_path}`);
     showToast(t("library.joinLinkCopied"));
+  }
+
+  async function handleTransliterate(target: "latn" | "cyrl") {
+    try {
+      setConverting(true);
+      const res = await transliterateLibrary(target);
+      showToast(t("library.convertedSuccess", { count: res.converted_books_count }));
+      queryClient.invalidateQueries({ queryKey: ["books"] });
+      queryClient.invalidateQueries({ queryKey: ["stats"] });
+    } catch (err: any) {
+      showToast(err.response?.data?.detail || "Failed to transliterate library", "error");
+    } finally {
+      setConverting(false);
+    }
   }
 
   if (!isOpen) return null;
@@ -226,6 +244,37 @@ export function LibraryModal({ isOpen, onClose }: Props) {
                 )}
               </div>
             )}
+
+            {/* Script Conversion */}
+            <div className="space-y-2 border-t border-line pt-4">
+              <div className="flex items-center gap-2">
+                <span className="text-base">🔤</span>
+                <p className="text-xs font-semibold text-ink-secondary uppercase tracking-wider">
+                  {t("library.transliterateTitle")}
+                </p>
+              </div>
+              <p className="text-xs text-ink-secondary">
+                {t("library.transliterateDesc")}
+              </p>
+              <div className="grid grid-cols-2 gap-2 pt-1">
+                <button
+                  type="button"
+                  disabled={converting}
+                  onClick={() => handleTransliterate("latn")}
+                  className="rounded-xl border border-line bg-canvas hover:bg-surface-hover px-3 py-2 text-xs font-semibold text-ink transition disabled:opacity-50 text-center"
+                >
+                  {converting ? t("library.converting") : t("library.convertToLatin")}
+                </button>
+                <button
+                  type="button"
+                  disabled={converting}
+                  onClick={() => handleTransliterate("cyrl")}
+                  className="rounded-xl border border-line bg-canvas hover:bg-surface-hover px-3 py-2 text-xs font-semibold text-ink transition disabled:opacity-50 text-center"
+                >
+                  {converting ? t("library.converting") : t("library.convertToCyrillic")}
+                </button>
+              </div>
+            </div>
           </>
         )}
       </div>
