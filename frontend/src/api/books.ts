@@ -107,8 +107,22 @@ export async function scanShelfImage(file: File): Promise<ShelfScanResult> {
   return data;
 }
 
-export async function bulkAddBooks(books: Partial<BookFormValues>[]): Promise<{ added_count: number; books: Book[] }> {
-  const { data } = await api.post("/books/bulk-add", { books });
+export async function bulkAddBooks(
+  books: Partial<BookFormValues>[],
+  convertToLatin: boolean = false
+): Promise<{ added_count: number; books: Book[] }> {
+  const { data } = await api.post("/books/bulk-add", { books, convert_to_latin: convertToLatin });
+  return data;
+}
+
+export async function transliterateLibrary(
+  targetScript: "latn" | "cyrl" = "latn"
+): Promise<{ converted_books_count: number; message: string }> {
+  const { data } = await api.post<{ converted_books_count: number; message: string }>(
+    "/books/transliterate-library",
+    null,
+    { params: { target_script: targetScript } }
+  );
   return data;
 }
 

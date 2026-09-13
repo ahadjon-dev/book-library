@@ -27,6 +27,7 @@ from app.schemas.book import (
     MemberStatusOut,
     StatusCounts,
     StatusUpdate,
+    TransliterateResponse,
 )
 from app.schemas.import_export import ImportSummary
 from app.schemas.recommendation import RecommendNextRequest, RecommendNextResponse
@@ -41,6 +42,7 @@ from app.services.isbn_utils import both_forms, is_valid, normalize
 from app.services.lookup_service import get_or_create_shelf, resolve_authors, resolve_tags
 from app.services.recommendation_engine import recommend_next_books
 from app.services.shelf_scanner import scan_shelf_image
+from app.services.translit import contains_cyrillic, get_search_variants, is_cyrillic, to_cyrillic, to_latin
 
 router = APIRouter(prefix="/books", tags=["books"])
 
@@ -78,9 +80,11 @@ def _apply_common_filters(
     if shelf:
         query = query.filter(Book.shelf.has(Shelf.name == shelf))
     if author:
-        query = query.filter(Book.authors.any(Author.name == author))
+        author_variants = get_search_variants(author)
+        query = query.filter(Book.authors.any(or_(*[Author.name.ilike(v) for v in author_variants])))
     if tag:
-        query = query.filter(Book.tags.any(Tag.name == tag))
+        tag_variants = get_search_variants(tag)
+        query = query.filter(Book.tags.any(or_(*[Tag.name.ilike(v) for v in tag_variants])))
     if year_min is not None:
         query = query.filter(Book.publication_year >= year_min)
     if year_max is not None:
@@ -88,9 +92,11 @@ def _apply_common_filters(
     if search:
         search_terms = [t.strip() for t in search.strip().split() if t.strip()]
         for term in search_terms:
-            like = f"%{term}%"
-            query = query.filter(
-                or_(
+            variants = get_search_variants(term)
+            conditions = []
+            for v in variants:
+                like = f"%{v}%"
+                conditions.extend([
                     Book.title.ilike(like),
                     Book.subtitle.ilike(like),
                     Book.isbn.ilike(like),
@@ -98,8 +104,8 @@ def _apply_common_filters(
                     Book.description.ilike(like),
                     Book.authors.any(Author.name.ilike(like)),
                     Book.tags.any(Tag.name.ilike(like)),
-                )
-            )
+                ])
+            query = query.filter(or_(*conditions))
     return query
 
 
@@ -455,18 +461,38 @@ async def bulk_add_books(
 
     added_books: list[Book] = []
     for idx, item in enumerate(payload.books):
+        title = to_latin(item.title) if payload.convert_to_latin and contains_cyrillic(item.title) else item.title
+        subtitle = (
+            to_latin(item.subtitle)
+            if payload.convert_to_latin and item.subtitle and contains_cyrillic(item.subtitle)
+            else item.subtitle
+        )
+        genre = (
+            to_latin(item.genre)
+            if payload.convert_to_latin and item.genre and contains_cyrillic(item.genre)
+            else item.genre
+        )
+
+        if payload.convert_to_latin:
+            if item.authors:
+                item.authors = [to_latin(a) if contains_cyrillic(a) else a for a in item.authors]
+            if item.shelf and contains_cyrillic(item.shelf):
+                item.shelf = to_latin(item.shelf)
+            if item.tags:
+                item.tags = [to_latin(t) if contains_cyrillic(t) else t for t in item.tags]
+
         book = Book(
             library_id=current_user.library_id,
             added_by_user_id=current_user.id,
-            title=item.title,
-            subtitle=item.subtitle,
+            title=title,
+            subtitle=subtitle,
             isbn=item.isbn,
             publisher=item.publisher,
             publication_year=item.publication_year,
             language=item.language,
             page_count=item.page_count,
             description=item.description,
-            genre=item.genre,
+            genre=genre,
             owned=item.owned,
             purchase_date=item.purchase_date,
             purchase_price=item.purchase_price,
@@ -637,3 +663,84 @@ def update_my_status(
     db.commit()
     status_by_book_id = _load_statuses(db, current_user.id, [book.id])
     return _to_book_out(book, status_by_book_id)
+
+
+@router.post("/transliterate-library", response_model=TransliterateResponse)
+def transliterate_library(
+    target_script: str = Query("latn", pattern="^(latn|cyrl)$"),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> TransliterateResponse:
+    """
+    Transliterates all books, authors, tags, and shelves in the user's library
+    to the target script ('latn' for Latin, 'cyrl' for Cyrillic).
+    """
+    books = (
+        db.query(Book)
+        .options(selectinload(Book.authors), selectinload(Book.tags), selectinload(Book.shelf))
+        .filter(Book.library_id == current_user.library_id)
+        .all()
+    )
+
+    convert_fn = to_latin if target_script == "latn" else to_cyrillic
+    condition_fn = contains_cyrillic if target_script == "latn" else (lambda s: not is_cyrillic(s) and any(c.isalpha() for c in s))
+
+    converted_count = 0
+    for book in books:
+        modified = False
+        if book.title and condition_fn(book.title):
+            book.title = convert_fn(book.title)
+            modified = True
+        if book.subtitle and condition_fn(book.subtitle):
+            book.subtitle = convert_fn(book.subtitle)
+            modified = True
+        if book.description and condition_fn(book.description):
+            book.description = convert_fn(book.description)
+            modified = True
+        if book.genre and condition_fn(book.genre):
+            book.genre = convert_fn(book.genre)
+            modified = True
+
+        # Authors
+        if book.authors:
+            new_author_names = []
+            author_modified = False
+            for author in book.authors:
+                if condition_fn(author.name):
+                    new_author_names.append(convert_fn(author.name))
+                    author_modified = True
+                else:
+                    new_author_names.append(author.name)
+            if author_modified:
+                book.authors = resolve_authors(db, new_author_names)
+                modified = True
+
+        # Tags
+        if book.tags:
+            new_tag_names = []
+            tag_modified = False
+            for tag in book.tags:
+                if condition_fn(tag.name):
+                    new_tag_names.append(convert_fn(tag.name))
+                    tag_modified = True
+                else:
+                    new_tag_names.append(tag.name)
+            if tag_modified:
+                book.tags = resolve_tags(db, new_tag_names, current_user.library_id)
+                modified = True
+
+        # Shelf
+        if book.shelf and condition_fn(book.shelf.name):
+            new_shelf_name = convert_fn(book.shelf.name)
+            book.shelf = get_or_create_shelf(db, new_shelf_name, current_user.library_id)
+            modified = True
+
+        if modified:
+            converted_count += 1
+
+    db.commit()
+    script_label = "Latin" if target_script == "latn" else "Cyrillic"
+    return TransliterateResponse(
+        converted_books_count=converted_count,
+        message=f"Successfully converted {converted_count} books to {script_label}.",
+    )

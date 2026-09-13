@@ -27,6 +27,7 @@ class ShelfScanResult(BaseModel):
 
 class BulkAddRequest(BaseModel):
     books: list[BookCreate]
+    convert_to_latin: bool = False
 
 
 class BulkAddResponse(BaseModel):

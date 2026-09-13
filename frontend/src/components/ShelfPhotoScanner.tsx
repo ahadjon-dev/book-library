@@ -6,6 +6,7 @@ import { compressImage } from "@/lib/compressImage";
 import { ImageCropAdjuster } from "@/components/ImageCropAdjuster";
 import { useTranslation } from "@/lib/LanguageContext";
 import { useToast } from "@/lib/ToastContext";
+import { toLatin, containsCyrillic } from "@/lib/translit";
 
 interface Props {
   isOpen: boolean;
@@ -22,6 +23,7 @@ export function ShelfPhotoScanner({ isOpen, onClose, onSuccess }: Props) {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [result, setResult] = useState<ShelfScanResult | null>(null);
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
+  const [convertToLatin, setConvertToLatin] = useState(true);
 
   if (!isOpen) return null;
 
@@ -83,8 +85,16 @@ export function ShelfPhotoScanner({ isOpen, onClose, onSuccess }: Props) {
     if (!result || selectedIndices.length === 0) return;
     try {
       setAdding(true);
-      const selected = selectedIndices.map((i) => result.items[i]);
-      const res = await bulkAddBooks(selected);
+      const selected = selectedIndices.map((i) => {
+        const orig = result.items[i];
+        if (!convertToLatin) return orig;
+        return {
+          ...orig,
+          title: containsCyrillic(orig.title) ? toLatin(orig.title) : orig.title,
+          authors: orig.authors.map((a) => (containsCyrillic(a) ? toLatin(a) : a)),
+        };
+      });
+      const res = await bulkAddBooks(selected, convertToLatin);
       showToast(t("shelfScanner.booksAdded", { count: res.added_count }));
       if (onSuccess) onSuccess();
       handleReset();
@@ -165,10 +175,24 @@ export function ShelfPhotoScanner({ isOpen, onClose, onSuccess }: Props) {
           )
         ) : (
           <div className="flex-1 flex flex-col min-h-0 space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-ink-secondary">
-                {t("shelfScanner.detected", { count: result.items.length })}
-              </span>
+            <div className="flex items-center justify-between flex-wrap gap-2 pb-1">
+              <div className="flex items-center gap-3 flex-wrap">
+                <span className="text-xs font-semibold text-ink-secondary">
+                  {t("shelfScanner.detected", { count: result.items.length })}
+                </span>
+                <label className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-line bg-canvas hover:bg-surface-hover transition cursor-pointer select-none text-xs">
+                  <input
+                    type="checkbox"
+                    checked={convertToLatin}
+                    onChange={(e) => setConvertToLatin(e.target.checked)}
+                    className="rounded border-line text-accent focus:ring-accent h-3.5 w-3.5"
+                  />
+                  <span className="font-medium text-ink flex items-center gap-1">
+                    <span>🔤</span>
+                    <span>{t("shelfScanner.latinToggle")}</span>
+                  </span>
+                </label>
+              </div>
               <button
                 onClick={toggleAll}
                 className="text-xs text-accent hover:underline font-medium"
@@ -180,6 +204,13 @@ export function ShelfPhotoScanner({ isOpen, onClose, onSuccess }: Props) {
             <div className="flex-1 overflow-y-auto grid sm:grid-cols-2 gap-2.5 pr-1">
               {result.items.map((item, idx) => {
                 const isSelected = selectedIndices.includes(idx);
+                const displayTitle =
+                  convertToLatin && containsCyrillic(item.title) ? toLatin(item.title) : item.title;
+                const authorRaw =
+                  item.authors.join(", ") || item.detected_author || "Unknown Author";
+                const displayAuthor =
+                  convertToLatin && containsCyrillic(authorRaw) ? toLatin(authorRaw) : authorRaw;
+
                 return (
                   <div
                     key={idx}
@@ -200,7 +231,7 @@ export function ShelfPhotoScanner({ isOpen, onClose, onSuccess }: Props) {
                     {item.cover_url ? (
                       <img
                         src={item.cover_url}
-                        alt={item.title}
+                        alt={displayTitle}
                         className="h-12 w-8 object-cover rounded shadow-sm shrink-0"
                       />
                     ) : (
@@ -211,7 +242,7 @@ export function ShelfPhotoScanner({ isOpen, onClose, onSuccess }: Props) {
 
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1.5 flex-wrap">
-                        <p className="text-sm font-semibold text-ink truncate">{item.title}</p>
+                        <p className="text-sm font-semibold text-ink truncate">{displayTitle}</p>
                         {item.already_in_library && (
                           <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20 shrink-0">
                             {t("shelfScanner.alreadyInLibrary")}
@@ -228,9 +259,7 @@ export function ShelfPhotoScanner({ isOpen, onClose, onSuccess }: Props) {
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-ink-secondary truncate">
-                        {item.authors.join(", ") || item.detected_author || "Unknown Author"}
-                      </p>
+                      <p className="text-xs text-ink-secondary truncate">{displayAuthor}</p>
                     </div>
 
                     <div className="text-right shrink-0">

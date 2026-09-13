@@ -15,6 +15,7 @@ import { coverUrl } from "@/api/client";
 import { updateMyStatus } from "@/api/books";
 import { useStatusLabels } from "@/lib/statusLabels";
 import { useToast } from "@/lib/ToastContext";
+import { useTranslation } from "@/lib/LanguageContext";
 import type { Book, ReadStatus, StatusUpdate } from "@/types/book";
 
 function StatusIcon({ status, className }: { status: ReadStatus; className?: string }) {
@@ -34,9 +35,14 @@ export function BookCard({ book }: { book: Book }) {
   const statusLabels = useStatusLabels();
   const queryClient = useQueryClient();
   const { showToast } = useToast();
+  const { translitBookText } = useTranslation();
 
   const [statusMenuOpen, setStatusMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  const displayTitle = translitBookText(book.title);
+  const displayAuthors =
+    book.authors.map((a) => translitBookText(a)).join(", ") || "Unknown";
 
   const cover = coverUrl(book.cover_image_path);
   const status: ReadStatus = book.my_status?.status ?? "unread";
@@ -127,7 +133,7 @@ export function BookCard({ book }: { book: Book }) {
           ) : (
             <div className="flex h-full w-full flex-col items-center justify-center p-3 text-center">
               <BookOpen className="h-7 w-7 text-ink-muted mb-1" />
-              <span className="text-xs font-semibold text-ink line-clamp-2">{book.title}</span>
+              <span className="text-xs font-semibold text-ink line-clamp-2">{displayTitle}</span>
             </div>
           )}
 
@@ -142,11 +148,11 @@ export function BookCard({ book }: { book: Book }) {
 
         {/* Title & Author */}
         <div className="p-2.5 pb-1.5">
-          <p className="truncate text-xs sm:text-sm font-semibold text-ink leading-snug" title={book.title}>
-            {book.title}
+          <p className="truncate text-xs sm:text-sm font-semibold text-ink leading-snug" title={displayTitle}>
+            {displayTitle}
           </p>
           <p className="truncate text-[11px] text-ink-secondary mt-0.5">
-            {book.authors.join(", ") || "Unknown"}
+            {displayAuthors}
           </p>
         </div>
       </Link>

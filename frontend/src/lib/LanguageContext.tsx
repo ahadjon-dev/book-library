@@ -2,15 +2,22 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 
 import { en } from "@/lib/i18n/en";
 import { uz } from "@/lib/i18n/uz";
+import { uzCyrl } from "@/lib/i18n/uz-cyrl";
+import { transliterateText } from "@/lib/translit";
 
 export const LANGUAGES = [
   { value: "en", label: "English" },
-  { value: "uz", label: "O'zbekcha" },
+  { value: "uz", label: "O'zbekcha (Lotin)" },
+  { value: "uz-cyrl", label: "Ўзбекча (Кирилл)" },
 ] as const;
 
 export type Language = (typeof LANGUAGES)[number]["value"];
 
-const DICTIONARIES: Record<Language, typeof en> = { en, uz };
+const DICTIONARIES: Record<Language, typeof en> = {
+  en,
+  uz,
+  "uz-cyrl": uzCyrl,
+};
 
 // Recursively derive "a.b.c"-style dot paths for every string leaf in the
 // dictionary shape, so t() rejects typos at compile time.
@@ -47,6 +54,7 @@ interface LanguageContextValue {
   language: Language;
   setLanguage: (language: Language) => void;
   t: (key: TranslationKey, params?: Record<string, string | number>) => string;
+  translitBookText: (text?: string | null) => string;
 }
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
@@ -69,11 +77,23 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   }
 
   function t(key: TranslationKey, params?: Record<string, string | number>): string {
-    return interpolate(lookup(DICTIONARIES[language], key), params);
+    const dict = DICTIONARIES[language] || en;
+    return interpolate(lookup(dict, key), params);
+  }
+
+  function translitBookText(text?: string | null): string {
+    if (!text) return "";
+    if (language === "uz-cyrl") {
+      return transliterateText(text, "cyrl");
+    }
+    // For Uzbek Latin or English, display in Latin
+    return transliterateText(text, "latn");
   }
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t }}>{children}</LanguageContext.Provider>
+    <LanguageContext.Provider value={{ language, setLanguage, t, translitBookText }}>
+      {children}
+    </LanguageContext.Provider>
   );
 }
 

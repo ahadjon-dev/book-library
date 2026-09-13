@@ -285,6 +285,7 @@ export const en = {
     lowConfidence: "Low Confidence",
     scanAnother: "Scan Another Photo",
     notConfigured: "AI Shelf Scanner is not configured on server (GEMINI_API_KEY required).",
+    latinToggle: "Auto-convert Cyrillic to Latin",
   },
   shareShelf: {
     title: "Share Your Shelf",
@@ -323,6 +324,12 @@ export const en = {
     joinLinkCopied: "Join link copied to clipboard!",
     revokeInvite: "Revoke",
     inviteRevoked: "Invite link revoked",
+    transliterateTitle: "Script Conversion",
+    transliterateDesc: "Easily convert Cyrillic book titles, authors, and shelves to Latin (or vice-versa).",
+    convertToLatin: "Convert Library to Latin",
+    convertToCyrillic: "Convert Library to Cyrillic",
+    converting: "Converting…",
+    convertedSuccess: "Converted {count} books!",
   },
   addHub: {
     title: "Add Books to Library",
