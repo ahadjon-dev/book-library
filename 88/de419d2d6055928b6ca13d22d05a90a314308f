@@ -1,0 +1,23 @@
+backend/app/services/translit.py
+  s_602f2b8bb9a13e::t_1d7f86cff36fbf 1-251
+frontend/src/lib/i18n/uz-cyrl.ts
+  s_602f2b8bb9a13e::t_7221f1bf0f2643 1-348
+frontend/src/lib/i18n/uz.ts
+  s_602f2b8bb9a13e::t_d3dd2b0dad12a2 291,330-335
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "88de419d2d6055928b6ca13d22d05a90a314308f",
+  "prompts": {},
+  "sessions": {
+    "s_602f2b8bb9a13e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c36961c5-f282-42fa-93ba-7afbe0e44196",
+        "model": "claude-opus-5"
+      },
+      "human_author": "ahadjon-dev <ahadjon@datatruck.io>"
+    }
+  }
+}
